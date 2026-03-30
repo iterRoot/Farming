@@ -12,5 +12,7 @@ public class CowFeedMapper : Profile
 		CreateMap<CowFeedListRequest, CowFeed>();
 		CreateMap<CowFeed, CowFeedListRequest>();
 
+		CreateMap<CowFeedUpdateRequest, CowFeed>();
+
 	}
 }

@@ -25,7 +25,7 @@ namespace FarmingApi.Modules.RawMilk
 
         // GET api/milkproduction
         [AllowAnonymous]
-        [HttpGet]
+        [HttpGet ("GetRawMail")]
         public IActionResult Gets()
         {
             var queryable = _repository.GetAll();
@@ -33,7 +33,6 @@ namespace FarmingApi.Modules.RawMilk
             return Ok(results);
         }
 
-        [AllowAnonymous]
         [HttpGet("{id:int}")]
         public IActionResult GetById([FromRoute] int id)
         {

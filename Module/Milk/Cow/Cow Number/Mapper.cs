@@ -11,6 +11,10 @@ public class CowMapper : Profile
 
 		CreateMap<CowListRequest, Cow>();
 		CreateMap<Cow, CowListRequest>();
+		// CowUpdateRequest
+
+		CreateMap<CowUpdateRequest, Cow>();
+
 
 	}
 }

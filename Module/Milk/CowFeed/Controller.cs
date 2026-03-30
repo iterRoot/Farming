@@ -62,4 +62,42 @@ public class CowFeedController : MyController
 
 	// }
 
+
+	[HttpPut("{id:int}")]
+	public async Task<IActionResult> Update(int id, [FromForm] CowFeedUpdateRequest request)
+	{
+		var item = _repository.GetSingle(e => e.Id == id);
+		if (item == null)
+		{
+			return BadRequest($"Item not found {id}");
+		}
+		_mapper.Map(request, item);
+		// if (request.Logo != null)
+		// {
+		// 	var stream = request.Logo.OpenReadStream();
+		// 	// var url = await _service.ReplaceFile(item.Logo, stream);
+		// 	item.Logo = url;
+		// }
+		item.UpdatedAt = DateTime.UtcNow;
+		// item.UpdatedBy = GetClaim()!.Id;
+		_repository.Update(item);
+		_repository.Commit();
+		return NoContent();
+	}
+
+	[HttpDelete]
+	public IActionResult Delete(int id)
+	{
+		var item = _repository.GetSingle(e => e.Id == id);
+		if (item == null)
+		{
+			return BadRequest($"Item not found {id}");
+		}
+		item.DeletedAt = DateTime.UtcNow;
+		// item.DeletedBy = GetClaim()!.Id;
+		_repository.Remove(item);
+		_repository.Commit();
+		return NoContent();
+	}
+
 }

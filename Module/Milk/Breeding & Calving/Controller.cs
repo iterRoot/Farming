@@ -6,14 +6,14 @@ using FarmingApi.Core;
 
 using FarmingApi;
 
-namespace FarmingApi.Modules.MilkCow;
-public class CowController : MyController
+namespace FarmingApi.Modules.Breeding;
+public class BreedingController : MyController
 
 {
     private readonly IMapper _mapper;
-	private readonly ICowRepository _repository;
-    public CowController(
-		ICowRepository repository,
+	private readonly IBreedingRepository _repository;
+    public BreedingController(
+		IBreedingRepository repository,
 		IMapper mapper
 		// ICloudStorageSingletonService service
 	)
@@ -28,31 +28,31 @@ public class CowController : MyController
 	public IActionResult Gets()
 	{
 		var iQueryable = _repository.GetAll();
-		var results = _mapper.ProjectTo<CowListResponse>(iQueryable).ToList();
+		var results = _mapper.ProjectTo<BreedingListResponse>(iQueryable).ToList();
 
 		return Ok(results);
 	}
 	[HttpPost]
-	public IActionResult CreatCow([FromBody] CowListRequest request)
+	public IActionResult CreatBreeding([FromBody] BreedingListRequest request)
 	{
 		if (!ModelState.IsValid)
 			return BadRequest(ModelState);
-		var cow = _mapper.Map<Cow>(request);
-		cow.CreatedAt = DateTime.UtcNow;
-		cow.InActive = false;
-		_repository.Add(cow);
+		var Breeding = _mapper.Map<Breeding>(request);
+		Breeding.CreatedAt = DateTime.UtcNow;
+		Breeding.InActive = false;
+		_repository.Add(Breeding);
 		_repository.Commit();
-		var response = _mapper.Map<CowListResponse>(cow);
+		var response = _mapper.Map<BreedingListResponse>(Breeding);
 		return CreatedAtAction(nameof(Gets), new { id = response.Id}, response);
 	}
 
 	// [HttpPost]
-	// public IActionResult CreatCow()
+	// public IActionResult CreatBreeding()
 	// {
 
 	// 	var existed = repository.Existed(e=> e.Id == request.Id);
 	// 	if(existed) return Existed(request.id);
-	// 	var item = mapper.Map<Cow>(request);
+	// 	var item = mapper.Map<HouseBreeding>(request);
 	// 	item.CreatedAt = DateTime.UtcNow;
     //     item.InActive = false;
     //     // item.CreatedBy = GetClaim()!.Id;

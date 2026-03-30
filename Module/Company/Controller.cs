@@ -24,7 +24,8 @@ public class CompanyController : MyController
 	}
 
 	[AllowAnonymous]
-		[HttpGet]
+	
+	[HttpGet]
 	public IActionResult Gets()
 	{
 		var iQueryable = _repository.GetAll();
@@ -33,7 +34,7 @@ public class CompanyController : MyController
 		return Ok(results);
 	}
 
-	[HttpGet("{id:guid}")]
+	[HttpGet("{id:int}")]
 	public IActionResult Get(int id)
 	{
 		var item = _repository.GetSingle(e => e.Id == id);

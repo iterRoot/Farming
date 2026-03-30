@@ -7,12 +7,12 @@ namespace FarmingApi.Modules.RawMilk;
 public class RawMilk : AuditableEntity
 {
     // Collection
-    public string CowId { get; set; }
+    public string? CowId { get; set; }
     public DateTime CollectionDate { get; set; }
-    public string Shift { get; set; }
+    public string? Shift { get; set; }
     public decimal QtyLiters { get; set; }
-    public string CollectorName { get; set; }
-    public string MilkingMethod { get; set; }
+    public string? CollectorName { get; set; }
+    public string? MilkingMethod { get; set; }
     public string? MilkingStation { get; set; }
 
     // Quality Parameters
@@ -39,7 +39,7 @@ public class RawMilk : AuditableEntity
     public decimal RatePerLiter { get; set; }
     public decimal AmountPaid { get; set; }
     public string? SupplierId { get; set; }
-    public string PaymentStatus { get; set; }
+    public string? PaymentStatus { get; set; }
 
     // Storage
     public string? BatchNumber { get; set; }
@@ -47,7 +47,7 @@ public class RawMilk : AuditableEntity
     public string? BulkTankNumber { get; set; }
     public DateTime? TransferTime { get; set; }
     public DateTime? CoolingTime { get; set; }
-    public string ProcessingStatus { get; set; }
+    public string? ProcessingStatus { get; set; }
 
     // Cow Health
     public string? CowHealthStatus { get; set; }

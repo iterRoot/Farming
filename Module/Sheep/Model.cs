@@ -1,0 +1,37 @@
+
+namespace FarmingApi.Modules.Sheep;
+
+public class SheepListResponse
+{
+	// public Guid GuidId { get; set; }
+	public int Id { get; set; }
+	public string Sex { get; set; } = null!;
+	public int? Age { get; set; }
+	public string? Birthday { get; set; }
+    public string? Variety { get; set; }
+	public string? Desc { get; set; }
+	public bool? InActive { get; set; }
+}
+
+public class SheepListRequest
+{
+	// public Guid GuidId { get; set; }
+	// public int Id { get; set; }
+	public string Sex { get; set; } = null!;
+	public int HouseId { get; set; }
+	public int? Age { get; set; }
+	public string? Birthday { get; set; }
+    public string? Variety { get; set; }
+	public string? Desc { get; set; }
+	public bool? InActive { get; set; }
+}
+public class SheepUpdateRequest
+{
+	public string Sex { get; set; } = null!;
+	public int? Age { get; set; }
+	public string? Birthday { get; set; }
+    public string? Variety { get; set; }
+	public string? Desc { get; set; }
+	public bool? InActive { get; set; }
+
+}
