@@ -35,7 +35,6 @@
 // 	}
 // }
 
-
 using System;
 using System.Linq;
 using System.Reflection;
@@ -52,6 +51,7 @@ namespace FarmingApi
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Disable cascade delete
             var relationships = modelBuilder.Model.GetEntityTypes()
                 .SelectMany(e => e.GetForeignKeys());
             foreach (var r in relationships)
@@ -61,6 +61,7 @@ namespace FarmingApi
 
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
+            // Apply all IEntityTypeConfiguration automatically
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
             const string prefix = "FarmingApi.Modules";
@@ -103,7 +104,10 @@ namespace FarmingApi
         {
             var dbConnection = Environment.GetEnvironmentVariable("DB_CONNECTION");
             dbConnection ??= "Host=localhost;Port=5432;Database=Farming;Username=postgres;Password=mypassword;";
-            service.AddDbContext<MyDbContext>(options => { options.UseNpgsql(dbConnection); });
+            service.AddDbContext<MyDbContext>(options =>
+            {
+                options.UseNpgsql(dbConnection);
+            });
         }
     }
 }

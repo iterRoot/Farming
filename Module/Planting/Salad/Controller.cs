@@ -61,40 +61,6 @@ public class SaladController : MyController
 		var response = _mapper.Map<SaladListResponse>(cow);
 		return CreatedAtAction(nameof(Gets), new { id = response.Id}, response);
 	}
-// 	[HttpPost]
-// public IActionResult CreatSalad([FromBody] SaladListRequest request)
-// {
-//     if (!ModelState.IsValid) return BadRequest(ModelState);
-
-//     if (request.HouseId.HasValue)
-//     {
-//         var exists = _houseRepository.GetAll().Any(h => h.Id == request.HouseId.Value);
-//         if (!exists) return BadRequest(new { message = "HouseId not found." });
-//     }
-
-//     var entity = _mapper.Map<Salad>(request);
-//     entity.CreatedAt = DateTime.UtcNow;
-//     _repository.Add(entity);
-//     _repository.Commit();
-//     return CreatedAtAction(nameof(GetById), new { id = entity.Id }, entity);
-// }
-
-
-	// [HttpPost]
-	// public IActionResult CreatSalad()
-	// {
-
-	// 	var existed = repository.Existed(e=> e.Id == request.Id);
-	// 	if(existed) return Existed(request.id);
-	// 	var item = mapper.Map<Salad>(request);
-	// 	item.CreatedAt = DateTime.UtcNow;
-    //     item.InActive = false;
-    //     // item.CreatedBy = GetClaim()!.Id;
-    //     repository.Add(item);
-    //     repository.Commit();
-    //     return Ok();
-
-	// }
 
 	[HttpPut("{id:int}")]
 	public async Task<IActionResult> Update(int id, [FromForm] SaladUpdateRequest request)

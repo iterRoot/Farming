@@ -54,5 +54,30 @@ public class UserMasterController : MyController
 			id = entity.Id
 		});
     }
+    [HttpPut("{id}")]
+    public IActionResult Update(int id, [FromBody] UserMasterUpdaterequest request)
+    {
+        var user = _repository.GetSingle(e => e.Id == id);
+        if (user == null) return NotFound ($"Item not found: {id}");
+        _mapper.Map(request, user);
+        user.UpdatedAt = DateTime.UtcNow;
+        _repository.Update(user);
+        _repository.Commit();
+        return NoContent(); 
+    }
+    [HttpDelete]
+	public IActionResult Delete(int id)
+	{
+		var user = _repository.GetSingle(e => e.Id == id);
+		if (user == null)
+		{
+			return BadRequest($"Item not found {id}");
+		}
+		user.DeletedAt = DateTime.UtcNow;
+		// item.DeletedBy = GetClaim()!.Id;
+		_repository.Remove(user);
+		_repository.Commit();
+		return NoContent();
+	}
 
 }
