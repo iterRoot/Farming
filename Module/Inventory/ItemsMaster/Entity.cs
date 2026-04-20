@@ -1,21 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using FarmingApi.Core;
-using FarmingApi.Modules.Master.ItemsMaster;
-
 
 namespace FarmingApi.Modules.Master.ItemsMaster;
+
 public class ItemsMaster : AuditableEntity
 {
     public int Id { get; set; }
 
-    public string ItemCode { get; set; } = string.Empty;
-    public string ItemName { get; set; } = string.Empty;
+    public string ItemCode { get; set; } = null!;
+    public string ItemName { get; set; } = null!;
 
     public string UomName { get; set; } = string.Empty;
     public string UomCode { get; set; } = string.Empty;
 
-    public decimal Price { get; set; }   // ✅ FIXED
+    public decimal Price { get; set; }
     public string PriceList { get; set; } = string.Empty;
 
     public string Types { get; set; } = string.Empty;
@@ -31,7 +30,6 @@ public class ItemsMasterConfig : IEntityTypeConfiguration<ItemsMaster>
 
         builder.HasKey(x => x.Id);
 
-        // ✅ Unique Item Code (important)
         builder.HasIndex(x => x.ItemCode).IsUnique();
 
         builder.Property(x => x.ItemCode)
@@ -42,26 +40,20 @@ public class ItemsMasterConfig : IEntityTypeConfiguration<ItemsMaster>
             .HasMaxLength(100)
             .IsRequired();
 
-        builder.Property(x => x.UomName)
-            .HasMaxLength(50);
-
-        builder.Property(x => x.UomCode)
-            .HasMaxLength(20);
-
         builder.Property(x => x.Price)
             .HasColumnType("decimal(18,2)");
 
-        builder.Property(x => x.PriceList)
-            .HasMaxLength(50);
+        builder.Property(x => x.Status)
+            .HasConversion(
+                v => v == ItemStatus.Active ? "A" : "I",
+                v => v == "A" ? ItemStatus.Active : ItemStatus.InActive
+            )
+            .HasMaxLength(1);
 
-        builder.Property(x => x.Types)
-            .HasMaxLength(50);
-
-builder.Property(x => x.Status)
-    .HasConversion(
-        v => v == ItemStatus.Active ? "A" : "I",
-        v => v == "A" ? ItemStatus.Active : ItemStatus.InActive
-    )
-    .HasMaxLength(1);
+        // 🔥 prevent empty string
+        builder.HasCheckConstraint(
+            "CK_ItemsMaster_ItemCode_NotEmpty",
+            "\"ItemCode\" <> ''"
+        );
     }
 }

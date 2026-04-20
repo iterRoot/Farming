@@ -1,10 +1,7 @@
-
 namespace FarmingApi.Modules.Master.ItemsMaster;
+
 public enum ItemStatus
 {
-    Active,
-    InActive
-    
+    Active = 0,
+    InActive = 1
 }
-
-// public enum Item

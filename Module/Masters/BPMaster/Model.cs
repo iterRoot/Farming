@@ -1,35 +1,45 @@
-namespace FarmingApi.Modules.Master.UserMaster;
+namespace FarmingApi.Modules.Master.BusinessPartner;
 
-public class UserMasterResponse
+public class BusinessPartnerResponse
 {
-    public string FirstName {get; set;}
-    public string MidName {get; set;}
-    public string LastName {get;set;}
-    public string Note { get; set;}
-    public TypeStatus TypeStatus {get; set;} = TypeStatus.Customer;
-    public ActiveStatus ActiveStatus { get; set; } = ActiveStatus.Active;
+    public int Id { get; set; }              // 🔥 IMPORTANT
+    public string Code { get; set; }         // 🔥 IMPORTANT
+
+    public string FirstName { get; set; }
+    public string MidName { get; set; }
+    public string LastName { get; set; }
+
+    public string Note { get; set; }
+
+    public TypeStatus TypeStatus { get; set; }
+    public ActiveStatus ActiveStatus { get; set; }
 }
 
-
-public class UserMasterInsertrequest
+public class BusinessPartnerCreateRequest
 {
     public string Code { get; set; } = null!;
+
     public string FirstName { get; set; } = null!;
-    public string MidName { get; set; } = null!;
+    public string MidName { get; set; } = string.Empty;
     public string LastName { get; set; } = null!;
-    public string Note { get; set; } = null!;
-    public TypeStatus TypeStatus {get; set;} = TypeStatus.Customer;
+
+    public string Note { get; set; } = string.Empty;
+
+    public TypeStatus TypeStatus { get; set; } = TypeStatus.Customer;
     public ActiveStatus ActiveStatus { get; set; } = ActiveStatus.Active;
 }
-public class UserMasterUpdaterequest
+
+
+public class BusinessPartnerUpdateRequest
 {
-    // public string Code { get; set; } = null!;
     public string FirstName { get; set; } = null!;
-    public string MidName { get; set; } = null!;
+    public string MidName { get; set; } = string.Empty;
     public string LastName { get; set; } = null!;
-    public string Note { get; set; } = null!;
-    public TypeStatus TypeStatus {get; set;} = TypeStatus.Customer;
-    public ActiveStatus ActiveStatus { get; set; } = ActiveStatus.Active;
+
+    public string Note { get; set; } = string.Empty;
+
+    public TypeStatus TypeStatus { get; set; }
+    public ActiveStatus ActiveStatus { get; set; }
 }
 
 

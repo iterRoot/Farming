@@ -1,154 +1,93 @@
-
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
-
-using FarmingApi;
 
 namespace FarmingApi.Modules.Master.ItemsMaster;
-public class ItemsMasterController : MyController
 
+[ApiController]
+[Route("[controller]")]
+public class ItemsMasterController : ControllerBase
 {
     private readonly IMapper _mapper;
-	private readonly IItemsMasterRepository _repository;
-    public ItemsMasterController(
-		IItemsMasterRepository repository,
-		IMapper mapper
-		// ICloudStorageSingletonService service
-	)
-	{
-		_mapper = mapper;
-		_repository = repository;
-		// _service = service;
-	}
+    private readonly IItemsMasterRepository _repository;
 
-	[AllowAnonymous]
-		[HttpGet]
-	public IActionResult Gets()
-	{
-		var iQueryable = _repository.GetAll();
-		var results = _mapper.ProjectTo<ItemsMasterListResponse>(iQueryable).ToList();
-
-		return Ok(results);
-	}
-
-	// [HttpGet("ItemsMaster{id:int}")]
-	[HttpGet("{id:int}")]
-
-	public IActionResult Get(int id)
-	{
-		var item = _repository.GetSingle(e => e.Id == id);
-		if (item == null)
-		{
-			return BadRequest($"Item not found {id}");
-		}
-		var result = _mapper.Map<ItemsMasterListResponse>(item);
-		return Ok(result);
-	}
-
-    [HttpPost]
-    public IActionResult Create([FromBody] ItemsMasterListRequest request)
+    public ItemsMasterController(IItemsMasterRepository repository, IMapper mapper)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+        _mapper = mapper;
+        _repository = repository;
+    }
+
+    // GET ALL
+    [HttpGet]
+    public IActionResult Gets()
+    {
+        var data = _repository.GetAll();
+        var results = _mapper.ProjectTo<ItemsMasterResponse>(data).ToList();
+        return Ok(results);
+    }
+
+    // GET BY ID
+    [HttpGet("{id}")]
+    public IActionResult Get(int id)
+    {
+        var item = _repository.GetSingle(e => e.Id == id);
+        if (item == null) return NotFound();
+
+        return Ok(_mapper.Map<ItemsMasterResponse>(item));
+    }
+
+    // CREATE
+    [HttpPost]
+    public IActionResult Create([FromBody] ItemsMasterRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.ItemCode) ||
+            string.IsNullOrWhiteSpace(request.ItemName))
+        {
+            return BadRequest("ItemCode and ItemName are required");
+        }
+
+        var exists = _repository.GetAll()
+            .Any(x => x.ItemCode == request.ItemCode);
+
+        if (exists)
+        {
+            return BadRequest("Item Code already exists");
+        }
 
         var entity = _mapper.Map<ItemsMaster>(request);
         entity.CreatedAt = DateTime.UtcNow;
-        entity.InActive = false;
 
         _repository.Add(entity);
         _repository.Commit();
 
-		return Ok(new
-		{
-			message = "Planting saved successfully",
-			id = entity.Id
-		});
+        return Ok(entity);
     }
-// tubecoffee@kpt
 
+    // UPDATE
+    [HttpPut("{id}")]
+    public IActionResult Update(int id, [FromBody] ItemsMasterUpdateRequest request)
+    {
+        var item = _repository.GetSingle(e => e.Id == id);
+        if (item == null) return NotFound();
 
+        _mapper.Map(request, item);
+        item.UpdatedAt = DateTime.UtcNow;
 
-	// [HttpPost]
-	// public IActionResult CreatItemsMaster([FromForm] ItemsMasterListRequest request)
-	// {
-	// 	if (!ModelState.IsValid)
-	// 		return BadRequest(ModelState);
-	// 	var cow = _mapper.Map<ItemsMaster>(request);
-	// 	cow.CreatedAt = DateTime.UtcNow;
-	// 	cow.InActive = false;
-	// 	_repository.Add(cow);
-	// 	_repository.Commit();
-	// 	var response = _mapper.Map<ItemsMasterListResponse>(cow);
-	// 	return CreatedAtAction(nameof(Gets), new { id = response.Id}, response);
-	// }
-// 	[HttpPost]
-// public IActionResult CreatItemsMaster([FromBody] ItemsMasterListRequest request)
-// {
-//     if (!ModelState.IsValid) return BadRequest(ModelState);
+        _repository.Update(item);
+        _repository.Commit();
 
-//     if (request.HouseId.HasValue)
-//     {
-//         var exists = _houseRepository.GetAll().Any(h => h.Id == request.HouseId.Value);
-//         if (!exists) return BadRequest(new { message = "HouseId not found." });
-//     }
+        return NoContent();
+    }
 
-//     var entity = _mapper.Map<ItemsMaster>(request);
-//     entity.CreatedAt = DateTime.UtcNow;
-//     _repository.Add(entity);
-//     _repository.Commit();
-//     return CreatedAtAction(nameof(GetById), new { id = entity.Id }, entity);
-// }
+    // DELETE
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id)
+    {
+        var item = _repository.GetSingle(e => e.Id == id);
+        if (item == null) return NotFound();
 
+        _repository.Remove(item);
+        _repository.Commit();
 
-	// [HttpPost]
-	// public IActionResult CreatItemsMaster()
-	// {
-
-	// 	var existed = repository.Existed(e=> e.Id == request.Id);
-	// 	if(existed) return Existed(request.id);
-	// 	var item = mapper.Map<ItemsMaster>(request);
-	// 	item.CreatedAt = DateTime.UtcNow;
-    //     item.InActive = false;
-    //     // item.CreatedBy = GetClaim()!.Id;
-    //     repository.Add(item);
-    //     repository.Commit();
-    //     return Ok();
-
-	// }
-
-	// [HttpPut("{id:int}")]
-	[HttpPut("{id}")]
-	public IActionResult Update(int id, [FromForm] ItemsMasterUpdateRequest request)
-	{
-		var item = _repository.GetSingle(e => e.Id == id);
-
-		if (item == null)
-			return NotFound($"Item not found: {id}");
-
-		_mapper.Map(request, item);
-
-		item.UpdatedAt = DateTime.UtcNow;
-
-		_repository.Update(item);
-		_repository.Commit();
-
-		return NoContent();
-	}
-
-	[HttpDelete]
-	public IActionResult Delete(int id)
-	{
-		var item = _repository.GetSingle(e => e.Id == id);
-		if (item == null)
-		{
-			return BadRequest($"Item not found {id}");
-		}
-		item.DeletedAt = DateTime.UtcNow;
-		// item.DeletedBy = GetClaim()!.Id;
-		_repository.Remove(item);
-		_repository.Commit();
-		return NoContent();
-	}
-
+        return NoContent();
+    }
 }

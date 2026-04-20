@@ -1,13 +1,13 @@
 using FarmingApi.Core;
 
-namespace FarmingApi.Modules.Master.UserMaster;
-public interface IUserMasterRepository : IRepository<UserMaster>
+namespace FarmingApi.Modules.Master.BusinessPartner;
+public interface IBusinessPartnerRepository : IRepository<BusinessPartner>
 {
 
 }
-public class UserMasterRepository : Repository<UserMaster>,IUserMasterRepository
+public class BusinessPartnerRepository : Repository<BusinessPartner>,IBusinessPartnerRepository
 {
-    public UserMasterRepository(MyDbContext context) : base(context)
+    public BusinessPartnerRepository(MyDbContext context) : base(context)
     {
         
     }

@@ -1,7 +1,7 @@
 public enum TypeStatus
 {
-    Customer = 1,
-    Vendor = 2
+    Customer = 0,
+    Vendor = 1
 }
 
 public enum ActiveStatus

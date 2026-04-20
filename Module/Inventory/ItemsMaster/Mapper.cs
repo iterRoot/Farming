@@ -4,17 +4,12 @@ namespace FarmingApi.Modules.Master.ItemsMaster;
 
 public class ItemsMasterMapper : Profile
 {
-	public ItemsMasterMapper()
-	{
-		CreateMap<ItemsMaster, ItemsMasterListResponse>();
-        CreateMap<ItemsMasterListResponse, ItemsMaster>();
+    public ItemsMasterMapper()
+    {
+        CreateMap<ItemsMaster, ItemsMasterResponse>();
 
-		CreateMap<ItemsMasterListRequest, ItemsMaster>();
-		CreateMap<ItemsMaster, ItemsMasterListRequest>();
-		// ItemsMasterUpdateRequest
+        CreateMap<ItemsMasterRequest, ItemsMaster>();
 
-		CreateMap<ItemsMasterUpdateRequest, ItemsMaster>();
-
-
-	}
+        CreateMap<ItemsMasterUpdateRequest, ItemsMaster>();
+    }
 }
