@@ -1,14 +1,14 @@
-// using FarmingApi.Core;
+using FarmingApi.Core;
 
-// namespace FarmingApi.Modules.Sale.Warehouse;
+namespace FarmingApi.Modules.Sale.Warehouse;
 
-// public interface IWarehouseRepository : IRepository<Warehouse>
-// {
-// }
+public interface IWarehouseRepository : IRepository<Warehouse>
+{
+}
 
-// public class WarehouseRepository : Repository<Warehouse>, IWarehouseRepository
-// {
-//     public WarehouseRepository(MyDbContext context) : base(context)
-//     {
-//     }
-// }
+public class WarehouseRepository : Repository<Warehouse>, IWarehouseRepository
+{
+    public WarehouseRepository(MyDbContext context) : base(context)
+    {
+    }
+}

@@ -1,0 +1,80 @@
+
+// ═══════════════════════════════════════════════════════════════
+// Controller.cs
+// ═══════════════════════════════════════════════════════════════
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace FarmingApi.Modules.Inventory.Weight;
+
+[ApiController]
+[Route("[controller]")]
+public class WeightUomController : ControllerBase
+{
+    private readonly IWeightUomRepository _repository;
+    private readonly IMapper              _mapper;
+
+    public WeightUomController(IWeightUomRepository repository, IMapper mapper)
+    {
+        _repository = repository;
+        _mapper     = mapper;
+    }
+
+    [AllowAnonymous][HttpGet]
+    public IActionResult GetAll()
+    {
+        var list = _repository.GetAll().OrderBy(x => x.ConversionToKg).ToList();
+        return Ok(_mapper.Map<List<WeightUomResponse>>(list));
+    }
+
+    [AllowAnonymous][HttpGet("{id:int}")]
+    public IActionResult GetById(int id)
+    {
+        var e = _repository.GetSingle(x => x.Id == id);
+        if (e == null) return NotFound();
+        return Ok(_mapper.Map<WeightUomResponse>(e));
+    }
+
+    [AllowAnonymous][HttpPost]
+    public IActionResult Create([FromBody] WeightUomRequest dto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        if (_repository.GetAll().Any(x => x.Code == dto.Code.Trim()))
+            return BadRequest($"Unit code '{dto.Code}' already exists");
+
+        var entity       = _mapper.Map<WeightUom>(dto);
+        entity.Code      = dto.Code.Trim().ToUpper();
+        entity.CreatedAt = DateTime.UtcNow;
+        entity.InActive  = false;
+        _repository.Add(entity);
+        _repository.Commit();
+        return Ok(_mapper.Map<WeightUomResponse>(entity));
+    }
+
+    [AllowAnonymous][HttpPut("{id:int}")]
+    public IActionResult Update(int id, [FromBody] WeightUomRequest dto)
+    {
+        var entity = _repository.GetSingle(x => x.Id == id);
+        if (entity == null) return NotFound();
+        if (_repository.GetAll().Any(x => x.Code == dto.Code.Trim() && x.Id != id))
+            return BadRequest($"Unit code '{dto.Code}' already exists");
+
+        _mapper.Map(dto, entity);
+        entity.Code      = dto.Code.Trim().ToUpper();
+        entity.UpdatedAt = DateTime.UtcNow;
+        _repository.Update(entity);
+        _repository.Commit();
+        return Ok(_mapper.Map<WeightUomResponse>(entity));
+    }
+
+    [AllowAnonymous][HttpDelete("{id:int}")]
+    public IActionResult Delete(int id)
+    {
+        var entity = _repository.GetSingle(x => x.Id == id);
+        if (entity == null) return NotFound();
+        _repository.Remove(entity);
+        _repository.Commit();
+        return NoContent();
+    }
+}

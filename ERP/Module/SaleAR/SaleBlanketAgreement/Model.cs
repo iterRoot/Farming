@@ -1,37 +1,35 @@
 namespace FarmingApi.Modules.SaleAR.SaleBlanketAgreement;
 
 // ══════════════════════════════════════════════════════════════════════════════
-// REQUEST (UI → API)
+// REQUEST (UI → API)  — YOUR EXISTING CODE (unchanged)
 // ══════════════════════════════════════════════════════════════════════════════
 public class SaleBlanketAgreementListRequest
 {
     public string    DocNum       { get; set; } = "";
-    public int       CustomerId   { get; set; }   // FK → BusinessPartner
+    public int       CustomerId   { get; set; }
     public DateTime? PostingDate  { get; set; }
     public DateTime? DeliveryDate { get; set; }
-    public string    Status       { get; set; } = "O";  // O=Open, C=Closed, D=Draft
+    public string    Status       { get; set; } = "O";
     public decimal   Discount     { get; set; }
     public decimal   Tax          { get; set; }
     public decimal   TaxAmount    { get; set; }
     public decimal   Total        { get; set; }
     public string?   Remarks      { get; set; }
-
     public List<SaleBlanketAgreementLineRequest> Items { get; set; } = new();
 }
 
 public class SaleBlanketAgreementLineRequest
 {
-    public int     ItemId   { get; set; }   // FK → ItemsMaster
+    public int     ItemId   { get; set; }
     public decimal Quantity { get; set; }
     public decimal Price    { get; set; }
     public decimal Total    { get; set; }
 }
 
-// ── Update reuses same shape ──────────────────────────────────────────────────
 public class SaleBlanketAgreementUpdateRequest : SaleBlanketAgreementListRequest { }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// RESPONSE (API → UI)
+// RESPONSE (API → UI) — YOUR EXISTING CODE (unchanged)
 // ══════════════════════════════════════════════════════════════════════════════
 public class SaleBlanketAgreementListResponse
 {
@@ -46,12 +44,9 @@ public class SaleBlanketAgreementListResponse
     public decimal   Total        { get; set; }
     public string?   Remarks      { get; set; }
     public DateTime  CreatedAt    { get; set; }
-
-    // From BP join
-    public int     CustomerId   { get; set; }
-    public string  CustomerCode { get; set; } = "";
-    public string  CustomerName { get; set; } = "";
-
+    public int       CustomerId   { get; set; }
+    public string    CustomerCode { get; set; } = "";
+    public string    CustomerName { get; set; } = "";
     public List<SaleBlanketAgreementLineResponse> Items { get; set; } = new();
 }
 
@@ -62,6 +57,34 @@ public class SaleBlanketAgreementLineResponse
     public string  ItemCode { get; set; } = "";
     public string? ItemName { get; set; }
     public decimal Quantity { get; set; }
+    public decimal Price    { get; set; }
+    public decimal Total    { get; set; }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ✅ NEW — COPY FROM RESPONSE
+// Returned to Sale Order form to pre-fill lines
+// ══════════════════════════════════════════════════════════════════════════════
+public class CopyFromBlanketAgreementResponse
+{
+    public int      AgreementId     { get; set; }
+    public string   AgreementDocNum { get; set; } = "";
+    public int      CustomerId      { get; set; }
+    public string   CustomerCode    { get; set; } = "";
+    public string   CustomerName    { get; set; } = "";
+    public string?  Remarks         { get; set; }
+    public decimal  Discount        { get; set; }
+    public decimal  Tax             { get; set; }
+    public List<CopyFromBlanketAgreementLine> Lines { get; set; } = new();
+}
+
+public class CopyFromBlanketAgreementLine
+{
+    public int     LineId   { get; set; }   // SaleBlanketAgreementLine.Id
+    public int     ItemId   { get; set; }
+    public string  ItemCode { get; set; } = "";
+    public string? ItemName { get; set; }
+    public decimal Quantity { get; set; }   // full planned quantity
     public decimal Price    { get; set; }
     public decimal Total    { get; set; }
 }
