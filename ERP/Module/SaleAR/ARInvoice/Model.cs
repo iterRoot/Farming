@@ -52,6 +52,8 @@ public class ARInvoiceListResponse
     public string  CustomerCode { get; set; } = "";
     public string  CustomerName { get; set; } = "";
 
+    public int?    JournalEntryId { get; set; }
+
     public List<ARInvoiceLineResponse> Items { get; set; } = new();
 }
 

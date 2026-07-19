@@ -8,7 +8,8 @@ using FarmingApi.Modules.Inventory.ItemsMaster;
 namespace FarmingApi.Modules.SaleAR.SaleQuotion;
 
 [ApiController]
-[Route("[controller]")]
+[Route("[controller]")]        // /SaleQuotion  (legacy spelling)
+[Route("SaleQuotation")]       // /SaleQuotation (alias used by the Sale-AR UI)
 public class SaleQuotionController : ControllerBase
 {
     private readonly MyDbContext _db;

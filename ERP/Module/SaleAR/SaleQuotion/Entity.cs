@@ -6,7 +6,8 @@ using FarmingApi.Modules.Inventory.ItemsMaster;
 
 namespace FarmingApi.Modules.SaleAR.SaleQuotion;
 
-public class SaleQuotion : AuditableEntity
+public class 
+SaleQuotion : AuditableEntity
 {
     public string    DocNum       { get; set; } = "";
     public DateTime? PostingDate  { get; set; }

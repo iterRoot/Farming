@@ -11,10 +11,15 @@ public class GoodsReceiptPO : AuditableEntity
 {
     public string DocNum { get; set; } = "";
     public DateTime? PostingDate { get; set; }
+    public DateTime? DocDate     { get; set; }
     public string Status { get; set; } = "O";
+    public decimal Discount  { get; set; }
+    public decimal Tax       { get; set; }
+    public decimal TaxAmount { get; set; }
     public int VendorId { get; set; }
     public BPEntity Vendor { get; set; } = null!;
     public decimal Total { get; set; }
+    public string? Remarks { get; set; }
     public ICollection<GoodsReceiptPOLine> Lines { get; set; } = new List<GoodsReceiptPOLine>();
 }
 
@@ -54,6 +59,10 @@ public class GoodsReceiptPOConfig : IEntityTypeConfiguration<GoodsReceiptPO>
 
         builder.Property(x => x.DocNum).HasMaxLength(100).IsRequired();
         builder.Property(x => x.Status).HasMaxLength(1);
+        builder.Property(x => x.Discount).HasPrecision(18, 2);
+        builder.Property(x => x.Tax).HasPrecision(18, 2);
+        builder.Property(x => x.TaxAmount).HasPrecision(18, 2);
+        builder.Property(x => x.Remarks).HasMaxLength(1000);
 
         builder.HasCheckConstraint("CK_GRPO_Status","\"Status\" IN ('O','C')");
 

@@ -108,6 +108,59 @@ public class GoodsReceiptController : MyController
         return Ok(new { message = "Goods Receipt saved successfully", id = entity.Id, docNo });
     }
 
+    // ── PUT /GoodsReceipt/{id} ─────────────────────────────────
+    [AllowAnonymous]
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, [FromBody] GoodsReceiptInsertListRequest request)
+    {
+        var entity = _repository.GetAll()
+            .Include(x => x.Lines)
+            .FirstOrDefault(x => x.Id == id);
+        if (entity == null) return NotFound();
+        if (entity.Status == "Closed")
+            return BadRequest("Cannot edit a Closed Goods Receipt");
+
+        var existingDocNo = entity.DocNo;
+        _db.RemoveRange(entity.Lines);
+
+        // Vendor lookup → CustomerCode / CustomerName
+        if (request.VendorId.HasValue && request.VendorId > 0)
+        {
+            var vendor = await _db.Set<BPEntity>()
+                .FirstOrDefaultAsync(x => x.Id == request.VendorId.Value);
+            if (vendor != null)
+            {
+                request.CustomerCode = vendor.Code;
+                request.CustomerName = vendor.CardName;
+            }
+        }
+
+        _mapper.Map(request, entity);
+        entity.DocNo     = existingDocNo;   // ✅ preserve original
+        entity.UpdatedAt = DateTime.UtcNow;
+
+        int ln = 1;
+        foreach (var line in entity.Lines)
+        {
+            var reqLine = request.Lines.ElementAtOrDefault(ln - 1);
+            if (reqLine?.ItemId > 0)
+            {
+                var item = await _db.Set<ItemsMasterEntity>()
+                    .FirstOrDefaultAsync(x => x.Id == reqLine.ItemId);
+                if (item != null)
+                {
+                    line.ItemCode = item.ItemCode ?? line.ItemCode;
+                    line.ItemName = item.ItemName ?? line.ItemName;
+                }
+            }
+            line.LineNum = ln++;
+        }
+
+        _repository.Update(entity);
+        _repository.Commit();
+        return NoContent();
+    }
+
     // ── DELETE /GoodsReceipt/{id} ──────────────────────────────
     [AllowAnonymous]
     [HttpDelete("{id:int}")]

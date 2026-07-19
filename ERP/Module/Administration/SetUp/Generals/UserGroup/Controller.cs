@@ -54,14 +54,13 @@ public class UserGroupController : MyController
 
         var entity = _mapper.Map<UserGroup>(request);
         entity.CreatedAt = DateTime.UtcNow;
-        entity.InActive = false;
 
         _repository.Add(entity);
         _repository.Commit();
 
 		return Ok(new
 		{
-			message = "Planting saved successfully",
+			message = "User group saved successfully",
 			id = entity.Id
 		});
     }
@@ -84,7 +83,7 @@ public class UserGroupController : MyController
 		return NoContent();
 	}
 
-	[HttpDelete]
+	[HttpDelete("{id:int}")]
 	public IActionResult Delete(int id)
 	{
 		var UserGroup = _repository.GetSingle(e => e.Id == id);

@@ -14,33 +14,39 @@ public class GLAccountDetermination : AuditableEntity
 {
     // ── Sale-AR ───────────────────────────────────────────────
     public string? AccountsReceivable { get; set; }  // Debit on AR Invoice   e.g. 1200
-    public string? SalesRevenue       { get; set; }  // Credit on AR Invoice  e.g. 4000
-    public string? SalesDiscount      { get; set; }  // Debit on discount     e.g. 4100
-    public string? SalesTax           { get; set; }  // Credit on tax         e.g. 2300
-    public string? CustomerDeposit    { get; set; }  // Down Payment received e.g. 2100
+    public string? SalesRevenue { get; set; }  // Credit on AR Invoice  e.g. 4000
+    public string? SalesDiscount { get; set; }  // Debit on discount     e.g. 4100
+    public string? SalesTax { get; set; }  // Credit on tax         e.g. 2300
+    public string? CustomerDeposit { get; set; }  // Down Payment received e.g. 2100
 
     // ── Purchase-AP ───────────────────────────────────────────
-    public string? AccountsPayable    { get; set; }  // Credit on AP Invoice  e.g. 2000
-    public string? PurchaseExpense    { get; set; }  // Debit on AP Invoice   e.g. 5000
-    public string? PurchaseDiscount   { get; set; }  // Credit on discount    e.g. 5100
-    public string? PurchaseTax        { get; set; }  // Debit on tax          e.g. 1300
-    public string? VendorDeposit      { get; set; }  // Down Payment paid     e.g. 1400
+    public string? AccountsPayable { get; set; }  // Credit on AP Invoice  e.g. 2000
+    public string? PurchaseExpense { get; set; }  // Debit on AP Invoice   e.g. 5000
+    public string? PurchaseDiscount { get; set; }  // Credit on discount    e.g. 5100
+    public string? PurchaseTax { get; set; }  // Debit on tax          e.g. 1300
+    public string? VendorDeposit { get; set; }  // Down Payment paid     e.g. 1400
 
     // ── Inventory ─────────────────────────────────────────────
-    public string? InventoryAccount   { get; set; }  // Debit on GR           e.g. 1300
-    public string? CostOfGoodsSold    { get; set; }  // Debit on GI           e.g. 5200
-    public string? InventoryOffset    { get; set; }  // Credit on GR          e.g. 2000
+    public string? InventoryAccount { get; set; }  // Debit on GR           e.g. 1300
+    public string? CostOfGoodsSold { get; set; }  // Debit on GI           e.g. 5200
+    public string? InventoryOffset { get; set; }  // Credit on GR          e.g. 2000
 
     // ── Banking ───────────────────────────────────────────────
-    public string? CashAccount        { get; set; }  // Debit on payment      e.g. 1000
-    public string? BankAccount        { get; set; }  // Debit on bank         e.g. 1010
-    public string? ExchangeGainLoss   { get; set; }  // FX differences        e.g. 6000
+    public string? CashAccount { get; set; }  // Debit on payment      e.g. 1000
+    public string? BankAccount { get; set; }  // Debit on bank         e.g. 1010
+    public string? ExchangeGainLoss { get; set; }  // FX differences        e.g. 6000
 
     // ── General ───────────────────────────────────────────────
-    public string? RetainedEarnings   { get; set; }  // Year-end              e.g. 3100
-    public string? OpeningBalance     { get; set; }  // Opening balance       e.g. 3000
+    public string? RetainedEarnings { get; set; }  // Year-end              e.g. 3100
+    public string? OpeningBalance { get; set; }  // Opening balance       e.g. 3000
 
-    public string? Notes              { get; set; }
+    public string? Notes { get; set; }
+
+    ///
+    ///     
+    public string? ARControlAccount { get; set; }   // e.g. "1401"
+    public string? RevenueAccount { get; set; }   // e.g. "4001"
+    public string? TaxOutputAccount { get; set; }
 }
 
 public class GLAccountDeterminationConfig
@@ -77,5 +83,8 @@ public class GLAccountDeterminationConfig
         }
 
         builder.Property(x => x.Notes).HasMaxLength(500);
+        builder.Property(m => m.ARControlAccount).HasMaxLength(20);
+        builder.Property(m => m.RevenueAccount).HasMaxLength(20);
+        builder.Property(m => m.TaxOutputAccount).HasMaxLength(20);
     }
 }

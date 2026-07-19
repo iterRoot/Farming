@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi;
 using FarmingApi.Modules.Inventory.ItemsMaster;  // ✅ your namespace
+using FarmingApi.Services;
 
 using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
@@ -12,13 +13,15 @@ namespace FarmingApi.Modules.SaleAR.Delivery;
 [Route("[controller]")]         // ✅ route = /Delivery
 public class DeliveryController : ControllerBase  // ✅ DeliveryController
 {
-    private readonly MyDbContext _db;
-    private readonly IMapper     _mapper;
+    private readonly MyDbContext            _db;
+    private readonly IMapper                _mapper;
+    private readonly IDocumentNumberService _docNumber;
 
-    public DeliveryController(MyDbContext db, IMapper mapper)
+    public DeliveryController(MyDbContext db, IMapper mapper, IDocumentNumberService docNumber)
     {
-        _db     = db;
-        _mapper = mapper;
+        _db        = db;
+        _mapper    = mapper;
+        _docNumber = docNumber;
     }
 
     // ── GET /Delivery ─────────────────────────────────────────────────────
@@ -59,6 +62,10 @@ public class DeliveryController : ControllerBase  // ✅ DeliveryController
             return BadRequest($"Customer with Id {dto.CustomerId} not found");
 
         var delivery = _mapper.Map<Delivery>(dto);
+
+        // Auto-assign the document number (server-side, race-safe)
+        try { delivery.DocNum = _docNumber.Next("Delivery"); }
+        catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
 
         foreach (var line in delivery.Items)
         {

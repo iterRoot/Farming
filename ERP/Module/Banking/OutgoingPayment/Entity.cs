@@ -21,12 +21,12 @@ public class OutgoingPayment : AuditableEntity
     public string Currency { get; set; } = "USD";
     public decimal ExchangeRate { get; set; } = 1;
     public string PaymentMethod { get; set; } = "Cash";      // Cash, Check, Transfer, Card
-    public string CheckNumber { get; set; }                  // Check number if applicable
+    public string? CheckNumber { get; set; }                  // Check number if applicable
     public DateTime? CheckDate { get; set; }
-    public string BankAccount { get; set; }                  // Bank account code
-    public string BankName { get; set; }
-    public string Reference { get; set; }
-    public string Memo { get; set; }
+    public string? BankAccount { get; set; }                  // Bank account code
+    public string? BankName { get; set; }
+    public string? Reference { get; set; }
+    public string? Memo { get; set; }
     public string Status { get; set; } = "O";                // O=Open, C=Closed, V=Void
     public int? JournalEntryId { get; set; }                 // Auto-created JE
     public string TransType { get; set; } = "KPYO";
@@ -47,14 +47,14 @@ public class OutgoingPaymentInvoice : AuditableEntity
     public int OutgoingPaymentId { get; set; }
     public int LineNum { get; set; }
     public int InvoiceId { get; set; }                       // FK to AP Invoice (KPAI)
-    public string InvoiceDocNum { get; set; }                // Invoice Number (display)
+    public string? InvoiceDocNum { get; set; }                // Invoice Number (display)
     public DateTime InvoiceDocDate { get; set; }
     public DateTime InvoiceDueDate { get; set; }
     public decimal InvoiceTotal { get; set; }                // Original invoice amount
     public decimal InvoiceBalance { get; set; }              // Balance before this payment
     public decimal AppliedAmount { get; set; }               // Amount being paid on this invoice
     public decimal RemainingBalance { get; set; }            // Balance after this payment
-    public string InvoiceStatus { get; set; }                // O=Open, C=Closed (paid)
+    public string? InvoiceStatus { get; set; }                // O=Open, C=Closed (paid)
     public string Currency { get; set; } = "USD";
     public decimal ExchangeRate { get; set; } = 1;
     public decimal DiscountAmount { get; set; }              // Early payment discount

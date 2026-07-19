@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi;
 using FarmingApi.Modules.Inventory.ItemsMaster;
+using FarmingApi.Modules.Financials.JournalEntry;
 using FarmingApi.Services;
 
-// ✅ Alias for BP entity
 using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
 namespace FarmingApi.Modules.SaleAR.ARInvoice;
@@ -14,18 +14,21 @@ namespace FarmingApi.Modules.SaleAR.ARInvoice;
 [Route("[controller]")]
 public class ARInvoiceController : ControllerBase
 {
-    private readonly MyDbContext           _db;
-    private readonly IMapper               _mapper;
-    private readonly IDocumentNumberService _docNumber; // ✅ auto-numbering
+    private readonly MyDbContext             _db;
+    private readonly IMapper                 _mapper;
+    private readonly IDocumentNumberService  _docNumber;
+    private readonly IARInvoiceJournalService _journalService;
 
     public ARInvoiceController(
-        MyDbContext            db,
-        IMapper                mapper,
-        IDocumentNumberService docNumber)
+        MyDbContext              db,
+        IMapper                  mapper,
+        IDocumentNumberService   docNumber,
+        IARInvoiceJournalService journalService)
     {
-        _db        = db;
-        _mapper    = mapper;
-        _docNumber = docNumber;
+        _db             = db;
+        _mapper         = mapper;
+        _docNumber      = docNumber;
+        _journalService = journalService;
     }
 
     // ── GET /ARInvoice ────────────────────────────────────────────
@@ -38,7 +41,17 @@ public class ARInvoiceController : ControllerBase
             .OrderByDescending(x => x.CreatedAt)
             .ToListAsync();
 
-        return Ok(_mapper.Map<List<ARInvoiceListResponse>>(list));
+        var responses = _mapper.Map<List<ARInvoiceListResponse>>(list);
+
+        var jeMap = await _db.Set<JournalEntry>()
+            .Where(j => j.BaseDocType == "KARI" && list.Select(i => i.Id).Contains(j.BaseDocEntry!.Value))
+            .ToDictionaryAsync(j => j.BaseDocEntry!.Value, j => j.Id);
+
+        foreach (var r in responses)
+            if (jeMap.TryGetValue(r.Id, out var jeId))
+                r.JournalEntryId = jeId;
+
+        return Ok(responses);
     }
 
     // ── GET /ARInvoice/{id} ───────────────────────────────────────
@@ -51,28 +64,38 @@ public class ARInvoiceController : ControllerBase
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (invoice == null) return NotFound();
-        return Ok(_mapper.Map<ARInvoiceListResponse>(invoice));
+
+        var response = _mapper.Map<ARInvoiceListResponse>(invoice);
+
+        var je = await _db.Set<JournalEntry>()
+            .FirstOrDefaultAsync(j => j.BaseDocType == "KARI" && j.BaseDocEntry == id);
+        response.JournalEntryId = je?.Id;
+
+        return Ok(response);
     }
 
-    // ── POST /ARInvoice ───────────────────────────────────────────
-    // ✅ DocNum auto-assigned from DocumentNumberRange
+    // ══════════════════════════════════════════════════════════════
+    // POST /ARInvoice — TRANSACTIONAL (Invoice + JE or rollback both)
+    // ══════════════════════════════════════════════════════════════
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] ARInvoiceListRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
+        // ── Validate customer ─────────────────────────────────────
         var customer = await _db.Set<BPEntity>()
             .FirstOrDefaultAsync(x => x.Id == dto.CustomerId);
         if (customer == null)
             return BadRequest($"Customer with Id {dto.CustomerId} not found");
 
-        // ✅ Auto-number
+        // ── Auto-number ───────────────────────────────────────────
         string docNum;
         try { docNum = _docNumber.Next("ArInvoice"); }
         catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
 
+        // ── Map + enrich lines ────────────────────────────────────
         var invoice    = _mapper.Map<ARInvoice>(dto);
-        invoice.DocNum = docNum;   // ✅ override whatever came from request
+        invoice.DocNum = docNum;
 
         foreach (var line in invoice.Items)
         {
@@ -85,16 +108,70 @@ public class ARInvoiceController : ControllerBase
             line.ItemName = item.ItemName;
         }
 
-        _db.Set<ARInvoice>().Add(invoice);
-        await _db.SaveChangesAsync();
+        // ══════════════════════════════════════════════════════════
+        // BEGIN TRANSACTION — Invoice + Journal Entry
+        // If ANYTHING fails, BOTH are rolled back.
+        // ══════════════════════════════════════════════════════════
+        await using var transaction = await _db.Database.BeginTransactionAsync();
 
-        var created = await _db.Set<ARInvoice>()
-            .Include(x => x.Customer)
-            .Include(x => x.Items).ThenInclude(l => l.Item)
-            .FirstAsync(x => x.Id == invoice.Id);
+        try
+        {
+            // ── Step 1: Save the invoice ──────────────────────────
+            _db.Set<ARInvoice>().Add(invoice);
+            await _db.SaveChangesAsync();
+            // invoice.Id is now populated
 
-        return CreatedAtAction(nameof(GetById), new { id = invoice.Id },
-            _mapper.Map<ARInvoiceListResponse>(created));
+            // ── Step 2: Auto-create Journal Entry ─────────────────
+            // This adds the JE + lines to the DbContext but does NOT
+            // call SaveChanges — we do it once for both.
+            var je = _journalService.CreateJournalEntry(invoice, customer);
+
+            // Update BaseDocEntry now that invoice.Id exists
+            je.BaseDocEntry = invoice.Id;
+
+            // ── Step 3: Save Journal Entry ────────────────────────
+            await _db.SaveChangesAsync();
+
+            // ── Step 4: Commit — both invoice + JE are final ──────
+            await transaction.CommitAsync();
+
+            // ── Return created invoice + JE id ────────────────────
+            var created = await _db.Set<ARInvoice>()
+                .Include(x => x.Customer)
+                .Include(x => x.Items).ThenInclude(l => l.Item)
+                .FirstAsync(x => x.Id == invoice.Id);
+
+            return CreatedAtAction(nameof(GetById), new { id = invoice.Id }, new
+            {
+                invoice        = _mapper.Map<ARInvoiceListResponse>(created),
+                journalEntryId = je.Id,
+                journalNo      = je.JrnlNo,
+            });
+        }
+        catch (InvalidOperationException ex)
+        {
+            // ── ROLLBACK — neither invoice nor JE is saved ────────
+            await transaction.RollbackAsync();
+
+            return BadRequest(new
+            {
+                error   = "AR Invoice creation failed — transaction rolled back",
+                details = ex.Message,
+                hint    = ex.Message.Contains("KGLD")
+                    ? "Go to Administration → GL Account Determination and configure ARControlAccount, RevenueAccount, TaxOutputAccount."
+                    : null,
+            });
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+
+            return StatusCode(500, new
+            {
+                error   = "Unexpected error — transaction rolled back",
+                details = ex.Message,
+            });
+        }
     }
 
     // ── PUT /ARInvoice/{id} ───────────────────────────────────────
@@ -114,10 +191,10 @@ public class ARInvoiceController : ControllerBase
         if (customer == null)
             return BadRequest($"Customer with Id {dto.CustomerId} not found");
 
-        var existingDocNum = invoice.DocNum;   // ✅ preserve original DocNum
+        var existingDocNum = invoice.DocNum;
         _db.RemoveRange(invoice.Items);
         _mapper.Map(dto, invoice);
-        invoice.DocNum = existingDocNum;        // ✅ never overwrite
+        invoice.DocNum = existingDocNum;
 
         foreach (var line in invoice.Items)
         {
@@ -135,7 +212,6 @@ public class ARInvoiceController : ControllerBase
     }
 
     // ── POST /ARInvoice/{id}/Close ────────────────────────────────
-    // ✅ Called when AR Credit Note is created from this invoice
     [HttpPost("{id:int}/Close")]
     public async Task<IActionResult> Close(int id)
     {

@@ -5,8 +5,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FarmingApi.Modules.Administration.UserGroups;
 
+// ⚠️ Route was "[controller]" (/UserGroup), which collided with
+// FarmingApi.Modules.Administration.SetUp.UserGroup.UserGroupController
+// (also /UserGroup) and threw AmbiguousMatchException on every call.
+// This is the richer RBAC groups feature (members/permissions); it now
+// lives at /SecurityUserGroup. The SetUp controller keeps /UserGroup,
+// which the User-creation dropdown and UserGroups CRUD pages use.
 [ApiController]
-[Route("[controller]")]
+[Route("SecurityUserGroup")]
 public class UserGroupController : ControllerBase
 {
     private readonly IUserGroupRepository _repo;

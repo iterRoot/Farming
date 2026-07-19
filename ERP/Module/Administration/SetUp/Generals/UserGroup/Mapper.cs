@@ -16,8 +16,7 @@ public class UserGroupMapper : Profile
             .ForMember(d => d.VersionNum, opt => opt.Ignore())
             .ForMember(d => d.CreatedAt, opt => opt.Ignore())
             .ForMember(d => d.UpdatedAt, opt => opt.Ignore())
-            .ForMember(d => d.DeletedAt, opt => opt.Ignore())
-            .ForMember(d => d.InActive, opt => opt.Ignore());
+            .ForMember(d => d.DeletedAt, opt => opt.Ignore());
 
         CreateMap<UserGroupUpdateRequest, UserGroup>()
             .ForMember(d => d.Id, opt => opt.Ignore())
@@ -27,7 +26,6 @@ public class UserGroupMapper : Profile
             .ForMember(d => d.VersionNum, opt => opt.Ignore())
             .ForMember(d => d.CreatedAt, opt => opt.Ignore())
             .ForMember(d => d.UpdatedAt, opt => opt.Ignore())
-            .ForMember(d => d.DeletedAt, opt => opt.Ignore())
-            .ForMember(d => d.InActive, opt => opt.Ignore());
+            .ForMember(d => d.DeletedAt, opt => opt.Ignore());
     }
 }

@@ -18,13 +18,16 @@ public static class DocTypes
         new("ArDownPaymentInvoice",  "ARDP","AR Down Payment",         "🛒 Sale-AR"),
         new("ArReserveInvoice",      "ARRI","AR Reserve Invoice",      "🛒 Sale-AR"),
         // ── Purchase-AP ───────────────────────────────────────────
-        new("PurchaseBlanketAgreement", "PBA", "Sale Blanket Agreement", "🏭 Purchase-AP"), // ✅ ADD
+        new("PurchaseBlanketAgreement", "PBA", "Purchase Blanket Agreement", "🏭 Purchase-AP"), // ✅ ADD
         new("PurchaseQuotation",     "PQ",  "Purchase Quotation",      "🏭 Purchase-AP"),
         new("PurchaseOrder",         "PO",  "Purchase Order",          "🏭 Purchase-AP"),
         new("GoodsReceiptPO",        "GR",  "Goods Receipt PO",        "🏭 Purchase-AP"),
         new("ApInvoice",             "API", "AP Invoice",              "🏭 Purchase-AP"),
         new("ApCreditNote",          "APCN","AP Credit Note",          "🏭 Purchase-AP"),
         new("ApDownPaymentInvoice",  "APDP","AP Down Payment",         "🏭 Purchase-AP"),
+        new("ApDownPaymentRequest",  "APDR","AP Down Payment Request", "🏭 Purchase-AP"),
+        new("ApReserveInvoice",  "APRI","AP Reserve Invoice",         "🏭 Purchase-AP"),
+        new("GoodsReturn",           "GRTN","Goods Return",            "🏭 Purchase-AP"),
 
         // ── Inventory ─────────────────────────────────────────────
         new("GoodsIssue",            "GI",  "Goods Issue",             "📦 Inventory"),

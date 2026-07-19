@@ -8,7 +8,7 @@ namespace FarmingApi.Modules.Financials.JournalEntry;
 
 public class JournalEntryController : MyController
 {
-    private readonly IMapper                  _mapper;
+    private readonly IMapper _mapper;
     private readonly IJournalEntryRepository  _repository;
 
     public JournalEntryController(IJournalEntryRepository repository, IMapper mapper)

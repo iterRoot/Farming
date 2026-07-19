@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using FarmingApi;
 using FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster;
 using FarmingApi.Modules.Inventory.ItemsMaster;
+using FarmingApi.Services;
 
 namespace FarmingApi.Modules.SaleAR.SaleOrder;
 
@@ -11,13 +12,15 @@ namespace FarmingApi.Modules.SaleAR.SaleOrder;
 [Route("[controller]")]
 public class SaleOrderController : ControllerBase
 {
-    private readonly MyDbContext _db;
-    private readonly IMapper     _mapper;
+    private readonly MyDbContext            _db;
+    private readonly IMapper                _mapper;
+    private readonly IDocumentNumberService _docNumber;
 
-    public SaleOrderController(MyDbContext db, IMapper mapper)
+    public SaleOrderController(MyDbContext db, IMapper mapper, IDocumentNumberService docNumber)
     {
-        _db     = db;
-        _mapper = mapper;
+        _db        = db;
+        _mapper    = mapper;
+        _docNumber = docNumber;
     }
 
     // ── GET /SaleOrder ────────────────────────────────────────────────────
@@ -59,6 +62,10 @@ public class SaleOrderController : ControllerBase
             return BadRequest($"Customer with Id {dto.CustomerId} not found");
 
         var order = _mapper.Map<SaleOrder>(dto);
+
+        // Auto-assign the document number (server-side, race-safe)
+        try { order.DocNum = _docNumber.Next("SaleOrder"); }
+        catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
 
         // Auto-fill ItemCode / ItemName from ItemsMaster
         foreach (var line in order.Items)

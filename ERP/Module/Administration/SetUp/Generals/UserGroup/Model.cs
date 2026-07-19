@@ -32,6 +32,7 @@ public class UserGroupListRequest
     public DateTime? DueDate { get; set; }
     public string ?GroupType { get; set; }
     public int? CockpitId { get; set; }
+    public bool InActive { get; set; }
 }
 
 public class UserGroupUpdateRequest
@@ -44,4 +45,5 @@ public class UserGroupUpdateRequest
     public DateTime? DueDate { get; set; }
     public string ?GroupType { get; set; }
     public int? CockpitId { get; set; }
+    public bool InActive { get; set; }
 }

@@ -1,13 +1,31 @@
 namespace FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster;
 
-public enum TypeStatus
+// ⚠️  Values are locked to match existing KOCR rows — do NOT reorder.
+
+public enum BPType
 {
     Customer = 0,
-    Vendor = 1
+    Vendor   = 1,
+    Lead     = 2,
 }
 
-public enum ActiveStatus
+public enum BPActiveStatus
 {
-    InActive = 0,
-    Active = 1
+    Active   = 0,
+    Inactive = 1,
+    Advanced = 2,   // uses ActiveFrom / ActiveTo date range
+}
+
+public enum BPTypeOfBusiness
+{
+    Company    = 0,
+    Private    = 1,
+    Government = 2,
+    Employee   = 3,
+}
+
+public enum BPConsolidationType
+{
+    Payment  = 0,
+    Delivery = 1,
 }

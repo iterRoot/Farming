@@ -12,7 +12,7 @@ public class ChartOfAccountsController : MyController
     private readonly IChartOfAccountsRepository  _repository;
 
     // ✅ All 8 SAP B1 types — matches right-panel tabs in screenshot
-    private static readonly string[] ValidTypes = { "A", "L", "E", "I", "C", "X", "N", "T" };
+    private static readonly string[] ValidTypes = { "A", "L", "M","E", "I", "C", "X", "N", "T" };
 
     public ChartOfAccountsController(
         IChartOfAccountsRepository repository,
