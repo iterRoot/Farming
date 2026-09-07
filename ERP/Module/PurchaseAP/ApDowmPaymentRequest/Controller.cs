@@ -2,7 +2,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi;
+using QuestPDF.Fluent;
 using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using CompanyEntity = FarmingApi.Modules.Company.Company;
 
 namespace FarmingApi.Modules.PurchaseAP.APDownPaymentRequest;
 
@@ -79,6 +81,22 @@ public class APDownPaymentRequestController : ControllerBase
         _mapper.Map(dto, req);
         await _db.SaveChangesAsync();
         return NoContent();
+    }
+
+    // ── GET /APDownPaymentRequest/{id}/Pdf ────────────────────────────
+    [HttpGet("{id:int}/Pdf")]
+    public async Task<IActionResult> GetPdf(int id)
+    {
+        var req = await _db.Set<APDownPaymentRequest>()
+            .Include(x => x.Vendor)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (req == null) return NotFound();
+
+        var company = await _db.Set<CompanyEntity>().OrderBy(x => x.Id).FirstOrDefaultAsync();
+        var pdfBytes = new APDownPaymentRequestPdfDocument(req, company).GeneratePdf();
+
+        return File(pdfBytes, "application/pdf", $"{req.DocNum}.pdf");
     }
 
     // ── DELETE /APDownPaymentRequest/{id} ─────────────────────────────

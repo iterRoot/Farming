@@ -49,6 +49,9 @@ public class ExchangeRateConfig : IEntityTypeConfiguration<ExchangeRate>
         b.Property(x => x.Currency).HasMaxLength(10).IsRequired();
         b.Property(x => x.CurrencyName).HasMaxLength(100).IsRequired();
         b.Property(x => x.BaseCurrency).HasMaxLength(10);
+
+        // One rate per currency per day
+        b.HasIndex(x => new { x.Currency, x.EffectiveDate }).IsUnique();
         b.Property(x => x.Rate).HasColumnType("decimal(18,6)");
         b.Property(x => x.Source).HasMaxLength(100);
         b.Property(x => x.Remarks).HasMaxLength(500);
@@ -64,6 +67,9 @@ public class PriceIndexConfig : IEntityTypeConfiguration<PriceIndex>
         b.Property(x => x.IndexCode).HasMaxLength(50).IsRequired();
         b.Property(x => x.IndexName).HasMaxLength(200).IsRequired();
         b.Property(x => x.Category).HasMaxLength(100);
+
+        // One value per index code per day
+        b.HasIndex(x => new { x.IndexCode, x.EffectiveDate }).IsUnique();
         b.Property(x => x.IndexValue).HasColumnType("decimal(18,6)");
         b.Property(x => x.Unit).HasMaxLength(50);
         b.Property(x => x.Source).HasMaxLength(100);

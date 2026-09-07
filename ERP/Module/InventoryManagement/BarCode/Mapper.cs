@@ -18,7 +18,8 @@ public class BarCodeMapper : Profile
 
         // Create Request → Entity
         CreateMap<BarCodeCreateRequest, BarCode>()
-            .ForMember(d => d.Id,         opt => opt.Ignore())
+            .ForMember(d => d.Id,          opt => opt.Ignore())
+            .ForMember(d => d.BarCodeType, opt => opt.Ignore())  // normalized in controller
             .ForMember(d => d.VersionNum, opt => opt.Ignore())
             .ForMember(d => d.Lines,      opt => opt.Ignore())
             .ForMember(d => d.CreatedAt,  opt => opt.Ignore())
@@ -30,6 +31,7 @@ public class BarCodeMapper : Profile
         CreateMap<BarCodeUpdateRequest, BarCode>()
             .ForMember(d => d.Id,          opt => opt.Ignore())
             .ForMember(d => d.ItemNo,      opt => opt.Ignore())
+            .ForMember(d => d.BarCodeType, opt => opt.Ignore())  // normalized in controller
             .ForMember(d => d.VersionNum,  opt => opt.Ignore())
             .ForMember(d => d.Lines,       opt => opt.Ignore())
             .ForMember(d => d.CreatedAt,   opt => opt.Ignore())

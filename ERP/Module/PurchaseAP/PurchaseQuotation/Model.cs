@@ -10,6 +10,7 @@ public class PurchaseQuotationRequest
     public DateTime? PostingDate { get; set; }
     public DateTime? DueDate     { get; set; }
     public string    Status      { get; set; } = "O";
+    public string    Type        { get; set; } = "Item";
     public decimal   Discount    { get; set; }
     public decimal   Tax         { get; set; }
     public decimal   TaxAmount   { get; set; }
@@ -41,6 +42,7 @@ public class PurchaseQuotationResponse
     public DateTime? PostingDate { get; set; }
     public DateTime? DueDate    { get; set; }
     public string    Status     { get; set; } = "O";
+    public string    Type        { get; set; } = "Item";
     public decimal   Discount   { get; set; }
     public decimal   Tax        { get; set; }
     public decimal   TaxAmount  { get; set; }

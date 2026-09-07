@@ -15,6 +15,8 @@ public class GoodsReturnRequest
 public class GoodsReturnLineRequest
 {
     public int     ItemId    { get; set; }
+    /// <summary>Optional — falls back to the default warehouse when omitted.</summary>
+    public string? WhsCode   { get; set; }
     public decimal Quantity  { get; set; }
     public decimal Price     { get; set; }
     public decimal Total     { get; set; }
@@ -34,6 +36,10 @@ public class GoodsReturnResponse
     public string?   Remarks     { get; set; }
     public DateTime  CreatedAt   { get; set; }
 
+    // Auto-created Journal Entry (reverse of Goods Receipt PO).
+    public int?      JournalEntryId { get; set; }
+    public string?   JournalNo      { get; set; }
+
     public int    VendorId   { get; set; }
     public string VendorCode { get; set; } = "";
     public string VendorName { get; set; } = "";
@@ -47,6 +53,7 @@ public class GoodsReturnLineResponse
     public int     ItemId    { get; set; }
     public string  ItemCode  { get; set; } = "";
     public string? ItemName  { get; set; }
+    public string? WhsCode   { get; set; }
     public decimal Quantity  { get; set; }
     public decimal Price     { get; set; }
     public decimal Total     { get; set; }

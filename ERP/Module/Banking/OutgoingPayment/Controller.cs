@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi.Core;
+using APInvoiceEntity = FarmingApi.Modules.PurchaseAP.APInvoice.APInvoice;
+using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
 namespace FarmingApi.Modules.Banking.OutgoingPayment;
 
@@ -11,15 +13,18 @@ public class OutgoingPaymentController : MyController
     private readonly IMapper _mapper;
     private readonly IOutgoingPaymentRepository _repository;
     private readonly MyDbContext _context;
+    private readonly IOutgoingPaymentJournalService _journalService;
 
     public OutgoingPaymentController(
         IOutgoingPaymentRepository repository,
         MyDbContext context,
-        IMapper mapper)
+        IMapper mapper,
+        IOutgoingPaymentJournalService journalService)
     {
         _mapper = mapper;
         _repository = repository;
         _context = context;
+        _journalService = journalService;
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -37,6 +42,7 @@ public class OutgoingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET BY ID
     // ═══════════════════════════════════════════════════════════════
+    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public IActionResult Get(int id)
     {
@@ -54,29 +60,45 @@ public class OutgoingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET OPEN AP INVOICES FOR SUPPLIER
     // ═══════════════════════════════════════════════════════════════
+    [AllowAnonymous]
     [HttpGet("OpenInvoices/{cardCode}")]
     public IActionResult GetOpenInvoices(string cardCode)
     {
-        // Get all open AP invoices for this supplier
-        var invoices = _context.Set<dynamic>()
-            .FromSqlRaw(@"
-                SELECT 
-                    Id as InvoiceId,
-                    DocNum,
-                    DocDate,
-                    DueDate,
-                    DocTotal,
-                    COALESCE(PaidToDate, 0) as PaidToDate,
-                    (DocTotal - COALESCE(PaidToDate, 0)) as Balance,
-                    DATEDIFF(day, DueDate, GETDATE()) as DaysOverdue,
-                    Status
-                FROM KPAI
-                WHERE CardCode = {0}
-                  AND Status = 'O'
-                  AND (DocTotal - COALESCE(PaidToDate, 0)) > 0
-                  AND DeletedAt IS NULL
-                ORDER BY DueDate ASC
-            ", cardCode)
+        var vendor = _context.Set<BPEntity>().FirstOrDefault(b => b.Code == cardCode);
+        if (vendor == null) return Ok(new List<object>());
+
+        // Amount already applied to each invoice by earlier (non-void) payments.
+        var appliedByInvoice = _context.Set<OutgoingPaymentInvoice>()
+            .Where(l => l.OutgoingPayment.Status != "V")
+            .GroupBy(l => l.InvoiceId)
+            .Select(g => new { InvoiceId = g.Key, Applied = g.Sum(x => x.AppliedAmount + x.DiscountAmount + x.WithholdingTax) })
+            .ToDictionary(x => x.InvoiceId, x => x.Applied);
+
+        var today = DateTime.UtcNow.Date;
+
+        var invoices = _context.Set<APInvoiceEntity>()
+            .Where(i => i.VendorId == vendor.Id && i.Status == "O")
+            .OrderBy(i => i.DueDate)
+            .ToList()
+            .Select(i =>
+            {
+                var paid = appliedByInvoice.TryGetValue(i.Id, out var p) ? p : 0m;
+                var balance = i.Total - paid;
+                var due = i.DueDate ?? i.PostingDate;
+                return new
+                {
+                    InvoiceId = i.Id,
+                    DocNum = i.DocNum,
+                    DocDate = i.PostingDate,
+                    DueDate = i.DueDate,
+                    DocTotal = i.Total,
+                    PaidToDate = paid,
+                    Balance = balance,
+                    DaysOverdue = due.HasValue ? (int)(today - due.Value.Date).TotalDays : 0,
+                    Status = i.Status,
+                };
+            })
+            .Where(x => x.Balance > 0)
             .ToList();
 
         return Ok(invoices);
@@ -85,6 +107,7 @@ public class OutgoingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // CREATE PAYMENT with AP Invoice Allocation
     // ═══════════════════════════════════════════════════════════════
+    [AllowAnonymous]
     [HttpPost]
     public IActionResult Create([FromBody] OutgoingPaymentListRequest request)
     {
@@ -100,7 +123,7 @@ public class OutgoingPaymentController : MyController
 
         // Validate total applied amount (including discounts and withholding)
         var totalApplied = request.Invoices.Sum(i => i.AppliedAmount + i.DiscountAmount + i.WithholdingTax);
-        if (totalApplied > request.DocTotal)
+        if (totalApplied > request.DocTotal + 0.01m)
             return BadRequest($"Applied amount ({totalApplied:N2}) cannot exceed payment amount ({request.DocTotal:N2})");
 
         // Create payment entity
@@ -115,45 +138,41 @@ public class OutgoingPaymentController : MyController
         entity.InActive = false;
 
         // Get supplier name
-        var supplier = _context.Set<dynamic>()
-            .FromSqlRaw("SELECT CardName FROM KBPM WHERE CardCode = {0}", request.CardCode)
-            .FirstOrDefault();
-        entity.CardName = supplier?.CardName ?? request.CardCode;
+        var vendor = _context.Set<BPEntity>().FirstOrDefault(b => b.Code == request.CardCode);
+        entity.CardName = vendor?.CardName ?? request.CardCode;
 
         // Process AP invoice allocations
         int lineNum = 1;
         foreach (var invoiceRequest in request.Invoices)
         {
-            // Get invoice details
-            var invoice = _context.Set<dynamic>()
-                .FromSqlRaw(@"
-                    SELECT Id, DocNum, DocDate, DueDate, DocTotal, 
-                           COALESCE(PaidToDate, 0) as PaidToDate, Status
-                    FROM KPAI 
-                    WHERE Id = {0}", invoiceRequest.InvoiceId)
-                .FirstOrDefault();
+            var invoice = _context.Set<APInvoiceEntity>()
+                .FirstOrDefault(x => x.Id == invoiceRequest.InvoiceId);
 
             if (invoice == null)
                 return BadRequest($"Invoice {invoiceRequest.InvoiceId} not found");
 
-            decimal invoiceBalance = invoice.DocTotal - invoice.PaidToDate;
+            // Balance = invoice total minus what earlier (non-void) payments applied.
+            var alreadyApplied = _context.Set<OutgoingPaymentInvoice>()
+                .Where(l => l.InvoiceId == invoice.Id && l.OutgoingPayment.Status != "V")
+                .Sum(l => (decimal?)(l.AppliedAmount + l.DiscountAmount + l.WithholdingTax)) ?? 0m;
+
+            decimal invoiceBalance = invoice.Total - alreadyApplied;
             decimal totalPaymentOnInvoice = invoiceRequest.AppliedAmount + invoiceRequest.DiscountAmount + invoiceRequest.WithholdingTax;
 
-            if (totalPaymentOnInvoice > invoiceBalance)
+            if (totalPaymentOnInvoice > invoiceBalance + 0.01m)
                 return BadRequest($"Total payment on invoice {invoice.DocNum} exceeds balance");
 
             decimal remainingBalance = invoiceBalance - totalPaymentOnInvoice;
-            string newInvoiceStatus = remainingBalance == 0 ? "C" : "O"; // C=Closed, O=Open
+            string newInvoiceStatus = remainingBalance <= 0 ? "C" : "O"; // C=Closed, O=Open
 
-            // Create payment invoice line
             var paymentInvoice = new OutgoingPaymentInvoice
             {
                 LineNum = lineNum++,
-                InvoiceId = invoiceRequest.InvoiceId,
+                InvoiceId = invoice.Id,
                 InvoiceDocNum = invoice.DocNum,
-                InvoiceDocDate = invoice.DocDate,
-                InvoiceDueDate = invoice.DueDate,
-                InvoiceTotal = invoice.DocTotal,
+                InvoiceDocDate = invoice.PostingDate ?? DateTime.UtcNow,
+                InvoiceDueDate = invoice.DueDate ?? invoice.PostingDate ?? DateTime.UtcNow,
+                InvoiceTotal = invoice.Total,
                 InvoiceBalance = invoiceBalance,
                 AppliedAmount = invoiceRequest.AppliedAmount,
                 DiscountAmount = invoiceRequest.DiscountAmount,
@@ -168,38 +187,55 @@ public class OutgoingPaymentController : MyController
 
             entity.Invoices.Add(paymentInvoice);
 
-            // ⭐ UPDATE AP INVOICE STATUS AND PAID AMOUNT
-            _context.Database.ExecuteSqlRaw(@"
-                UPDATE KPAI 
-                SET PaidToDate = COALESCE(PaidToDate, 0) + {0},
-                    Status = {1},
-                    UpdatedAt = GETDATE()
-                WHERE Id = {2}
-            ", totalPaymentOnInvoice, newInvoiceStatus, invoiceRequest.InvoiceId);
+            // Update the AP invoice status via EF (no raw SQL / SQL-Server syntax).
+            invoice.Status = newInvoiceStatus;
+            invoice.UpdatedAt = DateTime.UtcNow;
+            _context.Update(invoice);
         }
 
-        _repository.Add(entity);
-        _repository.Commit();
-
-        // TODO: Auto-create Journal Entry
-        // DR: Accounts Payable
-        // CR: Cash/Bank
-
-        return Ok(new
+        // Save the payment (+ invoice status changes) and its Journal Entry in
+        // one transaction — DR Accounts Payable (+ Vendor Deposit) / CR Cash-Bank
+        // (+ Purchase Discount / Withholding Tax Payable).
+        using var tx = _context.Database.BeginTransaction();
+        try
         {
-            message = "Payment saved successfully",
-            id = entity.Id,
-            docNum = entity.DocNum,
-            appliedAmount = entity.AppliedAmount,
-            unappliedAmount = entity.UnappliedAmount,
-            invoicesUpdated = entity.Invoices.Count,
-            closedInvoices = entity.Invoices.Count(i => i.InvoiceStatus == "C")
-        });
+            _context.Add(entity);
+            _context.SaveChanges();                 // entity.Id is now populated
+
+            var je = _journalService.CreateJournalEntry(entity, vendor);
+            je.BaseDocEntry = entity.Id;
+            _context.SaveChanges();                 // je.Id now populated
+
+            entity.JournalEntryId = je.Id;
+            _context.SaveChanges();
+
+            tx.Commit();
+
+            return Ok(new
+            {
+                message = "Payment saved successfully",
+                id = entity.Id,
+                docNum = entity.DocNum,
+                journalEntryId = je.Id,
+                journalNo = je.JrnlNo,
+                appliedAmount = entity.AppliedAmount,
+                unappliedAmount = entity.UnappliedAmount,
+                invoicesUpdated = entity.Invoices.Count,
+                closedInvoices = entity.Invoices.Count(i => i.InvoiceStatus == "C")
+            });
+        }
+        catch (Exception ex)
+        {
+            tx.Rollback();
+            // Surface the real reason (usually missing GL account setup).
+            return BadRequest(ex.InnerException?.Message ?? ex.Message);
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════
     // UPDATE PAYMENT
     // ═══════════════════════════════════════════════════════════════
+    [AllowAnonymous]
     [HttpPut("{id}")]
     public IActionResult Update(int id, [FromBody] OutgoingPaymentUpdateRequest request)
     {
@@ -215,20 +251,17 @@ public class OutgoingPaymentController : MyController
         if (payment.Status == "V")
             return BadRequest("Cannot update voided payment");
 
-        // Reverse old invoice allocations
+        // Reverse old invoice allocations — removing this payment's lines frees
+        // the balance, so reopen each affected AP invoice.
         foreach (var oldInvoice in payment.Invoices)
         {
-            decimal totalPaid = oldInvoice.AppliedAmount + oldInvoice.DiscountAmount + oldInvoice.WithholdingTax;
-            _context.Database.ExecuteSqlRaw(@"
-                UPDATE KPAI 
-                SET PaidToDate = PaidToDate - {0},
-                    Status = CASE 
-                        WHEN (DocTotal - (PaidToDate - {0})) > 0 THEN 'O' 
-                        ELSE 'C' 
-                    END,
-                    UpdatedAt = GETDATE()
-                WHERE Id = {1}
-            ", totalPaid, oldInvoice.InvoiceId);
+            var inv = _context.Set<APInvoiceEntity>().FirstOrDefault(x => x.Id == oldInvoice.InvoiceId);
+            if (inv != null)
+            {
+                inv.Status = "O";
+                inv.UpdatedAt = DateTime.UtcNow;
+                _context.Update(inv);
+            }
         }
 
         // Clear old lines
@@ -236,7 +269,7 @@ public class OutgoingPaymentController : MyController
 
         // Validate new allocations
         var totalApplied = request.Invoices.Sum(i => i.AppliedAmount + i.DiscountAmount + i.WithholdingTax);
-        if (totalApplied > request.DocTotal)
+        if (totalApplied > request.DocTotal + 0.01m)
             return BadRequest($"Applied amount ({totalApplied:N2}) cannot exceed payment amount ({request.DocTotal:N2})");
 
         // Update header
@@ -260,26 +293,32 @@ public class OutgoingPaymentController : MyController
         int lineNum = 1;
         foreach (var invoiceRequest in request.Invoices)
         {
-            var invoice = _context.Set<dynamic>()
-                .FromSqlRaw("SELECT Id, DocNum, DocDate, DueDate, DocTotal, COALESCE(PaidToDate, 0) as PaidToDate FROM KPAI WHERE Id = {0}", invoiceRequest.InvoiceId)
-                .FirstOrDefault();
+            var invoice = _context.Set<APInvoiceEntity>()
+                .FirstOrDefault(x => x.Id == invoiceRequest.InvoiceId);
 
             if (invoice == null)
                 return BadRequest($"Invoice {invoiceRequest.InvoiceId} not found");
 
-            decimal invoiceBalance = invoice.DocTotal - invoice.PaidToDate;
+            // Applied by other (non-void) payments, excluding this one being edited.
+            var alreadyApplied = _context.Set<OutgoingPaymentInvoice>()
+                .Where(l => l.InvoiceId == invoice.Id
+                            && l.OutgoingPaymentId != payment.Id
+                            && l.OutgoingPayment.Status != "V")
+                .Sum(l => (decimal?)(l.AppliedAmount + l.DiscountAmount + l.WithholdingTax)) ?? 0m;
+
+            decimal invoiceBalance = invoice.Total - alreadyApplied;
             decimal totalPayment = invoiceRequest.AppliedAmount + invoiceRequest.DiscountAmount + invoiceRequest.WithholdingTax;
             decimal remainingBalance = invoiceBalance - totalPayment;
-            string newInvoiceStatus = remainingBalance == 0 ? "C" : "O";
+            string newInvoiceStatus = remainingBalance <= 0 ? "C" : "O";
 
             var paymentInvoice = new OutgoingPaymentInvoice
             {
                 LineNum = lineNum++,
                 InvoiceId = invoiceRequest.InvoiceId,
                 InvoiceDocNum = invoice.DocNum,
-                InvoiceDocDate = invoice.DocDate,
-                InvoiceDueDate = invoice.DueDate,
-                InvoiceTotal = invoice.DocTotal,
+                InvoiceDocDate = invoice.PostingDate ?? DateTime.UtcNow,
+                InvoiceDueDate = invoice.DueDate ?? invoice.PostingDate ?? DateTime.UtcNow,
+                InvoiceTotal = invoice.Total,
                 InvoiceBalance = invoiceBalance,
                 AppliedAmount = invoiceRequest.AppliedAmount,
                 DiscountAmount = invoiceRequest.DiscountAmount,
@@ -292,14 +331,10 @@ public class OutgoingPaymentController : MyController
 
             payment.Invoices.Add(paymentInvoice);
 
-            // Update invoice
-            _context.Database.ExecuteSqlRaw(@"
-                UPDATE KPAI 
-                SET PaidToDate = COALESCE(PaidToDate, 0) + {0},
-                    Status = {1},
-                    UpdatedAt = GETDATE()
-                WHERE Id = {2}
-            ", totalPayment, newInvoiceStatus, invoiceRequest.InvoiceId);
+            // Update the AP invoice status via EF.
+            invoice.Status = newInvoiceStatus;
+            invoice.UpdatedAt = DateTime.UtcNow;
+            _context.Update(invoice);
         }
 
         _repository.Update(payment);
@@ -311,6 +346,7 @@ public class OutgoingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // VOID PAYMENT (Reverses all AP invoice allocations)
     // ═══════════════════════════════════════════════════════════════
+    [AllowAnonymous]
     [HttpPost("{id}/Void")]
     public IActionResult Void(int id)
     {
@@ -324,20 +360,16 @@ public class OutgoingPaymentController : MyController
         if (payment.Status == "V")
             return BadRequest("Payment is already voided");
 
-        // Reverse all AP invoice allocations
+        // Reverse all AP invoice allocations — reopen each affected invoice.
         foreach (var paymentInvoice in payment.Invoices)
         {
-            decimal totalPaid = paymentInvoice.AppliedAmount + paymentInvoice.DiscountAmount + paymentInvoice.WithholdingTax;
-            _context.Database.ExecuteSqlRaw(@"
-                UPDATE KPAI 
-                SET PaidToDate = PaidToDate - {0},
-                    Status = CASE 
-                        WHEN (DocTotal - (PaidToDate - {0})) > 0 THEN 'O' 
-                        ELSE 'C' 
-                    END,
-                    UpdatedAt = GETDATE()
-                WHERE Id = {1}
-            ", totalPaid, paymentInvoice.InvoiceId);
+            var inv = _context.Set<APInvoiceEntity>().FirstOrDefault(x => x.Id == paymentInvoice.InvoiceId);
+            if (inv != null)
+            {
+                inv.Status = "O";
+                inv.UpdatedAt = DateTime.UtcNow;
+                _context.Update(inv);
+            }
         }
 
         payment.Status = "V";
@@ -356,6 +388,7 @@ public class OutgoingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // DELETE
     // ═══════════════════════════════════════════════════════════════
+    [AllowAnonymous]
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
@@ -369,17 +402,16 @@ public class OutgoingPaymentController : MyController
         if (payment.Status == "C")
             return BadRequest("Cannot delete closed payment. Use Void instead.");
 
-        // Reverse invoice allocations
+        // Reverse invoice allocations — reopen each affected AP invoice.
         foreach (var paymentInvoice in payment.Invoices)
         {
-            decimal totalPaid = paymentInvoice.AppliedAmount + paymentInvoice.DiscountAmount + paymentInvoice.WithholdingTax;
-            _context.Database.ExecuteSqlRaw(@"
-                UPDATE KPAI 
-                SET PaidToDate = PaidToDate - {0},
-                    Status = 'O',
-                    UpdatedAt = GETDATE()
-                WHERE Id = {1}
-            ", totalPaid, paymentInvoice.InvoiceId);
+            var inv = _context.Set<APInvoiceEntity>().FirstOrDefault(x => x.Id == paymentInvoice.InvoiceId);
+            if (inv != null)
+            {
+                inv.Status = "O";
+                inv.UpdatedAt = DateTime.UtcNow;
+                _context.Update(inv);
+            }
         }
 
         payment.DeletedAt = DateTime.UtcNow;
@@ -392,6 +424,7 @@ public class OutgoingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET BY SUPPLIER
     // ═══════════════════════════════════════════════════════════════
+    [AllowAnonymous]
     [HttpGet("Supplier/{cardCode}")]
     public IActionResult GetBySupplier(string cardCode)
     {
@@ -408,6 +441,7 @@ public class OutgoingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET BY DATE RANGE
     // ═══════════════════════════════════════════════════════════════
+    [AllowAnonymous]
     [HttpGet("DateRange")]
     public IActionResult GetByDateRange([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
     {
@@ -424,6 +458,7 @@ public class OutgoingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET PAYMENT SUMMARY BY SUPPLIER
     // ═══════════════════════════════════════════════════════════════
+    [AllowAnonymous]
     [HttpGet("Summary/{cardCode}")]
     public IActionResult GetPaymentSummary(string cardCode)
     {

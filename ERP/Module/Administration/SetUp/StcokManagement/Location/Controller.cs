@@ -47,11 +47,13 @@ public class LocationController : ControllerBase
     public IActionResult Create([FromBody] LocationRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        if (_repository.GetAll().Any(x => x.Code == dto.Code.Trim()))
-            return BadRequest($"Location code '{dto.Code}' already exists");
+
+        var code = dto.Code.Trim().ToUpper();
+        if (_repository.GetAll().Any(x => x.Code == code))
+            return BadRequest($"Location code '{code}' already exists");
 
         var entity            = _mapper.Map<Location>(dto);
-        entity.Code           = dto.Code.Trim().ToUpper();
+        entity.Code           = code;
         entity.WarehouseCode  = dto.WarehouseCode?.Trim().ToUpper();
         entity.CreatedAt      = DateTime.UtcNow;
         entity.InActive       = false;
@@ -65,11 +67,13 @@ public class LocationController : ControllerBase
     {
         var entity = _repository.GetSingle(x => x.Id == id);
         if (entity == null) return NotFound();
-        if (_repository.GetAll().Any(x => x.Code == dto.Code.Trim() && x.Id != id))
-            return BadRequest($"Location code '{dto.Code}' already exists");
+
+        var code = dto.Code.Trim().ToUpper();
+        if (_repository.GetAll().Any(x => x.Code == code && x.Id != id))
+            return BadRequest($"Location code '{code}' already exists");
 
         _mapper.Map(dto, entity);
-        entity.Code          = dto.Code.Trim().ToUpper();
+        entity.Code          = code;
         entity.WarehouseCode = dto.WarehouseCode?.Trim().ToUpper();
         entity.UpdatedAt     = DateTime.UtcNow;
         _repository.Update(entity);

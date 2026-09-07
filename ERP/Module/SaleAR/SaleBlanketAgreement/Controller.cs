@@ -5,6 +5,8 @@ using FarmingApi;
 using FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster;
 using FarmingApi.Modules.Inventory.ItemsMaster;
 using FarmingApi.Services;
+using QuestPDF.Fluent;
+using CompanyEntity = FarmingApi.Modules.Company.Company;
 
 namespace FarmingApi.Modules.SaleAR.SaleBlanketAgreement;
 
@@ -131,6 +133,26 @@ public class SaleBlanketAgreementController : ControllerBase
 
         await _db.SaveChangesAsync();
         return NoContent();
+    }
+
+    // ── GET /SaleBlanketAgreement/{id}/Pdf ───────────────────────
+    [HttpGet("{id:int}/Pdf")]
+    public async Task<IActionResult> GetPdf(int id)
+    {
+        var agreement = await _db.Set<SaleBlanketAgreement>()
+            .Include(x => x.Customer)
+            .Include(x => x.Items).ThenInclude(l => l.Item)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (agreement == null) return NotFound();
+
+        var company = await _db.Set<CompanyEntity>()
+            .OrderBy(x => x.Id)
+            .FirstOrDefaultAsync();
+
+        var pdfBytes = new SaleBlanketAgreementPdfDocument(agreement, company).GeneratePdf();
+
+        return File(pdfBytes, "application/pdf", $"{agreement.DocNum}.pdf");
     }
 
     // ── DELETE /SaleBlanketAgreement/{id} ────────────────────────

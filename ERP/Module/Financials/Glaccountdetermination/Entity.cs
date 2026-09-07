@@ -25,6 +25,7 @@ public class GLAccountDetermination : AuditableEntity
     public string? PurchaseDiscount { get; set; }  // Credit on discount    e.g. 5100
     public string? PurchaseTax { get; set; }  // Debit on tax          e.g. 1300
     public string? VendorDeposit { get; set; }  // Down Payment paid     e.g. 1400
+    public string? WithholdingTaxPayable { get; set; }  // Credit when WHT withheld from a vendor payment e.g. 2110
 
     // ── Inventory ─────────────────────────────────────────────
     public string? InventoryAccount { get; set; }  // Debit on GR           e.g. 1300
@@ -69,6 +70,7 @@ public class GLAccountDeterminationConfig
             nameof(GLAccountDetermination.PurchaseDiscount),
             nameof(GLAccountDetermination.PurchaseTax),
             nameof(GLAccountDetermination.VendorDeposit),
+            nameof(GLAccountDetermination.WithholdingTaxPayable),
             nameof(GLAccountDetermination.InventoryAccount),
             nameof(GLAccountDetermination.CostOfGoodsSold),
             nameof(GLAccountDetermination.InventoryOffset),

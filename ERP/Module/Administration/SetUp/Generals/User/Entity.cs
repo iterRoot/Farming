@@ -18,6 +18,13 @@ public class User : AuditableEntity
     public int LoginAttempts { get; set; } = 0;
     public bool IsLocked { get; set; } = false;
 
+    // ── Two-factor (TOTP — Microsoft/Google Authenticator) ────────
+    /// <summary>Base32 shared secret. Set at setup; only trusted once TwoFactorEnabled is true.</summary>
+    public string? TwoFactorSecret  { get; set; }
+    public bool    TwoFactorEnabled { get; set; } = false;
+    /// <summary>Comma-separated SHA-256 hashes of single-use recovery codes.</summary>
+    public string? TwoFactorRecoveryCodes { get; set; }
+
     // Navigation property
     public UserGroupEntity UserGroup { get; set; } = null!;
 }

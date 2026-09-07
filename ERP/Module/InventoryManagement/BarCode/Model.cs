@@ -9,6 +9,7 @@ public class BarCodeResponse
     public string   ItemNo          { get; set; } = null!;
     public string?  ItemDescription { get; set; }
     public string?  UoMGroup        { get; set; }
+    public string   BarCodeType     { get; set; } = "Sale";
     public int      VersionNum      { get; set; }
     public DateTime CreatedAt       { get; set; }
     public DateTime? UpdatedAt      { get; set; }
@@ -37,6 +38,7 @@ public class BarCodeCreateRequest
     public string   ItemNo          { get; set; } = null!;
     public string?  ItemDescription { get; set; }
     public string?  UoMGroup        { get; set; }
+    public string?  BarCodeType     { get; set; }   // Sale | Purchase | Inventory (default Sale)
     public List<BarCodeLineRequest> Lines { get; set; } = new();
 }
 
@@ -47,6 +49,7 @@ public class BarCodeUpdateRequest
 {
     public string?  ItemDescription { get; set; }
     public string?  UoMGroup        { get; set; }
+    public string?  BarCodeType     { get; set; }   // Sale | Purchase | Inventory
     public List<BarCodeLineRequest> Lines { get; set; } = new();
 }
 
@@ -70,6 +73,7 @@ public class BarCodeSearchResponse
     public string   ItemNo          { get; set; } = null!;
     public string?  ItemDescription { get; set; }
     public string?  UoMGroup        { get; set; }
+    public string   BarCodeType     { get; set; } = "Sale";
     public string   Code            { get; set; } = null!;
     public string?  UoM             { get; set; }
     public string?  FreeText        { get; set; }

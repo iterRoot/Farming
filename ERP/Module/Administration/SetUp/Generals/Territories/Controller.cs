@@ -75,11 +75,13 @@ public class TerritoryController : ControllerBase
     public IActionResult Create([FromBody] TerritoryRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        if (_repo.GetAll().Any(x => x.Code == dto.Code.Trim()))
-            return BadRequest($"Territory code '{dto.Code}' already exists");
+
+        var code = dto.Code.Trim().ToUpper();
+        if (_repo.GetAll().Any(x => x.Code == code))
+            return BadRequest($"Territory code '{code}' already exists");
 
         var entity     = _mapper.Map<Territory>(dto);
-        entity.Code    = dto.Code.Trim().ToUpper();
+        entity.Code    = code;
         entity.CountryCode = dto.CountryCode?.Trim().ToUpper();
         entity.CreatedAt = DateTime.UtcNow;
         entity.InActive  = false;
@@ -109,11 +111,13 @@ public class TerritoryController : ControllerBase
     {
         var entity = _repo.GetSingle(x => x.Id == id);
         if (entity == null) return NotFound();
-        if (_repo.GetAll().Any(x => x.Code == dto.Code.Trim() && x.Id != id))
-            return BadRequest($"Territory code '{dto.Code}' already exists");
+
+        var code = dto.Code.Trim().ToUpper();
+        if (_repo.GetAll().Any(x => x.Code == code && x.Id != id))
+            return BadRequest($"Territory code '{code}' already exists");
 
         _mapper.Map(dto, entity);
-        entity.Code        = dto.Code.Trim().ToUpper();
+        entity.Code        = code;
         entity.CountryCode = dto.CountryCode?.Trim().ToUpper();
         entity.UpdatedAt   = DateTime.UtcNow;
 

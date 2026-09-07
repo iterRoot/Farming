@@ -22,12 +22,13 @@ public class BarCodeController : MyController
     // ═══════════════════════════════════════════════════════════════
     [AllowAnonymous]
     [HttpGet]
-    public IActionResult Gets([FromQuery] string? itemNo = null, [FromQuery] string? uomGroup = null)
+    public IActionResult Gets([FromQuery] string? itemNo = null, [FromQuery] string? uomGroup = null, [FromQuery] string? barCodeType = null)
     {
         var query = _repository.GetAll().Include(b => b.Lines).AsQueryable();
 
-        if (!string.IsNullOrEmpty(itemNo))   query = query.Where(b => b.ItemNo.Contains(itemNo));
-        if (!string.IsNullOrEmpty(uomGroup)) query = query.Where(b => b.UoMGroup == uomGroup);
+        if (!string.IsNullOrEmpty(itemNo))      query = query.Where(b => b.ItemNo.Contains(itemNo));
+        if (!string.IsNullOrEmpty(uomGroup))    query = query.Where(b => b.UoMGroup == uomGroup);
+        if (!string.IsNullOrEmpty(barCodeType)) query = query.Where(b => b.BarCodeType == barCodeType);
 
         var list   = query.OrderBy(b => b.ItemNo).ToList();
         var result = list.Select(b => MapWithComputed(b)).ToList();
@@ -84,6 +85,7 @@ public class BarCodeController : MyController
             ItemNo          = line.b.ItemNo,
             ItemDescription = line.b.ItemDescription,
             UoMGroup        = line.b.UoMGroup,
+            BarCodeType     = line.b.BarCodeType,
             Code            = line.l.Code,
             UoM             = line.l.UoM,
             FreeText        = line.l.FreeText,
@@ -101,9 +103,12 @@ public class BarCodeController : MyController
         if (string.IsNullOrWhiteSpace(request.ItemNo))
             return BadRequest("Item No. is required");
 
-        // Check duplicate item
-        var exists = _repository.GetAll().Any(b => b.ItemNo == request.ItemNo);
-        if (exists) return BadRequest($"Barcodes for item '{request.ItemNo}' already exist. Use Update instead.");
+        var barCodeType = NormalizeType(request.BarCodeType, out var typeError);
+        if (typeError != null) return BadRequest(typeError);
+
+        // Check duplicate item PER type
+        var exists = _repository.GetAll().Any(b => b.ItemNo == request.ItemNo && b.BarCodeType == barCodeType);
+        if (exists) return BadRequest($"{barCodeType} barcodes for item '{request.ItemNo}' already exist. Use Update instead.");
 
         // Validate no duplicate codes
         var codes = request.Lines.Where(l => !string.IsNullOrWhiteSpace(l.Code)).Select(l => l.Code).ToList();
@@ -111,6 +116,7 @@ public class BarCodeController : MyController
             return BadRequest("Duplicate barcode values in lines");
 
         var entity = _mapper.Map<BarCode>(request);
+        entity.BarCodeType = barCodeType;
         entity.VersionNum = 1;
         entity.CreatedAt  = DateTime.UtcNow;
         entity.InActive   = false;
@@ -133,10 +139,11 @@ public class BarCodeController : MyController
 
         return Ok(new
         {
-            message = "BarCode created successfully",
-            id      = entity.Id,
-            itemNo  = entity.ItemNo,
-            total   = entity.Lines.Count,
+            message     = "BarCode created successfully",
+            id          = entity.Id,
+            itemNo      = entity.ItemNo,
+            barCodeType = entity.BarCodeType,
+            total       = entity.Lines.Count,
         });
     }
 
@@ -151,6 +158,19 @@ public class BarCodeController : MyController
             .FirstOrDefault(b => b.Id == id);
 
         if (barcode == null) return NotFound($"BarCode {id} not found");
+
+        // Normalize + guard type change against another record of the same item/type
+        if (request.BarCodeType != null)
+        {
+            var newType = NormalizeType(request.BarCodeType, out var typeError);
+            if (typeError != null) return BadRequest(typeError);
+
+            if (newType != barcode.BarCodeType &&
+                _repository.GetAll().Any(b => b.Id != id && b.ItemNo == barcode.ItemNo && b.BarCodeType == newType))
+                return BadRequest($"{newType} barcodes for item '{barcode.ItemNo}' already exist.");
+
+            barcode.BarCodeType = newType;
+        }
 
         _mapper.Map(request, barcode);
         barcode.UpdatedAt   = DateTime.UtcNow;
@@ -218,6 +238,24 @@ public class BarCodeController : MyController
     // ═══════════════════════════════════════════════════════════════
     // HELPERS
     // ═══════════════════════════════════════════════════════════════
+    // Allowed barcode types
+    private static readonly string[] AllowedTypes = { "Sale", "Purchase", "Inventory" };
+
+    // Normalize/validate the type. Null or empty defaults to "Sale".
+    private static string NormalizeType(string? raw, out string? error)
+    {
+        error = null;
+        if (string.IsNullOrWhiteSpace(raw)) return "Sale";
+
+        var match = AllowedTypes.FirstOrDefault(t => t.Equals(raw.Trim(), StringComparison.OrdinalIgnoreCase));
+        if (match == null)
+        {
+            error = $"Invalid BarCodeType '{raw}'. Allowed: {string.Join(", ", AllowedTypes)}";
+            return "Sale";
+        }
+        return match;
+    }
+
     private BarCodeResponse MapWithComputed(BarCode b)
     {
         var response = _mapper.Map<BarCodeResponse>(b);

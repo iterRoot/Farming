@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi;
 using FarmingApi.Modules.Inventory.ItemsMaster;
+using FarmingApi.Modules.Financials.JournalEntry;
+using QuestPDF.Fluent;
 using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using CompanyEntity = FarmingApi.Modules.Company.Company;
 
 namespace FarmingApi.Modules.PurchaseAP.APReserveInvoice;
 
@@ -13,9 +16,10 @@ public class APReserveInvoiceController : ControllerBase
 {
     private readonly MyDbContext _db;
     private readonly IMapper     _mapper;
+    private readonly IAPReserveInvoiceJournalService _journalService;
 
-    public APReserveInvoiceController(MyDbContext db, IMapper mapper)
-    { _db = db; _mapper = mapper; }
+    public APReserveInvoiceController(MyDbContext db, IMapper mapper, IAPReserveInvoiceJournalService journalService)
+    { _db = db; _mapper = mapper; _journalService = journalService; }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -56,8 +60,22 @@ public class APReserveInvoiceController : ControllerBase
             line.ItemName = item.ItemName;
         }
 
-        _db.Set<APReserveInvoice>().Add(inv);
-        await _db.SaveChangesAsync();
+        // Save the document + its Journal Entry in one transaction (DR Purchase Expense / DR Input VAT / CR Accounts Payable).
+        await using var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            _db.Set<APReserveInvoice>().Add(inv);
+            await _db.SaveChangesAsync();
+            var je = _journalService.CreateJournalEntry(inv, vendor);
+            je.BaseDocEntry = inv.Id;
+            await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            return BadRequest(ex.InnerException?.Message ?? ex.Message);
+        }
 
         var created = await _db.Set<APReserveInvoice>()
             .Include(x => x.Vendor)
@@ -90,6 +108,22 @@ public class APReserveInvoiceController : ControllerBase
 
         await _db.SaveChangesAsync();
         return NoContent();
+    }
+
+    [HttpGet("{id:int}/Pdf")]
+    public async Task<IActionResult> GetPdf(int id)
+    {
+        var inv = await _db.Set<APReserveInvoice>()
+            .Include(x => x.Vendor)
+            .Include(x => x.Items).ThenInclude(l => l.Item)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (inv == null) return NotFound();
+
+        var company = await _db.Set<CompanyEntity>().OrderBy(x => x.Id).FirstOrDefaultAsync();
+        var pdfBytes = new APReserveInvoicePdfDocument(inv, company).GeneratePdf();
+
+        return File(pdfBytes, "application/pdf", $"{inv.DocNum}.pdf");
     }
 
     [HttpDelete("{id}")]

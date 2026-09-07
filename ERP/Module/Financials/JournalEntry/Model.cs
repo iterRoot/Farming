@@ -128,6 +128,16 @@ public class JournalEntryUpdateRequest
 }
 
 // ═══════════════════════════════════════════════════════════════════
+// REVERSE REQUEST — posts an opposite entry that cancels the original.
+// ═══════════════════════════════════════════════════════════════════
+public class ReverseJournalEntryRequest
+{
+    /// <summary>When the reversing entry is dated. Defaults to today.</summary>
+    public DateTime? ReversalDate { get; set; }
+    public string?   Reason       { get; set; }
+}
+
+// ═══════════════════════════════════════════════════════════════════
 // AUTO-CREATION REQUEST (for payment / invoice services)
 // ═══════════════════════════════════════════════════════════════════
 public class AutoJournalEntryRequest

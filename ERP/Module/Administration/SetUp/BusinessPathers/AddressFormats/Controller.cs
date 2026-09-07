@@ -80,13 +80,15 @@ public class AddressFormatController : ControllerBase
     public IActionResult Create([FromBody] AddressFormatRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        if (_repo.GetAll().Any(x => x.Code == dto.Code.Trim()))
-            return BadRequest($"Address format code '{dto.Code}' already exists");
+
+        var code = dto.Code.Trim().ToUpper();
+        if (_repo.GetAll().Any(x => x.Code == code))
+            return BadRequest($"Address format code '{code}' already exists");
 
         if (dto.IsDefault) UnsetDefault(0);
 
         var entity           = _mapper.Map<AddressFormat>(dto);
-        entity.Code          = dto.Code.Trim().ToUpper();
+        entity.Code          = code;
         entity.CountryCode   = dto.CountryCode?.Trim().ToUpper();
         entity.CreatedAt     = DateTime.UtcNow;
         entity.InActive      = false;
@@ -107,14 +109,16 @@ public class AddressFormatController : ControllerBase
             .Include(x => x.Lines)
             .FirstOrDefault(x => x.Id == id);
         if (entity == null) return NotFound();
-        if (_repo.GetAll().Any(x => x.Code == dto.Code.Trim() && x.Id != id))
-            return BadRequest($"Address format code '{dto.Code}' already exists");
+
+        var code = dto.Code.Trim().ToUpper();
+        if (_repo.GetAll().Any(x => x.Code == code && x.Id != id))
+            return BadRequest($"Address format code '{code}' already exists");
 
         if (dto.IsDefault) UnsetDefault(id);
 
         _db.RemoveRange(entity.Lines);
         _mapper.Map(dto, entity);
-        entity.Code        = dto.Code.Trim().ToUpper();
+        entity.Code        = code;
         entity.CountryCode = dto.CountryCode?.Trim().ToUpper();
         entity.UpdatedAt   = DateTime.UtcNow;
 

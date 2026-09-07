@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi;
 using FarmingApi.Modules.Inventory.ItemsMaster;
+using QuestPDF.Fluent;
 using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using CompanyEntity = FarmingApi.Modules.Company.Company;
 
 namespace FarmingApi.Modules.PurchaseAP.PurchaseBlanketAgreement;
 
@@ -102,6 +104,23 @@ public class PurchaseBlanketAgreementController : ControllerBase
 
         await _db.SaveChangesAsync();
         return NoContent();
+    }
+
+    // ── GET /PurchaseBlanketAgreement/{id}/Pdf ────────────────────────────
+    [HttpGet("{id:int}/Pdf")]
+    public async Task<IActionResult> GetPdf(int id)
+    {
+        var pba = await _db.Set<PurchaseBlanketAgreement>()
+            .Include(x => x.Vendor)
+            .Include(x => x.Items).ThenInclude(l => l.Item)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (pba == null) return NotFound();
+
+        var company = await _db.Set<CompanyEntity>().OrderBy(x => x.Id).FirstOrDefaultAsync();
+        var pdfBytes = new PurchaseBlanketAgreementPdfDocument(pba, company).GeneratePdf();
+
+        return File(pdfBytes, "application/pdf", $"{pba.DocNum}.pdf");
     }
 
     // ── DELETE /PurchaseBlanketAgreement/{id} ─────────────────────────────

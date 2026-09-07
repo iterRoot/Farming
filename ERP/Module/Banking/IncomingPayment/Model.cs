@@ -57,23 +57,51 @@ public class IncomingPaymentListRequest
 {
     public DateTime DocDate { get; set; }
     public DateTime DueDate { get; set; }
-    public string CardCode { get; set; } = null!;
+    public string? CardCode { get; set; }
+    public string? CardName { get; set; }
     public decimal DocTotal { get; set; }
     public string Currency { get; set; } = "USD";
     public decimal ExchangeRate { get; set; } = 1;
     public string PaymentMethod { get; set; } = "Cash";
     public string? CheckNumber { get; set; }
     public DateTime? CheckDate { get; set; }
-    public string BankAccount { get; set; } = null!;
+    public string? BankAccount { get; set; }
     public string? Reference { get; set; }
     public string? Memo { get; set; }
+
+    // The UI also sends header aliases (refNo, remarks, chequeNo…) and a
+    // line-based grid. Accept both so the SAP-style Create screen works.
+    public string? RefNo      { get; set; }
+    public string? Remarks    { get; set; }
+    public string? BankName   { get; set; }
+    public string? ChequeNo   { get; set; }
+    public DateTime? ChequeDate { get; set; }
+    public string? TransferRef { get; set; }
+
     public List<IncomingPaymentInvoiceRequest> Invoices { get; set; } = new();
+    public List<IncomingPaymentLineRequest>?   Lines    { get; set; }
 }
 
 public class IncomingPaymentInvoiceRequest
 {
     public int InvoiceId { get; set; }
     public decimal AppliedAmount { get; set; }
+}
+
+// One row of the SAP-style payment grid. When DocType/DocEntry point at an AR
+// invoice (KARI), the row is treated as an allocation against that invoice.
+public class IncomingPaymentLineRequest
+{
+    public int     LineNum     { get; set; }
+    public string? DocType     { get; set; }
+    public int?    DocEntry    { get; set; }
+    public string? DocRef      { get; set; }
+    public string? AccountCode { get; set; }
+    public string? AccountName { get; set; }
+    public decimal PaymentAmt  { get; set; }
+    public decimal DiscountAmt { get; set; }
+    public decimal WhtAmount   { get; set; }
+    public string? Remarks     { get; set; }
 }
 
 public class IncomingPaymentUpdateRequest
@@ -86,7 +114,7 @@ public class IncomingPaymentUpdateRequest
     public string PaymentMethod { get; set; } = null!;
     public string? CheckNumber { get; set; }
     public DateTime? CheckDate { get; set; }
-    public string BankAccount { get; set; } = null!;
+    public string? BankAccount { get; set; }
     public string? Reference { get; set; }
     public string? Memo { get; set; }
     public List<IncomingPaymentInvoiceRequest> Invoices { get; set; } = new();

@@ -6,7 +6,12 @@ using FarmingApi.Core;
 using FarmingApi.Modules.SaleAR.ARInvoice;
 using FarmingApi.Modules.Financials.JournalEntry;
 using FarmingApi.Modules.Financials.GLAccountDetermination;
+using Microsoft.Extensions.Options;
+using QuestPDF.Infrastructure;
+
 // using FarmingApi.Modules.Items;
+QuestPDF.Settings.License = LicenseType.Community;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>
@@ -32,6 +37,15 @@ builder.Services.AddScoped<IJournalEntryRepository, JournalEntryRepository>();
 builder.Services.AddScoped<IGLAccountDeterminationRepository, GLAccountDeterminationRepository>();
 builder.Services.AddInjection();
 builder.Services.AddDatabase();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin.Numbering", p =>
+        p.RequireAuthenticatedUser()
+            .RequireRole("Administrator"));
+
+    options.AddPolicy("Numbering.Read", p =>
+        p.RequireAuthenticatedUser());
+});
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
@@ -46,16 +60,6 @@ if (app.Environment.IsDevelopment())
         options.RoutePrefix = "swagger"; // Serves the UI at localhost:5181/swagger
     });
 }
-// if (app.Environment.IsDevelopment())
-// {
-//     app.MapOpenApi();
-//         app.UseSwaggerUi(options =>
-//     {
-//         options.DocumentPath = "/openapi/v1.json";
-//     });
-// }
-
-
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

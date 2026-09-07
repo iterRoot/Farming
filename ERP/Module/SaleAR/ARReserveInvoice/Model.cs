@@ -48,6 +48,10 @@ public class ARReserveInvoiceResponse
     public string?   Remarks     { get; set; }
     public DateTime  CreatedAt   { get; set; }
 
+    // Auto-created Journal Entry (DR AR / CR Revenue / CR Output VAT).
+    public int?      JournalEntryId { get; set; }
+    public string?   JournalNo      { get; set; }
+
     public int    CustomerId   { get; set; }
     public string CustomerCode { get; set; } = "";
     public string CustomerName { get; set; } = "";

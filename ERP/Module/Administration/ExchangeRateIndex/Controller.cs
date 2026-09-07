@@ -56,15 +56,33 @@ public class ExchangeRateController : ControllerBase
         return Ok(_mapper.Map<List<ExchangeRateResponse>>(latest));
     }
 
+    // UPSERT — one rate per currency per day. Posting a date that already
+    // has a rate for that currency updates it instead of duplicating.
     [AllowAnonymous][HttpPost]
     public IActionResult Create([FromBody] ExchangeRateRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var entity       = _mapper.Map<ExchangeRate>(dto);
-        entity.Currency  = dto.Currency.Trim().ToUpper();
-        entity.CreatedAt = DateTime.UtcNow;
-        entity.InActive  = false;
+        var code = dto.Currency.Trim().ToUpper();
+        var day  = NormaliseDay(dto.EffectiveDate);
+
+        var existing = _repo.GetSingle(x => x.Currency == code && x.EffectiveDate == day);
+        if (existing != null)
+        {
+            _mapper.Map(dto, existing);
+            existing.Currency      = code;
+            existing.EffectiveDate = day;
+            existing.UpdatedAt     = DateTime.UtcNow;
+            _repo.Update(existing);
+            _repo.Commit();
+            return Ok(_mapper.Map<ExchangeRateResponse>(existing));
+        }
+
+        var entity           = _mapper.Map<ExchangeRate>(dto);
+        entity.Currency      = code;
+        entity.EffectiveDate = day;
+        entity.CreatedAt     = DateTime.UtcNow;
+        entity.InActive      = false;
         _repo.Add(entity);
         _repo.Commit();
         return Ok(_mapper.Map<ExchangeRateResponse>(entity));
@@ -76,13 +94,27 @@ public class ExchangeRateController : ControllerBase
         var entity = _repo.GetSingle(x => x.Id == id);
         if (entity == null) return NotFound();
 
+        var code = dto.Currency.Trim().ToUpper();
+        var day  = NormaliseDay(dto.EffectiveDate);
+
+        // Don't let an edit collide with another row for the same currency/day
+        var clash = _repo.GetSingle(x => x.Currency == code && x.EffectiveDate == day && x.Id != id);
+        if (clash != null)
+            return BadRequest($"A {code} rate already exists for {day:yyyy-MM-dd}.");
+
         _mapper.Map(dto, entity);
-        entity.Currency  = dto.Currency.Trim().ToUpper();
-        entity.UpdatedAt = DateTime.UtcNow;
+        entity.Currency      = code;
+        entity.EffectiveDate = day;
+        entity.UpdatedAt     = DateTime.UtcNow;
         _repo.Update(entity);
         _repo.Commit();
         return Ok(_mapper.Map<ExchangeRateResponse>(entity));
     }
+
+    // Strip the time and pin to UTC so a day matches exactly, whatever
+    // timezone the client posted from.
+    private static DateTime NormaliseDay(DateTime d) =>
+        DateTime.SpecifyKind(d.Date, DateTimeKind.Utc);
 
     [AllowAnonymous][HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
@@ -148,15 +180,32 @@ public class PriceIndexController : ControllerBase
         return Ok(_mapper.Map<List<PriceIndexResponse>>(latest));
     }
 
+    // UPSERT — one value per index code per day.
     [AllowAnonymous][HttpPost]
     public IActionResult Create([FromBody] PriceIndexRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var entity       = _mapper.Map<PriceIndex>(dto);
-        entity.IndexCode = dto.IndexCode.Trim().ToUpper();
-        entity.CreatedAt = DateTime.UtcNow;
-        entity.InActive  = false;
+        var code = dto.IndexCode.Trim().ToUpper();
+        var day  = NormaliseDay(dto.EffectiveDate);
+
+        var existing = _repo.GetSingle(x => x.IndexCode == code && x.EffectiveDate == day);
+        if (existing != null)
+        {
+            _mapper.Map(dto, existing);
+            existing.IndexCode     = code;
+            existing.EffectiveDate = day;
+            existing.UpdatedAt     = DateTime.UtcNow;
+            _repo.Update(existing);
+            _repo.Commit();
+            return Ok(_mapper.Map<PriceIndexResponse>(existing));
+        }
+
+        var entity           = _mapper.Map<PriceIndex>(dto);
+        entity.IndexCode     = code;
+        entity.EffectiveDate = day;
+        entity.CreatedAt     = DateTime.UtcNow;
+        entity.InActive      = false;
         _repo.Add(entity);
         _repo.Commit();
         return Ok(_mapper.Map<PriceIndexResponse>(entity));
@@ -168,13 +217,24 @@ public class PriceIndexController : ControllerBase
         var entity = _repo.GetSingle(x => x.Id == id);
         if (entity == null) return NotFound();
 
+        var code = dto.IndexCode.Trim().ToUpper();
+        var day  = NormaliseDay(dto.EffectiveDate);
+
+        var clash = _repo.GetSingle(x => x.IndexCode == code && x.EffectiveDate == day && x.Id != id);
+        if (clash != null)
+            return BadRequest($"A {code} value already exists for {day:yyyy-MM-dd}.");
+
         _mapper.Map(dto, entity);
-        entity.IndexCode = dto.IndexCode.Trim().ToUpper();
-        entity.UpdatedAt = DateTime.UtcNow;
+        entity.IndexCode     = code;
+        entity.EffectiveDate = day;
+        entity.UpdatedAt     = DateTime.UtcNow;
         _repo.Update(entity);
         _repo.Commit();
         return Ok(_mapper.Map<PriceIndexResponse>(entity));
     }
+
+    private static DateTime NormaliseDay(DateTime d) =>
+        DateTime.SpecifyKind(d.Date, DateTimeKind.Utc);
 
     [AllowAnonymous][HttpDelete("{id:int}")]
     public IActionResult Delete(int id)

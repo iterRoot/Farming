@@ -16,6 +16,7 @@ public class APInvoice : AuditableEntity
     public DateTime? PostingDate { get; set; }
     public DateTime? DueDate     { get; set; }
     public string    Status      { get; set; } = "O";   // O=Open, C=Closed
+    public string    Type        { get; set; } = "Item"; // Item | Service
     public decimal   Discount    { get; set; }
     public decimal   Tax         { get; set; }
     public decimal   TaxAmount   { get; set; }
@@ -43,6 +44,7 @@ public class APInvoiceLine : AuditableEntity
 
     public string?  ItemCode { get; set; }
     public string?  ItemName { get; set; }
+    public string?  WhsCode  { get; set; }   // warehouse the goods are received into
     public decimal  Quantity { get; set; }
     public decimal  Price    { get; set; }
     public decimal  Total    { get; set; }
@@ -66,6 +68,7 @@ public class APInvoiceConfig : IEntityTypeConfiguration<APInvoice>
 
         builder.Property(x => x.DocNum).HasMaxLength(100).IsRequired();
         builder.Property(x => x.Status).HasMaxLength(10);
+        builder.Property(x => x.Type).HasMaxLength(50);
         builder.Property(x => x.Remarks).HasMaxLength(500);
         builder.Property(x => x.Discount).HasPrecision(18, 2);
         builder.Property(x => x.Tax).HasPrecision(18, 2);
@@ -93,6 +96,7 @@ public class APInvoiceLineConfig : IEntityTypeConfiguration<APInvoiceLine>
 
         builder.Property(x => x.ItemCode).HasMaxLength(100);
         builder.Property(x => x.ItemName).HasMaxLength(200);
+        builder.Property(x => x.WhsCode).HasMaxLength(50);
         builder.Property(x => x.BaseType).HasMaxLength(100);
         builder.Property(x => x.Quantity).HasPrecision(18, 2);
         builder.Property(x => x.Price).HasPrecision(18, 2);

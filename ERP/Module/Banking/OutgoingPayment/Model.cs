@@ -22,7 +22,7 @@ public class OutgoingPaymentListResponse
     public string PaymentMethod { get; set; }
     public string CheckNumber { get; set; }
     public DateTime? CheckDate { get; set; }
-    public string BankAccount { get; set; }
+    public string? BankAccount { get; set; }
     public string BankName { get; set; }
     public string Reference { get; set; }
     public string Memo { get; set; }
@@ -59,16 +59,18 @@ public class OutgoingPaymentListRequest
 {
     public DateTime DocDate { get; set; }
     public DateTime DueDate { get; set; }
-    public string CardCode { get; set; }
+    public string? CardCode { get; set; }
+    public string? CardName { get; set; }
     public decimal DocTotal { get; set; }
     public string Currency { get; set; } = "USD";
     public decimal ExchangeRate { get; set; } = 1;
     public string PaymentMethod { get; set; } = "Cash";
-    public string CheckNumber { get; set; }
+    public string? CheckNumber { get; set; }
     public DateTime? CheckDate { get; set; }
-    public string BankAccount { get; set; }
-    public string Reference { get; set; }
-    public string Memo { get; set; }
+    public string? BankAccount { get; set; }
+    public string? BankName { get; set; }
+    public string? Reference { get; set; }
+    public string? Memo { get; set; }
     public List<OutgoingPaymentInvoiceRequest> Invoices { get; set; } = new();
 }
 
@@ -85,14 +87,14 @@ public class OutgoingPaymentUpdateRequest
     public DateTime DocDate { get; set; }
     public DateTime DueDate { get; set; }
     public decimal DocTotal { get; set; }
-    public string Currency { get; set; }
-    public decimal ExchangeRate { get; set; }
-    public string PaymentMethod { get; set; }
-    public string CheckNumber { get; set; }
+    public string Currency { get; set; } = "USD";
+    public decimal ExchangeRate { get; set; } = 1;
+    public string PaymentMethod { get; set; } = "Cash";
+    public string? CheckNumber { get; set; }
     public DateTime? CheckDate { get; set; }
-    public string BankAccount { get; set; }
-    public string Reference { get; set; }
-    public string Memo { get; set; }
+    public string? BankAccount { get; set; }
+    public string? Reference { get; set; }
+    public string? Memo { get; set; }
     public List<OutgoingPaymentInvoiceRequest> Invoices { get; set; } = new();
 }
 

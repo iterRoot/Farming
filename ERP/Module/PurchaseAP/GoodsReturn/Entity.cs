@@ -37,6 +37,7 @@ public class GoodsReturnLine : AuditableEntity
 
     public string?  ItemCode { get; set; }
     public string?  ItemName { get; set; }
+    public string?  WhsCode  { get; set; }   // warehouse the goods are returned from
     public decimal  Quantity { get; set; }
     public decimal  Price    { get; set; }
     public decimal  Total    { get; set; }
@@ -84,6 +85,7 @@ public class GoodsReturnLineConfig : IEntityTypeConfiguration<GoodsReturnLine>
 
         builder.Property(x => x.ItemCode).HasMaxLength(100);
         builder.Property(x => x.ItemName).HasMaxLength(200);
+        builder.Property(x => x.WhsCode).HasMaxLength(50);
         builder.Property(x => x.BaseType).HasMaxLength(100);
         builder.Property(x => x.Quantity).HasPrecision(18, 2);
         builder.Property(x => x.Price).HasPrecision(18, 2);

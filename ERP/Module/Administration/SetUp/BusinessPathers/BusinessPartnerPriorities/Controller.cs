@@ -45,8 +45,10 @@ public class BPPropertyController : ControllerBase
     public IActionResult Create([FromBody] BPPropertyRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        if (_repo.GetAll().Any(x => x.Code == dto.Code.Trim()))
-            return BadRequest($"BP property code '{dto.Code}' already exists");
+
+        var code = dto.Code.Trim().ToUpper();
+        if (_repo.GetAll().Any(x => x.Code == code))
+            return BadRequest($"BP property code '{code}' already exists");
 
         // Auto-assign next property number if not provided
         if (dto.PropertyNo <= 0)
@@ -57,7 +59,7 @@ public class BPPropertyController : ControllerBase
         }
 
         var entity       = _mapper.Map<BPProperty>(dto);
-        entity.Code      = dto.Code.Trim().ToUpper();
+        entity.Code      = code;
         entity.CreatedAt = DateTime.UtcNow;
         entity.InActive  = false;
         _repo.Add(entity);
@@ -71,11 +73,13 @@ public class BPPropertyController : ControllerBase
     {
         var entity = _repo.GetSingle(x => x.Id == id);
         if (entity == null) return NotFound();
-        if (_repo.GetAll().Any(x => x.Code == dto.Code.Trim() && x.Id != id))
-            return BadRequest($"BP property code '{dto.Code}' already exists");
+
+        var code = dto.Code.Trim().ToUpper();
+        if (_repo.GetAll().Any(x => x.Code == code && x.Id != id))
+            return BadRequest($"BP property code '{code}' already exists");
 
         _mapper.Map(dto, entity);
-        entity.Code      = dto.Code.Trim().ToUpper();
+        entity.Code      = code;
         entity.UpdatedAt = DateTime.UtcNow;
         _repo.Update(entity);
         _repo.Commit();

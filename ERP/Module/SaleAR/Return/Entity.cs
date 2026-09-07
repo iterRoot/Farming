@@ -15,6 +15,7 @@ public class Return : AuditableEntity          // ✅ not "Return" — reserved 
     public DateTime? PostingDate { get; set; }
     public DateTime? ReturnDate  { get; set; }
     public string    Status      { get; set; } = "O";
+    public string    Type        { get; set; } = "Item"; // Item | Service
     public decimal   Discount    { get; set; }
     public decimal   Tax         { get; set; }
     public decimal   TaxAmount   { get; set; }
@@ -40,6 +41,7 @@ public class ReturnLine : AuditableEntity
 
     public string?  ItemCode { get; set; }
     public string?  ItemName { get; set; }
+    public string?  WhsCode  { get; set; }   // warehouse the goods are returned into
     public decimal  Quantity { get; set; }
     public decimal  Price    { get; set; }
     public decimal  Total    { get; set; }
@@ -57,6 +59,7 @@ public class ReturnConfig : IEntityTypeConfiguration<Return>
 
         builder.Property(m => m.DocNum).HasMaxLength(100).IsRequired();
         builder.Property(m => m.Status).HasMaxLength(10);
+        builder.Property(m => m.Type).HasMaxLength(50);
         builder.Property(m => m.Remarks).HasMaxLength(500);
         builder.Property(m => m.Discount).HasPrecision(18, 2);
         builder.Property(m => m.Tax).HasPrecision(18, 2);
@@ -84,6 +87,7 @@ public class ReturnLineConfig : IEntityTypeConfiguration<ReturnLine>
 
         builder.Property(m => m.ItemCode).HasMaxLength(100);
         builder.Property(m => m.ItemName).HasMaxLength(200);
+        builder.Property(m => m.WhsCode).HasMaxLength(50);
         builder.Property(m => m.Quantity).HasPrecision(18, 2);
         builder.Property(m => m.Price).HasPrecision(18, 2);
         builder.Property(m => m.Total).HasPrecision(18, 2);

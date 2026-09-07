@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using FarmingApi;
 using FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster;
 using FarmingApi.Modules.Inventory.ItemsMaster;
+using QuestPDF.Fluent;
+using CompanyEntity = FarmingApi.Modules.Company.Company;
 
 namespace FarmingApi.Modules.SaleAR.SaleQuotion;
 
@@ -116,6 +118,26 @@ public class SaleQuotionController : ControllerBase
 
         await _db.SaveChangesAsync();
         return NoContent();
+    }
+
+    // ── GET /SaleQuotion/{id}/Pdf ───────────────────────────────────────────
+    [HttpGet("{id:int}/Pdf")]
+    public async Task<IActionResult> GetPdf(int id)
+    {
+        var quotation = await _db.Set<SaleQuotion>()
+            .Include(x => x.Customer)
+            .Include(x => x.Items).ThenInclude(l => l.Item)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (quotation == null) return NotFound();
+
+        var company = await _db.Set<CompanyEntity>()
+            .OrderBy(x => x.Id)
+            .FirstOrDefaultAsync();
+
+        var pdfBytes = new SaleQuotionPdfDocument(quotation, company).GeneratePdf();
+
+        return File(pdfBytes, "application/pdf", $"{quotation.DocNum}.pdf");
     }
 
     // ── DELETE /SaleQuotion/{id} ────────────────────────────────────────────

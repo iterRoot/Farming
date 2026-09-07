@@ -28,9 +28,16 @@ public class ARCreditNoteLine : AuditableEntity  // ✅ renamed
     public ItemsMaster Item   { get; set; } = null!;
     public string?  ItemCode { get; set; }
     public string?  ItemName { get; set; }
+    public string?  WhsCode  { get; set; }   // warehouse the goods are returned into
     public decimal  Quantity { get; set; }
     public decimal  Price    { get; set; }
     public decimal  Total    { get; set; }
+
+    // Source document this line was copied from. A line based on a Return has
+    // already had the goods received back there, so the credit note must not
+    // post the movement again.
+    public int?     BaseEntry { get; set; }
+    public string?  BaseType  { get; set; }  // "ArInvoice" | "Return"
 }
 
 public class ARCreditNoteConfig : IEntityTypeConfiguration<ARCreditNote>
@@ -70,6 +77,8 @@ public class ARCreditNoteLineConfig : IEntityTypeConfiguration<ARCreditNoteLine>
 
         builder.Property(m => m.ItemCode).HasMaxLength(100);
         builder.Property(m => m.ItemName).HasMaxLength(200);
+        builder.Property(m => m.WhsCode).HasMaxLength(50);
+        builder.Property(m => m.BaseType).HasMaxLength(50);
         builder.Property(m => m.Quantity).HasPrecision(18, 2);
         builder.Property(m => m.Price).HasPrecision(18, 2);
         builder.Property(m => m.Total).HasPrecision(18, 2);

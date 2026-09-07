@@ -15,6 +15,7 @@ public class APDownPaymentRequest : AuditableEntity
     public DateTime? PostingDate { get; set; }
     public DateTime? DueDate     { get; set; }
     public string    Status      { get; set; } = "O";   // O=Open, C=Closed
+    public string    Type        { get; set; } = "Item"; // Item | Service
     public decimal   Total       { get; set; }
     public string?   Remarks     { get; set; }
 
@@ -41,6 +42,7 @@ public class APDownPaymentRequestConfig : IEntityTypeConfiguration<APDownPayment
 
         builder.Property(x => x.DocNum).HasMaxLength(100).IsRequired();
         builder.Property(x => x.Status).HasMaxLength(10);
+        builder.Property(x => x.Type).HasMaxLength(50);
         builder.Property(x => x.Remarks).HasMaxLength(500);
         builder.Property(x => x.Total).HasPrecision(18, 2);
 

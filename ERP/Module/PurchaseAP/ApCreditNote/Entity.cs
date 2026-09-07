@@ -16,6 +16,7 @@ public class APCreditNote : AuditableEntity
     public DateTime? PostingDate { get; set; }
     public DateTime? DueDate     { get; set; }
     public string    Status      { get; set; } = "O";
+    public string    Type        { get; set; } = "Item"; // Item | Service
     public decimal   Discount    { get; set; }
     public decimal   Tax         { get; set; }
     public decimal   TaxAmount   { get; set; }
@@ -64,6 +65,7 @@ public class APCreditNoteConfig : IEntityTypeConfiguration<APCreditNote>
 
         builder.Property(x => x.DocNum).HasMaxLength(100).IsRequired();
         builder.Property(x => x.Status).HasMaxLength(10);
+        builder.Property(x => x.Type).HasMaxLength(50);
         builder.Property(x => x.Remarks).HasMaxLength(500);
         builder.Property(x => x.Discount).HasPrecision(18, 2);
         builder.Property(x => x.Tax).HasPrecision(18, 2);

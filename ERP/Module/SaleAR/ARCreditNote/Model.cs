@@ -20,9 +20,15 @@ public class ARCreditNoteListRequest  // ✅ renamed
 public class ARCreditNoteLineRequest  // ✅ renamed
 {
     public int     ItemId   { get; set; }
+    /// <summary>Optional — falls back to the default warehouse when omitted.</summary>
+    public string? WhsCode  { get; set; }
     public decimal Quantity { get; set; }
     public decimal Price    { get; set; }
     public decimal Total    { get; set; }
+
+    /// <summary>Set when copied from another document. "Return" suppresses stock posting.</summary>
+    public int?    BaseEntry { get; set; }
+    public string? BaseType  { get; set; }
 }
 
 public class ARCreditNoteUpdateRequest : ARCreditNoteListRequest { }  // ✅ renamed
@@ -41,6 +47,11 @@ public class ARCreditNoteListResponse  // ✅ renamed
     public decimal   Total       { get; set; }
     public string?   Remarks     { get; set; }
     public DateTime  CreatedAt   { get; set; }
+
+    // Auto-created Journal Entry (reverse of AR Invoice).
+    public int?      JournalEntryId { get; set; }
+    public string?   JournalNo      { get; set; }
+
     public int     CustomerId   { get; set; }
     public string  CustomerCode { get; set; } = "";
     public string  CustomerName { get; set; } = "";
@@ -53,7 +64,11 @@ public class ARCreditNoteLineResponse  // ✅ renamed
     public int     ItemId   { get; set; }
     public string  ItemCode { get; set; } = "";
     public string? ItemName { get; set; }
+    public string? WhsCode  { get; set; }
     public decimal Quantity { get; set; }
     public decimal Price    { get; set; }
     public decimal Total    { get; set; }
+
+    public int?    BaseEntry { get; set; }
+    public string? BaseType  { get; set; }
 }

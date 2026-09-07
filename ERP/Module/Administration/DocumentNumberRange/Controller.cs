@@ -14,7 +14,7 @@ public class DocumentNumberRangeController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET ALL — grouped by module
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
+    // [Authorize(Policy = "Numbering.Read")]
     [HttpGet]
     public IActionResult Gets([FromQuery] string? documentType = null)
     {
@@ -228,7 +228,7 @@ public class DocumentNumberRangeController : MyController
                 IsLocked         = false,
                 Prefix           = docType.DefaultPrefix,
                 IncludeYear      = true,
-                PadLength        = 5,
+                PadLength        = 8,
                 FirstNum         = 1,
                 NextNum          = 1,
                 LastNum          = null,

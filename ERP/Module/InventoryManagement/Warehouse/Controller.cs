@@ -1,154 +1,122 @@
-
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using FarmingApi.Core;
 
-using FarmingApi;
-
 namespace FarmingApi.Modules.Sale.Warehouse;
-public class WarehouseController : MyController
 
+// ═══════════════════════════════════════════════════════════════
+// WAREHOUSE  (route: /Warehouse)
+// GET    /Warehouse        → all warehouses
+// GET    /Warehouse/{id}   → one
+// POST   /Warehouse        → create
+// PUT    /Warehouse/{id}   → update
+// DELETE /Warehouse/{id}   → delete
+// ═══════════════════════════════════════════════════════════════
+public class WarehouseController : MyController
 {
     private readonly IMapper _mapper;
-	private readonly IWarehouseRepository _repository;
-    public WarehouseController(
-		IWarehouseRepository repository,
-		IMapper mapper
-		// ICloudStorageSingletonService service
-	)
-	{
-		_mapper = mapper;
-		_repository = repository;
-		// _service = service;
-	}
+    private readonly IWarehouseRepository _repository;
 
-	[AllowAnonymous]
-		[HttpGet]
-	public IActionResult Gets()
-	{
-		var iQueryable = _repository.GetAll();
-		var results = _mapper.ProjectTo<WarehouseListResponse>(iQueryable).ToList();
+    public WarehouseController(IWarehouseRepository repository, IMapper mapper)
+    {
+        _mapper = mapper;
+        _repository = repository;
+    }
 
-		return Ok(results);
-	}
+    [AllowAnonymous]
+    [HttpGet]
+    public IActionResult Gets()
+    {
+        var list = _repository.GetAll()
+            .OrderByDescending(x => x.IsDefault).ThenBy(x => x.Code);
+        var results = _mapper.ProjectTo<WarehouseListResponse>(list).ToList();
+        return Ok(results);
+    }
 
-	// [HttpGet("Warehouse{id:int}")]
-	[HttpGet("{id:int}")]
+    [AllowAnonymous]
+    [HttpGet("{id:int}")]
+    public IActionResult Get(int id)
+    {
+        var item = _repository.GetSingle(e => e.Id == id);
+        if (item == null) return NotFound($"Warehouse {id} not found");
+        return Ok(_mapper.Map<WarehouseListResponse>(item));
+    }
 
-	public IActionResult Get(int id)
-	{
-		var item = _repository.GetSingle(e => e.Id == id);
-		if (item == null)
-		{
-			return BadRequest($"Item not found {id}");
-		}
-		var result = _mapper.Map<WarehouseListResponse>(item);
-		return Ok(result);
-	}
-
+    [AllowAnonymous]
     [HttpPost]
     public IActionResult Create([FromBody] WarehouseListRequest request)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var err = Validate(request, null);
+        if (err != null) return BadRequest(err);
 
         var entity = _mapper.Map<Warehouse>(request);
+        entity.Code = request.Code.Trim();
+        entity.Name = request.Name.Trim();
+        entity.InActive = !request.IsActive;
         entity.CreatedAt = DateTime.UtcNow;
-        entity.InActive = false;
 
         _repository.Add(entity);
         _repository.Commit();
 
-		return Ok(new
-		{
-			message = "Planting saved successfully",
-			id = entity.Id
-		});
+        if (entity.IsDefault) { ClearOtherDefaults(entity.Id); _repository.Commit(); }
+
+        return Ok(new { id = entity.Id, code = entity.Code, message = "Warehouse created." });
     }
-// tubecoffee@kpt
 
+    [AllowAnonymous]
+    [HttpPut("{id:int}")]
+    public IActionResult Update(int id, [FromBody] WarehouseUpdateRequest request)
+    {
+        var item = _repository.GetSingle(e => e.Id == id);
+        if (item == null) return NotFound($"Warehouse {id} not found");
 
+        var err = Validate(request, id);
+        if (err != null) return BadRequest(err);
 
-	// [HttpPost]
-	// public IActionResult CreatWarehouse([FromForm] WarehouseListRequest request)
-	// {
-	// 	if (!ModelState.IsValid)
-	// 		return BadRequest(ModelState);
-	// 	var cow = _mapper.Map<Warehouse>(request);
-	// 	cow.CreatedAt = DateTime.UtcNow;
-	// 	cow.InActive = false;
-	// 	_repository.Add(cow);
-	// 	_repository.Commit();
-	// 	var response = _mapper.Map<WarehouseListResponse>(cow);
-	// 	return CreatedAtAction(nameof(Gets), new { id = response.Id}, response);
-	// }
-// 	[HttpPost]
-// public IActionResult CreatWarehouse([FromBody] WarehouseListRequest request)
-// {
-//     if (!ModelState.IsValid) return BadRequest(ModelState);
+        _mapper.Map(request, item);
+        item.Code = request.Code.Trim();
+        item.Name = request.Name.Trim();
+        item.InActive = !request.IsActive;
+        item.UpdatedAt = DateTime.UtcNow;
 
-//     if (request.HouseId.HasValue)
-//     {
-//         var exists = _houseRepository.GetAll().Any(h => h.Id == request.HouseId.Value);
-//         if (!exists) return BadRequest(new { message = "HouseId not found." });
-//     }
+        _repository.Update(item);
+        _repository.Commit();
 
-//     var entity = _mapper.Map<Warehouse>(request);
-//     entity.CreatedAt = DateTime.UtcNow;
-//     _repository.Add(entity);
-//     _repository.Commit();
-//     return CreatedAtAction(nameof(GetById), new { id = entity.Id }, entity);
-// }
+        if (item.IsDefault) { ClearOtherDefaults(item.Id); _repository.Commit(); }
 
+        return Ok(new { id = item.Id, message = "Warehouse updated." });
+    }
 
-	// [HttpPost]
-	// public IActionResult CreatWarehouse()
-	// {
+    [AllowAnonymous]
+    [HttpDelete("{id:int}")]
+    public IActionResult Delete(int id)
+    {
+        var item = _repository.GetSingle(e => e.Id == id);
+        if (item == null) return NotFound($"Warehouse {id} not found");
+        _repository.Remove(item);
+        _repository.Commit();
+        return NoContent();
+    }
 
-	// 	var existed = repository.Existed(e=> e.Id == request.Id);
-	// 	if(existed) return Existed(request.id);
-	// 	var item = mapper.Map<Warehouse>(request);
-	// 	item.CreatedAt = DateTime.UtcNow;
-    //     item.InActive = false;
-    //     // item.CreatedBy = GetClaim()!.Id;
-    //     repository.Add(item);
-    //     repository.Commit();
-    //     return Ok();
+    // Only one warehouse may be the default.
+    private void ClearOtherDefaults(int keepId)
+    {
+        foreach (var w in _repository.GetAll().Where(x => x.IsDefault && x.Id != keepId))
+        {
+            w.IsDefault = false;
+            _repository.Update(w);
+        }
+    }
 
-	// }
-
-	// [HttpPut("{id:int}")]
-	[HttpPut("{id}")]
-	public IActionResult Update(int id, [FromForm] WarehouseUpdateRequest request)
-	{
-		var item = _repository.GetSingle(e => e.Id == id);
-
-		if (item == null)
-			return NotFound($"Item not found: {id}");
-
-		_mapper.Map(request, item);
-
-		item.UpdatedAt = DateTime.UtcNow;
-
-		_repository.Update(item);
-		_repository.Commit();
-
-		return NoContent();
-	}
-
-	[HttpDelete]
-	public IActionResult Delete(int id)
-	{
-		var item = _repository.GetSingle(e => e.Id == id);
-		if (item == null)
-		{
-			return BadRequest($"Item not found {id}");
-		}
-		item.DeletedAt = DateTime.UtcNow;
-		// item.DeletedBy = GetClaim()!.Id;
-		_repository.Remove(item);
-		_repository.Commit();
-		return NoContent();
-	}
-
+    private string? Validate(WarehouseListRequest r, int? ignoreId)
+    {
+        if (string.IsNullOrWhiteSpace(r.Code)) return "Warehouse Code is required.";
+        if (string.IsNullOrWhiteSpace(r.Name)) return "Warehouse Name is required.";
+        var code = r.Code.Trim().ToLowerInvariant();
+        var clash = _repository.GetAll().AsEnumerable()
+            .Any(x => x.Code.ToLowerInvariant() == code && x.Id != ignoreId);
+        if (clash) return $"Warehouse Code \"{r.Code}\" already exists.";
+        return null;
+    }
 }

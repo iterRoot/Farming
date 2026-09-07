@@ -10,6 +10,7 @@ public class APDownPaymentInvoiceRequest
     public DateTime? PostingDate { get; set; }
     public DateTime? DueDate     { get; set; }
     public string    Status      { get; set; } = "O";
+    public string    Type        { get; set; } = "Item";
     public decimal   Total       { get; set; }
     public string?   Remarks     { get; set; }
     public int?      BaseEntry   { get; set; }   // ✅ FK to APDownPaymentRequest
@@ -28,6 +29,7 @@ public class APDownPaymentInvoiceResponse
     public DateTime? PostingDate { get; set; }
     public DateTime? DueDate    { get; set; }
     public string    Status     { get; set; } = "O";
+    public string    Type        { get; set; } = "Item";
     public decimal   Total      { get; set; }
     public string?   Remarks    { get; set; }
     public DateTime  CreatedAt  { get; set; }

@@ -13,6 +13,7 @@ public class BarCode : AuditableEntity
     public string   ItemNo          { get; set; } = null!;   // Item Master code
     public string?  ItemDescription { get; set; }             // Auto-filled from item
     public string?  UoMGroup        { get; set; }             // Unit of Measure Group
+    public string   BarCodeType     { get; set; } = "Sale";  // Sale | Purchase | Inventory
     public int      VersionNum      { get; set; } = 1;
 
     // Navigation
@@ -47,11 +48,13 @@ public class BarCodeConfig : IEntityTypeConfiguration<BarCode>
         builder.HasKey(x => x.Id);
 
         builder.Property(m => m.ItemNo).HasMaxLength(50).IsRequired();
-        builder.HasIndex(m => m.ItemNo).IsUnique();
         builder.Property(m => m.ItemDescription).HasMaxLength(200);
         builder.Property(m => m.UoMGroup).HasMaxLength(50);
+        builder.Property(m => m.BarCodeType).HasMaxLength(20).HasDefaultValue("Sale").IsRequired();
         builder.Property(m => m.VersionNum).HasDefaultValue(1);
 
+        // One barcode record per item PER type (Sale / Purchase / Inventory)
+        builder.HasIndex(m => new { m.ItemNo, m.BarCodeType }).IsUnique();
         builder.HasIndex(m => m.ItemNo);
     }
 }

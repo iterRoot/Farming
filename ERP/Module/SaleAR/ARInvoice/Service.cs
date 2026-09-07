@@ -2,40 +2,18 @@ using FarmingApi.Modules.Financials.GLAccountDetermination;
 using FarmingApi.Modules.Financials.JournalEntry;
 
 using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
-
 namespace FarmingApi.Modules.SaleAR.ARInvoice;
-
-// ═══════════════════════════════════════════════════════════════════
-// AR INVOICE JOURNAL SERVICE
-// Auto-creates a Journal Entry when an AR Invoice is created.
-//
-//   DR  Accounts Receivable    Total (incl. tax)
-//   CR  Sales Revenue          Total - TaxAmount
-//   CR  Output VAT             TaxAmount (only if > 0)
-//
-// Uses MyDbContext directly (not repository) so it participates
-// in the SAME transaction as the AR Invoice save.
-// ═══════════════════════════════════════════════════════════════════
-
 public interface IARInvoiceJournalService
 {
-    /// <summary>
-    /// Creates a JournalEntry + Lines in the DbContext (without calling SaveChanges).
-    /// The caller is responsible for committing the transaction.
-    /// Returns the JournalEntry entity (Id populated after SaveChanges).
-    /// </summary>
     JournalEntry CreateJournalEntry(ARInvoice invoice, BPEntity customer);
 }
-
 public class ARInvoiceJournalService : IARInvoiceJournalService
 {
     private readonly MyDbContext _db;
-
     public ARInvoiceJournalService(MyDbContext db)
     {
         _db = db;
     }
-
     public JournalEntry CreateJournalEntry(ARInvoice invoice, BPEntity customer)
     {
         // ── 1. Load KGLD row ──────────────────────────────────────

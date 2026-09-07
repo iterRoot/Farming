@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi;
 using FarmingApi.Modules.Inventory.ItemsMaster;
+using QuestPDF.Fluent;
+using FarmingApi.Modules.Administration.DocumentNumberRange;
 using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using CompanyEntity = FarmingApi.Modules.Company.Company;
 
 namespace FarmingApi.Modules.PurchaseAP.PurchaseQuotation;
 
@@ -13,10 +16,12 @@ public class PurchaseQuotationController : ControllerBase
 {
     private readonly MyDbContext _db;
     private readonly IMapper     _mapper;
+    private readonly IDocumentNumberRangeRepository _docNums;
 
-    public PurchaseQuotationController(MyDbContext db, IMapper mapper)
+    public PurchaseQuotationController(MyDbContext db, IMapper mapper,
+                                       IDocumentNumberRangeRepository docNums)
     {
-        _db = db; _mapper = mapper;
+        _db = db; _mapper = mapper; _docNums = docNums;
     }
 
     // ── GET /PurchaseQuotation ─────────────────────────────────────────────
@@ -55,6 +60,18 @@ public class PurchaseQuotationController : ControllerBase
         if (vendor == null) return BadRequest($"Vendor {dto.VendorId} not found");
 
         var pq = _mapper.Map<PurchaseQuotation>(dto);
+
+        // The document number is assigned here, never taken from the client.
+        // The screen only ever shows a peeked preview; reserving on save is
+        // what stops two quotations claiming the same number.
+        try
+        {
+            pq.DocNum = _docNums.GenerateNextNumber("PurchaseQuotation").DocNo;
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
 
         foreach (var line in pq.Items)
         {
@@ -102,6 +119,23 @@ public class PurchaseQuotationController : ControllerBase
 
         await _db.SaveChangesAsync();
         return NoContent();
+    }
+
+    // ── GET /PurchaseQuotation/{id}/Pdf ─────────────────────────────────────
+    [HttpGet("{id:int}/Pdf")]
+    public async Task<IActionResult> GetPdf(int id)
+    {
+        var pq = await _db.Set<PurchaseQuotation>()
+            .Include(x => x.Vendor)
+            .Include(x => x.Items).ThenInclude(l => l.Item)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (pq == null) return NotFound();
+
+        var company = await _db.Set<CompanyEntity>().OrderBy(x => x.Id).FirstOrDefaultAsync();
+        var pdfBytes = new PurchaseQuotationPdfDocument(pq, company).GeneratePdf();
+
+        return File(pdfBytes, "application/pdf", $"{pq.DocNum}.pdf");
     }
 
     // ── DELETE /PurchaseQuotation/{id} ─────────────────────────────────────

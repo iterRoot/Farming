@@ -41,6 +41,11 @@ public class ARDownPaymentListResponse  // ✅ renamed
     public decimal   Total       { get; set; }
     public string?   Remarks     { get; set; }
     public DateTime  CreatedAt   { get; set; }
+
+    // Auto-created Journal Entry (DR AR / CR Customer Deposit).
+    public int?      JournalEntryId { get; set; }
+    public string?   JournalNo      { get; set; }
+
     public int     CustomerId   { get; set; }
     public string  CustomerCode { get; set; } = "";
     public string  CustomerName { get; set; } = "";

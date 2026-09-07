@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi;
 using FarmingApi.Modules.Inventory.ItemsMaster;  // ✅ your namespace
+using FarmingApi.Modules.InventoryManagement.InventoryJournal;
+using FarmingApi.Services;
 
 using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
@@ -14,11 +16,19 @@ public class ReturnController : ControllerBase  // ✅ ReturnController
 {
     private readonly MyDbContext _db;
     private readonly IMapper     _mapper;
+    private readonly IInventoryPostingService _inventoryPosting;
+    private readonly IDocumentNumberService _docNumber;
 
-    public ReturnController(MyDbContext db, IMapper mapper)
+    public ReturnController(
+        MyDbContext db,
+        IMapper mapper,
+        IInventoryPostingService inventoryPosting,
+        IDocumentNumberService docNumber)
     {
         _db     = db;
         _mapper = mapper;
+        _inventoryPosting = inventoryPosting;
+        _docNumber = docNumber;
     }
 
     // ── GET /Return ─────────────────────────────────────────────────────
@@ -60,6 +70,11 @@ public class ReturnController : ControllerBase  // ✅ ReturnController
 
         var Return = _mapper.Map<Return>(dto);
 
+        // Auto-assign the document number (server-side, race-safe) — same as
+        // every other Sale A/R document.
+        try { Return.DocNum = _docNumber.Next("Return"); }
+        catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
+
         foreach (var line in Return.Items)
         {
             var item = await _db.Set<ItemsMaster>()
@@ -69,10 +84,37 @@ public class ReturnController : ControllerBase  // ✅ ReturnController
 
             line.ItemCode = item.ItemCode;
             line.ItemName = item.ItemName;
+
+            // Blank warehouse falls back to the default; an unknown one is rejected.
+            try { line.WhsCode = await _inventoryPosting.ResolveWarehouseCodeAsync(line.WhsCode); }
+            catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
         }
 
-        _db.Set<Return>().Add(Return);
-        await _db.SaveChangesAsync();
+        // The return and its stock movement must commit together, or neither.
+        await using var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            _db.Set<Return>().Add(Return);
+            await _db.SaveChangesAsync();       // Return.Id populated
+
+            // Goods physically come back into stock, at current average cost.
+            var stockDate = Return.PostingDate ?? DateTime.UtcNow;
+            foreach (var line in Return.Items)
+            {
+                await _inventoryPosting.PostReturnInAsync(
+                    line.ItemCode!, line.WhsCode!, line.Quantity,
+                    "Return", "Return", Return.Id, Return.DocNum, stockDate,
+                    customer.Code, customer.CardName);
+            }
+
+            await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            return BadRequest(ex.InnerException?.Message ?? ex.Message);
+        }
 
         var created = await _db.Set<Return>()
             .Include(x => x.Customer)
@@ -110,6 +152,9 @@ public class ReturnController : ControllerBase  // ✅ ReturnController
 
             line.ItemCode = item.ItemCode;
             line.ItemName = item.ItemName;
+
+            try { line.WhsCode = await _inventoryPosting.ResolveWarehouseCodeAsync(line.WhsCode); }
+            catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
         }
 
         await _db.SaveChangesAsync();

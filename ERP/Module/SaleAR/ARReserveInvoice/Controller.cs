@@ -3,9 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi;
 using FarmingApi.Modules.Inventory.ItemsMaster;
+using FarmingApi.Modules.Financials.JournalEntry;
+using FarmingApi.Services;
+using QuestPDF.Fluent;
 
 // ✅ Alias for BP entity
 using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using CompanyEntity = FarmingApi.Modules.Company.Company;
 
 namespace FarmingApi.Modules.SaleAR.ARReserveInvoice;
 
@@ -15,11 +19,19 @@ public class ARReserveInvoiceController : ControllerBase
 {
     private readonly MyDbContext _db;
     private readonly IMapper     _mapper;
+    private readonly IDocumentNumberService _docNumber;
+    private readonly IARReserveInvoiceJournalService _journalService;
 
-    public ARReserveInvoiceController(MyDbContext db, IMapper mapper)
+    public ARReserveInvoiceController(
+        MyDbContext db,
+        IMapper mapper,
+        IDocumentNumberService docNumber,
+        IARReserveInvoiceJournalService journalService)
     {
         _db     = db;
         _mapper = mapper;
+        _docNumber = docNumber;
+        _journalService = journalService;
     }
 
     // ── GET /ARReserveInvoice ────────────────────────────────────────────────────
@@ -62,6 +74,10 @@ public class ARReserveInvoiceController : ControllerBase
 
         var invoice = _mapper.Map<ARReserveInvoice>(dto);
 
+        // Auto-assign the document number (server-side, race-safe).
+        try { invoice.DocNum = _docNumber.Next("ArReserveInvoice"); }
+        catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
+
         // Auto-fill ItemCode / ItemName from ItemsMaster
         foreach (var line in invoice.Items)
         {
@@ -74,16 +90,41 @@ public class ARReserveInvoiceController : ControllerBase
             line.ItemName = item.ItemName;
         }
 
-        _db.Set<ARReserveInvoice>().Add(invoice);
-        await _db.SaveChangesAsync();
+        // Save the invoice + its Journal Entry in one transaction —
+        // DR Accounts Receivable / CR Revenue / CR Output VAT.
+        int?    jeId = null;
+        string? jeNo = null;
+
+        await using var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            _db.Set<ARReserveInvoice>().Add(invoice);
+            await _db.SaveChangesAsync();           // invoice.Id populated
+
+            var je = _journalService.CreateJournalEntry(invoice, customer);
+            je.BaseDocEntry = invoice.Id;
+            await _db.SaveChangesAsync();
+            jeId = je.Id;
+            jeNo = je.JrnlNo;
+
+            await transaction.CommitAsync();
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            return BadRequest(ex.InnerException?.Message ?? ex.Message);
+        }
 
         var created = await _db.Set<ARReserveInvoice>()
             .Include(x => x.Customer)
             .Include(x => x.Items).ThenInclude(l => l.Item)
             .FirstAsync(x => x.Id == invoice.Id);
 
-        return CreatedAtAction(nameof(GetById), new { id = invoice.Id },
-            _mapper.Map<ARReserveInvoiceResponse>(created));
+        var response = _mapper.Map<ARReserveInvoiceResponse>(created);
+        response.JournalEntryId = jeId;
+        response.JournalNo       = jeNo;
+
+        return CreatedAtAction(nameof(GetById), new { id = invoice.Id }, response);
     }
 
     // ── PUT /ARReserveInvoice/{id} ───────────────────────────────────────────────
@@ -117,6 +158,26 @@ public class ARReserveInvoiceController : ControllerBase
 
         await _db.SaveChangesAsync();
         return NoContent();
+    }
+
+    // ── GET /ARReserveInvoice/{id}/Pdf ────────────────────────────────────────────
+    [HttpGet("{id:int}/Pdf")]
+    public async Task<IActionResult> GetPdf(int id)
+    {
+        var invoice = await _db.Set<ARReserveInvoice>()
+            .Include(x => x.Customer)
+            .Include(x => x.Items).ThenInclude(l => l.Item)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (invoice == null) return NotFound();
+
+        var company = await _db.Set<CompanyEntity>()
+            .OrderBy(x => x.Id)
+            .FirstOrDefaultAsync();
+
+        var pdfBytes = new ARReserveInvoicePdfDocument(invoice, company).GeneratePdf();
+
+        return File(pdfBytes, "application/pdf", $"{invoice.DocNum}.pdf");
     }
 
     // ── DELETE /ARReserveInvoice/{id} ────────────────────────────────────────────

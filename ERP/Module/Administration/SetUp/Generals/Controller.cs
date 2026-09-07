@@ -93,11 +93,13 @@ public class UserGroupController : ControllerBase
     public IActionResult Create([FromBody] UserGroupRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        if (_repo.GetAll().Any(x => x.Code == dto.Code.Trim()))
-            return BadRequest($"Group code '{dto.Code}' already exists");
+
+        var code = dto.Code.Trim().ToUpper();
+        if (_repo.GetAll().Any(x => x.Code == code))
+            return BadRequest($"Group code '{code}' already exists");
 
         var entity       = _mapper.Map<UserGroup>(dto);
-        entity.Code      = dto.Code.Trim().ToUpper();
+        entity.Code      = code;
         entity.CreatedAt = DateTime.UtcNow;
         entity.InActive  = false;
         _repo.Add(entity);
@@ -116,13 +118,15 @@ public class UserGroupController : ControllerBase
         if (entity == null) return NotFound();
         if (entity.GroupType == "System")
             return BadRequest("System groups cannot be modified");
-        if (_repo.GetAll().Any(x => x.Code == dto.Code.Trim() && x.Id != id))
-            return BadRequest($"Group code '{dto.Code}' already exists");
+
+        var code = dto.Code.Trim().ToUpper();
+        if (_repo.GetAll().Any(x => x.Code == code && x.Id != id))
+            return BadRequest($"Group code '{code}' already exists");
 
         _db.RemoveRange(entity.Members);
         _db.RemoveRange(entity.Permissions);
         _mapper.Map(dto, entity);
-        entity.Code      = dto.Code.Trim().ToUpper();
+        entity.Code      = code;
         entity.UpdatedAt = DateTime.UtcNow;
         _repo.Update(entity);
         _repo.Commit();

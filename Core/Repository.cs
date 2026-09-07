@@ -12,6 +12,8 @@ public interface IRepository<T> where T : Entity
 
     T? GetSingle(Expression<Func<T, bool>> predicate);
 
+    // T? GetById(Expression<Func<T,bool>> predicate);
+
     IQueryable<T> FindBy(Expression<Func<T, bool>> predicate);
     void Add(T entity);
 

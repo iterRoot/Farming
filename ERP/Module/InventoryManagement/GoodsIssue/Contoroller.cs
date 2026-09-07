@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using FarmingApi.Core;
 using FarmingApi.Services;
 using FarmingApi;
+using FarmingApi.Modules.InventoryManagement.InventoryJournal;
 
 // ✅ Aliases — avoids namespace/class name conflict
 using ItemsMasterEntity = FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster;
@@ -18,17 +19,20 @@ public class GoodsIssueController : MyController
     private readonly IMapper                _mapper;
     private readonly IDocumentNumberService _docNumber;
     private readonly MyDbContext            _db;
+    private readonly IInventoryPostingService _inventoryPosting;
 
     public GoodsIssueController(
         IGoodsIssueRepository  repository,
         IMapper                mapper,
         IDocumentNumberService docNumber,
-        MyDbContext            db)
+        MyDbContext            db,
+        IInventoryPostingService inventoryPosting)
     {
         _repository = repository;
         _mapper     = mapper;
         _docNumber  = docNumber;
         _db         = db;
+        _inventoryPosting = inventoryPosting;
     }
 
     // ── GET /GoodsIssue ───────────────────────────────────────
@@ -102,6 +106,18 @@ public class GoodsIssueController : MyController
 
         _repository.Add(entity);
         _repository.Commit();
+
+        // Track each issued line in the Inventory Journal (default warehouse).
+        var whs = await _inventoryPosting.ResolveWarehouseCodeAsync(null);
+        var postDate = entity.PostingDate == default ? DateTime.UtcNow : entity.PostingDate;
+        foreach (var line in entity.Lines)
+        {
+            await _inventoryPosting.PostOutAsync(
+                line.ItemCode, whs, line.Qty,
+                "Goods Issue", "GoodsIssue", entity.Id, docNo, postDate,
+                entity.CustomerCode, entity.CustomerName);
+        }
+        await _db.SaveChangesAsync();
 
         return Ok(new { message = "Goods Issue saved successfully", id = entity.Id, docNo = entity.DocNo });
     }

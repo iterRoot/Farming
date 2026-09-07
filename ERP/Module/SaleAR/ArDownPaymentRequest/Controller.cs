@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi;
 using FarmingApi.Modules.Inventory.ItemsMaster;
+using FarmingApi.Services;
+using QuestPDF.Fluent;
 using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using CompanyEntity = FarmingApi.Modules.Company.Company;
 
 namespace FarmingApi.Modules.SaleAR.ArDownPaymentRequest;
 
@@ -13,10 +16,11 @@ public class ArDownPaymentRequestController : ControllerBase
 {
     private readonly MyDbContext _db;
     private readonly IMapper     _mapper;
+    private readonly IDocumentNumberService _docNumber;
 
-    public ArDownPaymentRequestController(MyDbContext db, IMapper mapper)
+    public ArDownPaymentRequestController(MyDbContext db, IMapper mapper, IDocumentNumberService docNumber)
     {
-        _db = db; _mapper = mapper;
+        _db = db; _mapper = mapper; _docNumber = docNumber;
     }
 
     // ── GET /ArDownPaymentRequest ─────────────────────────────────────────
@@ -55,6 +59,10 @@ public class ArDownPaymentRequestController : ControllerBase
         if (customer == null) return BadRequest($"Customer {dto.CustomerId} not found");
 
         var dp = _mapper.Map<ArDownPaymentRequest>(dto);
+
+        // Auto-assign the document number (server-side, race-safe).
+        try { dp.DocNum = _docNumber.Next("ArDownPaymentRequest"); }
+        catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
 
         foreach (var line in dp.Items)
         {
@@ -102,6 +110,26 @@ public class ArDownPaymentRequestController : ControllerBase
 
         await _db.SaveChangesAsync();
         return NoContent();
+    }
+
+    // ── GET /ArDownPaymentRequest/{id}/Pdf ────────────────────────────────
+    [HttpGet("{id:int}/Pdf")]
+    public async Task<IActionResult> GetPdf(int id)
+    {
+        var dp = await _db.Set<ArDownPaymentRequest>()
+            .Include(x => x.Customer)
+            .Include(x => x.Items).ThenInclude(l => l.Item)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (dp == null) return NotFound();
+
+        var company = await _db.Set<CompanyEntity>()
+            .OrderBy(x => x.Id)
+            .FirstOrDefaultAsync();
+
+        var pdfBytes = new ArDownPaymentRequestPdfDocument(dp, company).GeneratePdf();
+
+        return File(pdfBytes, "application/pdf", $"{dp.DocNum}.pdf");
     }
 
     // ── DELETE /ArDownPaymentRequest/{id} ─────────────────────────────────

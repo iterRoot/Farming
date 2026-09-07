@@ -10,6 +10,7 @@ public class APInvoiceRequest
     public DateTime? PostingDate { get; set; }
     public DateTime? DueDate     { get; set; }
     public string    Status      { get; set; } = "O";
+    public string    Type        { get; set; } = "Item";
     public decimal   Discount    { get; set; }
     public decimal   Tax         { get; set; }
     public decimal   TaxAmount   { get; set; }
@@ -22,6 +23,8 @@ public class APInvoiceRequest
 public class APInvoiceLineRequest
 {
     public int     ItemId    { get; set; }
+    /// <summary>Optional — falls back to the default warehouse when omitted.</summary>
+    public string? WhsCode   { get; set; }
     public decimal Quantity  { get; set; }
     public decimal Price     { get; set; }
     public decimal Total     { get; set; }
@@ -41,6 +44,7 @@ public class APInvoiceResponse
     public DateTime? PostingDate { get; set; }
     public DateTime? DueDate    { get; set; }
     public string    Status     { get; set; } = "O";
+    public string    Type        { get; set; } = "Item";
     public decimal   Discount   { get; set; }
     public decimal   Tax        { get; set; }
     public decimal   TaxAmount  { get; set; }
@@ -61,6 +65,7 @@ public class APInvoiceLineResponse
     public int     ItemId    { get; set; }
     public string  ItemCode  { get; set; } = "";
     public string? ItemName  { get; set; }
+    public string? WhsCode   { get; set; }
     public decimal Quantity  { get; set; }
     public decimal Price     { get; set; }
     public decimal Total     { get; set; }

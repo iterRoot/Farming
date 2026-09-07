@@ -13,9 +13,11 @@ public static class DocTypes
         new("SaleQuotation",         "SQ",  "Sale Quotation",          "🛒 Sale-AR"),
         new("SaleOrder",             "SO",  "Sale Order",              "🛒 Sale-AR"),
         new("Delivery",              "DN",  "Delivery Note",           "🛒 Sale-AR"),
+        new("Return",                "RTN", "Return",                  "🛒 Sale-AR"),
         new("ArInvoice",             "ARI", "AR Invoice",              "🛒 Sale-AR"),
         new("ArCreditNote",          "ARCN","AR Credit Note",          "🛒 Sale-AR"),
         new("ArDownPaymentInvoice",  "ARDP","AR Down Payment",         "🛒 Sale-AR"),
+        new("ArDownPaymentRequest",  "ARDR","AR Down Payment Request", "🛒 Sale-AR"),
         new("ArReserveInvoice",      "ARRI","AR Reserve Invoice",      "🛒 Sale-AR"),
         // ── Purchase-AP ───────────────────────────────────────────
         new("PurchaseBlanketAgreement", "PBA", "Purchase Blanket Agreement", "🏭 Purchase-AP"), // ✅ ADD

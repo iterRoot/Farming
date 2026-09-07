@@ -41,11 +41,13 @@ public class ShippingTypeController : ControllerBase
     public IActionResult Create([FromBody] ShippingTypeRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        if (_repository.GetAll().Any(x => x.Code == dto.Code.Trim()))
-            return BadRequest($"Shipping type code '{dto.Code}' already exists");
+
+        var code = dto.Code.Trim().ToUpper();
+        if (_repository.GetAll().Any(x => x.Code == code))
+            return BadRequest($"Shipping type code '{code}' already exists");
 
         var entity       = _mapper.Map<ShippingType>(dto);
-        entity.Code      = dto.Code.Trim().ToUpper();
+        entity.Code      = code;
         entity.CreatedAt = DateTime.UtcNow;
         entity.InActive  = false;
         _repository.Add(entity);
@@ -58,11 +60,13 @@ public class ShippingTypeController : ControllerBase
     {
         var entity = _repository.GetSingle(x => x.Id == id);
         if (entity == null) return NotFound();
-        if (_repository.GetAll().Any(x => x.Code == dto.Code.Trim() && x.Id != id))
-            return BadRequest($"Shipping type code '{dto.Code}' already exists");
+
+        var code = dto.Code.Trim().ToUpper();
+        if (_repository.GetAll().Any(x => x.Code == code && x.Id != id))
+            return BadRequest($"Shipping type code '{code}' already exists");
 
         _mapper.Map(dto, entity);
-        entity.Code      = dto.Code.Trim().ToUpper();
+        entity.Code      = code;
         entity.UpdatedAt = DateTime.UtcNow;
         _repository.Update(entity);
         _repository.Commit();

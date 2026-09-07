@@ -26,7 +26,7 @@ public class DocumentNumberRange : AuditableEntity
     // ── Format ────────────────────────────────────────────────────
     public string   Prefix          { get; set; } = null!;   // "SO", "ARI", etc.
     public bool     IncludeYear     { get; set; } = true;    // SO-2026-XXXXX
-    public int      PadLength       { get; set; } = 5;       // zero-padding digits
+    public int      PadLength       { get; set; } = 8;       // zero-padding digits
 
     // ── Range ─────────────────────────────────────────────────────
     public int      FirstNum        { get; set; } = 1;       // starting number
@@ -51,7 +51,7 @@ public class DocumentNumberRangeConfig : IEntityTypeConfiguration<DocumentNumber
         builder.Property(m => m.DocumentTypeCode).HasMaxLength(10).IsRequired();
         builder.Property(m => m.SeriesName).HasMaxLength(50).HasDefaultValue("Primary");
         builder.Property(m => m.Prefix).HasMaxLength(20).IsRequired();
-        builder.Property(m => m.PadLength).HasDefaultValue(5);
+        builder.Property(m => m.PadLength).HasDefaultValue(8);
         builder.Property(m => m.FirstNum).HasDefaultValue(1);
         builder.Property(m => m.NextNum).HasDefaultValue(1);
         builder.Property(m => m.Remarks).HasMaxLength(200);

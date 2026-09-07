@@ -10,6 +10,7 @@ public class SaleOrderListRequest
     public DateTime? PostingDate  { get; set; }
     public DateTime? DeliveryDate { get; set; }
     public string    Status       { get; set; } = "O";  // O=Open, C=Closed, D=Draft
+    public string    Type         { get; set; } = "Item"; // Item | Service
     public decimal   Discount     { get; set; }
     public decimal   Tax          { get; set; }
     public decimal   TaxAmount    { get; set; }
@@ -40,6 +41,7 @@ public class SaleOrderListResponse
     public DateTime? PostingDate  { get; set; }
     public DateTime? DeliveryDate { get; set; }
     public string    Status       { get; set; } = "O";
+    public string    Type         { get; set; } = "Item";
     public decimal   Discount     { get; set; }
     public decimal   Tax          { get; set; }
     public decimal   TaxAmount    { get; set; }

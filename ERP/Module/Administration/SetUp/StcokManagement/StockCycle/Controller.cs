@@ -43,11 +43,13 @@ public class StockCycleController : ControllerBase
     public IActionResult Create([FromBody] StockCycleRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        if (_repository.GetAll().Any(x => x.Code == dto.Code.Trim()))
-            return BadRequest($"Stock cycle code '{dto.Code}' already exists");
+
+        var code = dto.Code.Trim().ToUpper();
+        if (_repository.GetAll().Any(x => x.Code == code))
+            return BadRequest($"Stock cycle code '{code}' already exists");
 
         var entity       = _mapper.Map<StockCycle>(dto);
-        entity.Code      = dto.Code.Trim().ToUpper();
+        entity.Code      = code;
         entity.CreatedAt = DateTime.UtcNow;
         entity.InActive  = false;
         _repository.Add(entity);
@@ -62,12 +64,14 @@ public class StockCycleController : ControllerBase
         if (entity == null) return NotFound();
         if (entity.Status == "Completed")
             return BadRequest("Cannot edit a Completed stock cycle");
-        if (_repository.GetAll().Any(x => x.Code == dto.Code.Trim() && x.Id != id))
-            return BadRequest($"Stock cycle code '{dto.Code}' already exists");
+
+        var code = dto.Code.Trim().ToUpper();
+        if (_repository.GetAll().Any(x => x.Code == code && x.Id != id))
+            return BadRequest($"Stock cycle code '{code}' already exists");
 
         var existingCompleted = entity.CompletedDate;
         _mapper.Map(dto, entity);
-        entity.Code          = dto.Code.Trim().ToUpper();
+        entity.Code          = code;
         entity.CompletedDate = existingCompleted;
         entity.UpdatedAt     = DateTime.UtcNow;
         _repository.Update(entity);

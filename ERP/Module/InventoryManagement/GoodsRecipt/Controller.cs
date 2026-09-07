@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using FarmingApi.Core;
 using FarmingApi.Services;
 using FarmingApi;
+using FarmingApi.Modules.InventoryManagement.InventoryJournal;
 // ✅ Alias to avoid conflict between namespace and class both named ItemsMaster
 using ItemsMasterEntity = FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster;
 using BPEntity          = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
@@ -17,17 +18,20 @@ public class GoodsReceiptController : MyController
     private readonly IMapper                 _mapper;
     private readonly IDocumentNumberService  _docNumber;
     private readonly MyDbContext             _db;
+    private readonly IInventoryPostingService _inventoryPosting;
 
     public GoodsReceiptController(
         IGoodsReceiptRepository repository,
         IMapper                 mapper,
         IDocumentNumberService  docNumber,
-        MyDbContext             db)
+        MyDbContext             db,
+        IInventoryPostingService inventoryPosting)
     {
         _repository = repository;
         _mapper     = mapper;
         _docNumber  = docNumber;
         _db         = db;
+        _inventoryPosting = inventoryPosting;
     }
 
     // ── GET /GoodsReceipt ──────────────────────────────────────
@@ -104,6 +108,18 @@ public class GoodsReceiptController : MyController
 
         _repository.Add(entity);
         _repository.Commit();
+
+        // Track each received line in the Inventory Journal (default warehouse).
+        var whs = await _inventoryPosting.ResolveWarehouseCodeAsync(null);
+        var postDate = entity.PostingDate == default ? DateTime.UtcNow : entity.PostingDate;
+        foreach (var line in entity.Lines)
+        {
+            await _inventoryPosting.PostInAsync(
+                line.ItemCode, whs, line.Qty, line.Price,
+                "Goods Receipt", "GoodsReceipt", entity.Id, docNo, postDate,
+                entity.CustomerCode, entity.CustomerName);
+        }
+        await _db.SaveChangesAsync();
 
         return Ok(new { message = "Goods Receipt saved successfully", id = entity.Id, docNo });
     }

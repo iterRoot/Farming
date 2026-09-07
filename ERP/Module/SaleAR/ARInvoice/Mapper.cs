@@ -21,9 +21,12 @@ public class ARInvoiceMapper : Profile
             .ForMember(dest => dest.CustomerId,   opt => opt.MapFrom(src => src.CustomerId))
             .ForMember(dest => dest.CustomerCode, opt => opt.MapFrom(src => src.Customer.Code))
             .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.CardName))
-            .ForMember(dest => dest.Items,        opt => opt.MapFrom(src => src.Items));
+            .ForMember(dest => dest.Items,        opt => opt.MapFrom(src => src.Items))
+            .ForMember(dest => dest.Attachments,  opt => opt.MapFrom(src => src.Attachments));
 
         CreateMap<ARInvoiceLine, ARInvoiceLineResponse>();
+
+        CreateMap<ARInvoiceAttachment, ARInvoiceAttachmentResponse>();
 
         // ── Update ────────────────────────────────────────────────────────
         CreateMap<ARInvoiceUpdateRequest, ARInvoice>()

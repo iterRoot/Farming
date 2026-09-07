@@ -18,6 +18,7 @@ public class PurchaseQuotation : AuditableEntity
     public DateTime? PostingDate { get; set; }
     public DateTime? DueDate     { get; set; }
     public string    Status      { get; set; } = "O";   // O=Open, C=Closed
+    public string    Type        { get; set; } = "Item"; // Item | Service
     public decimal   Discount    { get; set; }
     public decimal   Tax         { get; set; }
     public decimal   TaxAmount   { get; set; }
@@ -67,7 +68,13 @@ public class PurchaseQuotationConfig : IEntityTypeConfiguration<PurchaseQuotatio
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.DocNum).HasMaxLength(100).IsRequired();
+
+        // Document numbers come from the reserved series, so a collision
+        // means a bug in reservation — fail loudly rather than silently
+        // storing two documents under one number.
+        builder.HasIndex(x => x.DocNum).IsUnique();
         builder.Property(x => x.Status).HasMaxLength(10);
+        builder.Property(x => x.Type).HasMaxLength(50);
         builder.Property(x => x.Remarks).HasMaxLength(500);
         builder.Property(x => x.Discount).HasPrecision(18, 2);
         builder.Property(x => x.Tax).HasPrecision(18, 2);

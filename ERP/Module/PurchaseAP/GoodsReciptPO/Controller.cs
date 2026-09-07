@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi;
 using FarmingApi.Modules.Inventory.ItemsMaster;
+using FarmingApi.Modules.InventoryManagement.InventoryJournal;
+using QuestPDF.Fluent;
 using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using CompanyEntity = FarmingApi.Modules.Company.Company;
 
 namespace FarmingApi.Modules.PurchaseAP.GoodsReceiptPO;
 
@@ -14,13 +17,16 @@ public class GoodsReceiptPOController : ControllerBase
     private readonly MyDbContext _db;
     private readonly IMapper     _mapper;
     private readonly IGoodsReceiptPOJournalService _journalService;
+    private readonly IInventoryPostingService _inventoryPosting;
 
     public GoodsReceiptPOController(
         MyDbContext db,
         IMapper mapper,
-        IGoodsReceiptPOJournalService journalService)
+        IGoodsReceiptPOJournalService journalService,
+        IInventoryPostingService inventoryPosting)
     {
         _db = db; _mapper = mapper; _journalService = journalService;
+        _inventoryPosting = inventoryPosting;
     }
 
     // ── GET /GoodsReceiptPO ─────────────────────────────────────────────
@@ -88,7 +94,18 @@ public class GoodsReceiptPOController : ControllerBase
             // Link back now that gr.Id exists
             je.BaseDocEntry = gr.Id;
 
-            // ── Step 3: Save Journal Entry ────────────────────────
+            // ── Step 2b: Post stock in — one InventoryJournal row per line ──
+            var whsCode = await _inventoryPosting.GetDefaultWarehouseCodeAsync();
+            var stockDate = gr.PostingDate ?? gr.DocDate ?? DateTime.UtcNow;
+            foreach (var line in gr.Lines)
+            {
+                await _inventoryPosting.PostInAsync(
+                    line.ItemCode!, whsCode, line.Quantity, line.Price,
+                    "Goods Receipt PO", "GoodsReceiptPO", gr.Id, gr.DocNum, stockDate,
+                    vendor.Code, vendor.CardName);
+            }
+
+            // ── Step 3: Save Journal Entry + Inventory Journal ────
             await _db.SaveChangesAsync();
 
             // ── Step 4: Commit — both GRPO + JE are final ─────────
@@ -158,6 +175,23 @@ public class GoodsReceiptPOController : ControllerBase
 
         await _db.SaveChangesAsync();
         return NoContent();
+    }
+
+    // ── GET /GoodsReceiptPO/{id}/Pdf ─────────────────────────────────────
+    [HttpGet("{id:int}/Pdf")]
+    public async Task<IActionResult> GetPdf(int id)
+    {
+        var gr = await _db.Set<GoodsReceiptPO>()
+            .Include(x => x.Vendor)
+            .Include(x => x.Lines).ThenInclude(l => l.Item)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (gr == null) return NotFound();
+
+        var company = await _db.Set<CompanyEntity>().OrderBy(x => x.Id).FirstOrDefaultAsync();
+        var pdfBytes = new GoodsReceiptPOPdfDocument(gr, company).GeneratePdf();
+
+        return File(pdfBytes, "application/pdf", $"{gr.DocNum}.pdf");
     }
 
     // ── DELETE /GoodsReceiptPO/{id} ─────────────────────────────────────
