@@ -7,6 +7,7 @@ using FarmingApi.Core;
 using JE = FarmingApi.Modules.Financials.JournalEntry.JournalEntry;
 using JELine = FarmingApi.Modules.Financials.JournalEntry.JournalEntryLine;
 using COA = FarmingApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
+using JENumbers = FarmingApi.Modules.Financials.JournalEntry.JournalEntryNumberService;
 
 namespace FarmingApi.Modules.Financials.RecurringPosting;
 
@@ -34,7 +35,6 @@ public class RecurringPostingController : MyController
         _repo = repo; _db = db; _mapper = mapper;
     }
 
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult Gets()
     {
@@ -43,7 +43,6 @@ public class RecurringPostingController : MyController
     }
 
     // Templates that are Active and due (NextExecution <= today).
-    [AllowAnonymous]
     [HttpGet("Due")]
     public IActionResult GetDue()
     {
@@ -122,7 +121,7 @@ public class RecurringPostingController : MyController
         var when = DateTime.UtcNow.Date;
         var je = new JE
         {
-            JrnlNo          = GenerateJournalNumber(),
+            JrnlNo          = JENumbers.Next(_db, when),
             TransDate       = when, DueDate = when, DocDate = when,
             RefNo           = tpl.Code,
             TransType       = "JE",
@@ -219,14 +218,4 @@ public class RecurringPostingController : MyController
         return $"{prefix}{next:D8}";
     }
 
-    // Matches the Journal Entry module's own numbering (JE-YYYY-00001).
-    private string GenerateJournalNumber()
-    {
-        var prefix = $"JE-{DateTime.Now.Year}-";
-        var last = _db.Set<JE>().Where(j => j.JrnlNo.StartsWith(prefix))
-            .OrderByDescending(j => j.Id).FirstOrDefault();
-        if (last == null) return $"{prefix}00001";
-        var p = last.JrnlNo.Split('-');
-        return (p.Length >= 3 && int.TryParse(p[2], out var num)) ? $"{prefix}{(num + 1):D5}" : $"{prefix}00001";
-    }
 }

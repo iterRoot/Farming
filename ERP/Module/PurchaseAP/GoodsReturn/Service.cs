@@ -13,9 +13,12 @@ public class GoodsReturnJournalService : IGoodsReturnJournalService
 {
     private readonly MyDbContext _db;
 
-    public GoodsReturnJournalService(MyDbContext db)
+    private readonly GLAccountResolver _resolver;
+
+    public GoodsReturnJournalService(MyDbContext db, GLAccountResolver resolver)
     {
         _db = db;
+        _resolver = resolver;
     }
 
     public JournalEntry CreateJournalEntry(GoodsReturn goodsReturn, BPEntity vendor)
@@ -48,7 +51,7 @@ public class GoodsReturnJournalService : IGoodsReturnJournalService
 
         var je = new JournalEntry
         {
-            JrnlNo          = GenerateJournalNumber(),
+            JrnlNo          = JournalEntryNumberService.Next(_db, postingDate),
             TransDate       = postingDate,
             DueDate         = postingDate,
             DocDate         = postingDate,
@@ -112,6 +115,10 @@ public class GoodsReturnJournalService : IGoodsReturnJournalService
             InActive    = false,
         });
 
+        // Inventory is credited on each line's item-group account when an override is set.
+        GLAccountResolver.SplitLine(je, l => l.AccountName == "Inventory",
+            _resolver.SplitByItemGroup("InventoryAccount", inventoryCode, goodsValue, goodsReturn.Items.Select(l => (l.ItemCode, l.Total > 0 ? l.Total : l.Quantity * l.Price))));
+
         var totalDr = je.Lines.Sum(l => l.Debit);
         var totalCr = je.Lines.Sum(l => l.Credit);
         if (Math.Abs(totalDr - totalCr) > 0.01m)
@@ -125,25 +132,5 @@ public class GoodsReturnJournalService : IGoodsReturnJournalService
 
         _db.Set<JournalEntry>().Add(je);
         return je;
-    }
-
-    private string GenerateJournalNumber()
-    {
-        var year   = DateTime.Now.Year;
-        var prefix = $"JE-{year}-";
-
-        var last = _db.Set<JournalEntry>()
-            .Where(j => j.JrnlNo.StartsWith(prefix))
-            .OrderByDescending(j => j.Id)
-            .FirstOrDefault();
-
-        if (last == null)
-            return $"{prefix}00001";
-
-        var parts = last.JrnlNo.Split('-');
-        if (parts.Length >= 3 && int.TryParse(parts[2], out int lastNum))
-            return $"{prefix}{(lastNum + 1):D5}";
-
-        return $"{prefix}00001";
     }
 }

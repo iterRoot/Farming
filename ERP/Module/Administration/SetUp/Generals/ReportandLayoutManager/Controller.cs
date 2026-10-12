@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using FarmingApi.Core;
 
 namespace FarmingApi.Modules.Administration.ReportLayoutManager;
 
@@ -9,20 +10,37 @@ namespace FarmingApi.Modules.Administration.ReportLayoutManager;
 [Route("[controller]")]
 public class ReportLayoutController : ControllerBase
 {
-    private readonly IReportLayoutRepository _repo;
-    private readonly IMapper                 _mapper;
-    private readonly MyDbContext             _db;
+    private readonly IReportLayoutRepository  _repo;
+    private readonly IMapper                  _mapper;
+    private readonly MyDbContext              _db;
+    private readonly IPrintLayoutRenderService _printLayout;
 
     public ReportLayoutController(
-        IReportLayoutRepository repo, IMapper mapper, MyDbContext db)
+        IReportLayoutRepository repo, IMapper mapper, MyDbContext db, IPrintLayoutRenderService printLayout)
     {
         _repo   = repo;
         _mapper = mapper;
         _db     = db;
+        _printLayout = printLayout;
+    }
+
+    // ── POST /ReportLayout/PreviewHtml ─────────────────────────
+    // Live preview for the template editor: merges the given (unsaved)
+    // template against the most recent real document of that type — the
+    // same engine GetPdf uses, so what the editor shows is what will print.
+    [HttpPost("PreviewHtml")]
+    public async Task<IActionResult> PreviewHtml([FromBody] PreviewHtmlRequest dto)
+    {
+        var (header, lines) = await _printLayout.GetSampleAsync(dto.DocumentType);
+        if (header == null)
+            return NotFound(new { message = $"No {dto.DocumentType} document exists yet to preview against — save one first, then come back to preview." });
+
+        var html = PrintLayoutRenderService.Merge(dto.HtmlTemplate ?? "", header, lines);
+        return Content(html, "text/html");
     }
 
     // ── GET /ReportLayout ──────────────────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll(
         [FromQuery] string? documentType = null,
         [FromQuery] string? module       = null,
@@ -43,7 +61,7 @@ public class ReportLayoutController : ControllerBase
     }
 
     // ── GET /ReportLayout/{id} ─────────────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetAll()
@@ -54,7 +72,7 @@ public class ReportLayoutController : ControllerBase
     }
 
     // ── GET /ReportLayout/Default/{documentType} ──────────────
-    [AllowAnonymous][HttpGet("Default/{documentType}")]
+    [HttpGet("Default/{documentType}")]
     public IActionResult GetDefault(string documentType)
     {
         var e = _repo.GetAll()
@@ -68,7 +86,7 @@ public class ReportLayoutController : ControllerBase
     }
 
     // ── GET /ReportLayout/ByModule/{module} ───────────────────
-    [AllowAnonymous][HttpGet("ByModule/{module}")]
+    [HttpGet("ByModule/{module}")]
     public IActionResult GetByModule(string module)
     {
         var list = _repo.GetAll()
@@ -82,7 +100,7 @@ public class ReportLayoutController : ControllerBase
     }
 
     // ── GET /ReportLayout/DocumentTypes ───────────────────────
-    [AllowAnonymous][HttpGet("DocumentTypes")]
+    [HttpGet("DocumentTypes")]
     public IActionResult GetDocumentTypes()
     {
         var types = _repo.GetAll()
@@ -94,7 +112,7 @@ public class ReportLayoutController : ControllerBase
     }
 
     // ── POST /ReportLayout ─────────────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] ReportLayoutRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -119,7 +137,7 @@ public class ReportLayoutController : ControllerBase
     }
 
     // ── PUT /ReportLayout/{id} ─────────────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] ReportLayoutRequest dto)
     {
         var entity = _repo.GetAll()
@@ -150,7 +168,7 @@ public class ReportLayoutController : ControllerBase
     }
 
     // ── POST /ReportLayout/{id}/SetDefault ────────────────────
-    [AllowAnonymous][HttpPost("{id:int}/SetDefault")]
+    [HttpPost("{id:int}/SetDefault")]
     public IActionResult SetDefault(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -164,7 +182,7 @@ public class ReportLayoutController : ControllerBase
     }
 
     // ── POST /ReportLayout/{id}/Duplicate ─────────────────────
-    [AllowAnonymous][HttpPost("{id:int}/Duplicate")]
+    [HttpPost("{id:int}/Duplicate")]
     public IActionResult Duplicate(int id)
     {
         var source = _repo.GetAll()
@@ -229,7 +247,7 @@ public class ReportLayoutController : ControllerBase
     }
 
     // ── DELETE /ReportLayout/{id} ──────────────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -242,7 +260,7 @@ public class ReportLayoutController : ControllerBase
     }
 
     // ── POST /ReportLayout/Seed ────────────────────────────────
-    [AllowAnonymous][HttpPost("Seed")]
+    [HttpPost("Seed")]
     public IActionResult Seed()
     {
         if (_repo.GetAll().Any())

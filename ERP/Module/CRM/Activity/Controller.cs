@@ -21,7 +21,7 @@ public class ActivityController : ControllerBase
     }
 
     // ── GET /Activity ──────────────────────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll(
         [FromQuery] string? status         = null,   // Open/Closed/Inactive
         [FromQuery] string? activityKind   = null,
@@ -42,7 +42,7 @@ public class ActivityController : ControllerBase
     }
 
     // ── GET /Activity/{id} ─────────────────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetAll().Include(x => x.Attachments).FirstOrDefault(x => x.Id == id);
@@ -51,7 +51,7 @@ public class ActivityController : ControllerBase
     }
 
     // ── GET /Activity/Summary ──────────────────────────────────
-    [AllowAnonymous][HttpGet("Summary")]
+    [HttpGet("Summary")]
     public IActionResult GetSummary()
     {
         var all = _repo.GetAll().ToList();
@@ -68,7 +68,7 @@ public class ActivityController : ControllerBase
     }
 
     // ── POST /Activity ─────────────────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] ActivityRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -91,7 +91,7 @@ public class ActivityController : ControllerBase
     }
 
     // ── PUT /Activity/{id} ─────────────────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] ActivityRequest dto)
     {
         var entity = _repo.GetAll().Include(x => x.Attachments).FirstOrDefault(x => x.Id == id);
@@ -113,7 +113,7 @@ public class ActivityController : ControllerBase
     }
 
     // ── PUT /Activity/{id}/Close ───────────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}/Close")]
+    [HttpPut("{id:int}/Close")]
     public IActionResult SetClosed(int id, [FromBody] ActivityCloseRequest dto)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -128,7 +128,7 @@ public class ActivityController : ControllerBase
 
     // ── POST /Activity/{id}/FollowUp ───────────────────────────
     // Creates a new Activity pre-filled from this one (BP, contact, etc.)
-    [AllowAnonymous][HttpPost("{id:int}/FollowUp")]
+    [HttpPost("{id:int}/FollowUp")]
     public IActionResult FollowUp(int id, [FromBody] FollowUpRequest dto)
     {
         var source = _repo.GetSingle(x => x.Id == id);
@@ -163,7 +163,7 @@ public class ActivityController : ControllerBase
     }
 
     // ── DELETE /Activity/{id} ──────────────────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);

@@ -30,7 +30,6 @@ public class OutgoingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET ALL
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult Gets()
     {
@@ -42,7 +41,6 @@ public class OutgoingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET BY ID
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public IActionResult Get(int id)
     {
@@ -60,7 +58,6 @@ public class OutgoingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET OPEN AP INVOICES FOR SUPPLIER
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet("OpenInvoices/{cardCode}")]
     public IActionResult GetOpenInvoices(string cardCode)
     {
@@ -107,7 +104,6 @@ public class OutgoingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // CREATE PAYMENT with AP Invoice Allocation
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpPost]
     public IActionResult Create([FromBody] OutgoingPaymentListRequest request)
     {
@@ -132,6 +128,7 @@ public class OutgoingPaymentController : MyController
         entity.AppliedAmount = totalApplied;
         entity.UnappliedAmount = request.DocTotal - totalApplied;
         entity.Status = "O";
+        entity.CheckStatus = entity.PaymentMethod == "Check" ? "Issued" : null;
         entity.TransType = "KPYO";
         entity.VersionNum = 1;
         entity.CreatedAt = DateTime.UtcNow;
@@ -235,7 +232,6 @@ public class OutgoingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // UPDATE PAYMENT
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpPut("{id}")]
     public IActionResult Update(int id, [FromBody] OutgoingPaymentUpdateRequest request)
     {
@@ -346,7 +342,30 @@ public class OutgoingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // VOID PAYMENT (Reverses all AP invoice allocations)
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
+    // CHECK STATUS — Issued (default) -> Cleared / Bounced / Voided.
+    // ═══════════════════════════════════════════════════════════════
+    private static readonly string[] ManualCheckStatuses = { "Issued", "Cleared", "Bounced", "Voided" };
+
+    [HttpPost("{id}/CheckStatus")]
+    public IActionResult SetCheckStatus(int id, [FromBody] CheckStatusRequest request)
+    {
+        var payment = _repository.GetSingle(p => p.Id == id);
+        if (payment == null) return NotFound($"Payment not found: {id}");
+        if (payment.PaymentMethod != "Check")
+            return BadRequest("This payment was not made by check.");
+        if (payment.CheckStatus is "Bounced" or "Voided")
+            return BadRequest($"A {payment.CheckStatus.ToLower()} check's status is final.");
+        if (!ManualCheckStatuses.Contains(request.Status))
+            return BadRequest($"Status must be one of: {string.Join(", ", ManualCheckStatuses)}.");
+
+        payment.CheckStatus = request.Status;
+        payment.UpdatedAt   = DateTime.UtcNow;
+        _repository.Update(payment);
+        _repository.Commit();
+        return Ok(new { message = $"Check status set to {request.Status}.", id, status = request.Status });
+    }
+
+    // ═══════════════════════════════════════════════════════════════
     [HttpPost("{id}/Void")]
     public IActionResult Void(int id)
     {
@@ -388,7 +407,6 @@ public class OutgoingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // DELETE
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
@@ -424,7 +442,6 @@ public class OutgoingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET BY SUPPLIER
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet("Supplier/{cardCode}")]
     public IActionResult GetBySupplier(string cardCode)
     {
@@ -441,7 +458,6 @@ public class OutgoingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET BY DATE RANGE
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet("DateRange")]
     public IActionResult GetByDateRange([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
     {
@@ -458,7 +474,6 @@ public class OutgoingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET PAYMENT SUMMARY BY SUPPLIER
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet("Summary/{cardCode}")]
     public IActionResult GetPaymentSummary(string cardCode)
     {

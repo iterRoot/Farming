@@ -25,14 +25,14 @@ public class UomGroupController : ControllerBase
         _db         = db;
     }
 
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll()
     {
         var list = _repository.GetAll().Include(x => x.Lines).OrderBy(x => x.Code).ToList();
         return Ok(_mapper.Map<List<UomGroupResponse>>(list));
     }
 
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repository.GetAll().Include(x => x.Lines).FirstOrDefault(x => x.Id == id);
@@ -40,7 +40,7 @@ public class UomGroupController : ControllerBase
         return Ok(_mapper.Map<UomGroupResponse>(e));
     }
 
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] UomGroupRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -67,7 +67,7 @@ public class UomGroupController : ControllerBase
         return Ok(_mapper.Map<UomGroupResponse>(entity));
     }
 
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] UomGroupRequest dto)
     {
         var entity = _repository.GetAll().Include(x => x.Lines).FirstOrDefault(x => x.Id == id);
@@ -95,7 +95,7 @@ public class UomGroupController : ControllerBase
         return Ok(_mapper.Map<UomGroupResponse>(entity));
     }
 
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repository.GetSingle(x => x.Id == id);

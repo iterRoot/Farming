@@ -13,9 +13,12 @@ public class APInvoiceJournalService : IAPInvoiceJournalService
 {
     private readonly MyDbContext _db;
 
-    public APInvoiceJournalService(MyDbContext db)
+    private readonly GLAccountResolver _resolver;
+
+    public APInvoiceJournalService(MyDbContext db, GLAccountResolver resolver)
     {
         _db = db;
+        _resolver = resolver;
     }
 
     public JournalEntry CreateJournalEntry(APInvoice invoice, BPEntity vendor)
@@ -26,7 +29,7 @@ public class APInvoiceJournalService : IAPInvoiceJournalService
                      "Go to Administration → GL Account Determination and add " +
                      "AccountsPayable, PurchaseExpense, PurchaseTax.");
 
-        var payableCode = gl.AccountsPayable;
+        var payableCode = _resolver.ForBpGroup("AccountsPayable", vendor.GroupCode, gl.AccountsPayable);
         var expenseCode = gl.PurchaseExpense;
         var taxCode     = gl.PurchaseTax;
 
@@ -49,7 +52,7 @@ public class APInvoiceJournalService : IAPInvoiceJournalService
 
         var je = new JournalEntry
         {
-            JrnlNo          = GenerateJournalNumber(),
+            JrnlNo          = JournalEntryNumberService.Next(_db, postingDate),
             TransDate       = postingDate,
             DueDate         = invoice.DueDate ?? postingDate,
             DocDate         = postingDate,
@@ -141,6 +144,10 @@ public class APInvoiceJournalService : IAPInvoiceJournalService
             InActive    = false,
         });
 
+        // Expense follows each line's item group when an override is set.
+        GLAccountResolver.SplitLine(je, l => l.AccountName == "Purchase Expense",
+            _resolver.SplitByItemGroup("PurchaseExpense", expenseCode, netExpense, invoice.Items.Select(l => (l.ItemCode, l.Total))));
+
         var totalDr = je.Lines.Sum(l => l.Debit);
         var totalCr = je.Lines.Sum(l => l.Credit);
         if (Math.Abs(totalDr - totalCr) > 0.01m)
@@ -155,25 +162,5 @@ public class APInvoiceJournalService : IAPInvoiceJournalService
 
         _db.Set<JournalEntry>().Add(je);
         return je;
-    }
-
-    private string GenerateJournalNumber()
-    {
-        var year   = DateTime.Now.Year;
-        var prefix = $"JE-{year}-";
-
-        var last = _db.Set<JournalEntry>()
-            .Where(j => j.JrnlNo.StartsWith(prefix))
-            .OrderByDescending(j => j.Id)
-            .FirstOrDefault();
-
-        if (last == null)
-            return $"{prefix}00001";
-
-        var parts = last.JrnlNo.Split('-');
-        if (parts.Length >= 3 && int.TryParse(parts[2], out int lastNum))
-            return $"{prefix}{(lastNum + 1):D5}";
-
-        return $"{prefix}00001";
     }
 }

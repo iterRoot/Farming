@@ -40,7 +40,6 @@ public class UserAuthorizationController : MyController
     }
 
     // ── GET /UserAuthorization ─────────────────────────────────
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult GetAll()
     {
@@ -73,7 +72,6 @@ public class UserAuthorizationController : MyController
     }
 
     // ── GET /UserAuthorization/{userId} ────────────────────────
-    [AllowAnonymous]
     [HttpGet("{userId:int}")]
     public IActionResult Get(int userId)
     {
@@ -93,7 +91,6 @@ public class UserAuthorizationController : MyController
     }
 
     // ── PUT /UserAuthorization/{userId} ────────────────────────
-    [AllowAnonymous]
     [HttpPut("{userId:int}")]
     public IActionResult Save(int userId, [FromBody] AuthorizationSaveRequest request)
     {
@@ -123,7 +120,6 @@ public class UserAuthorizationController : MyController
     }
 
     // ── POST /UserAuthorization/{userId}/GrantFull ─────────────
-    [AllowAnonymous]
     [HttpPost("{userId:int}/GrantFull")]
     public IActionResult GrantFull(int userId, [FromBody] AuthorizationSaveRequest? request)
     {
@@ -148,7 +144,6 @@ public class UserAuthorizationController : MyController
     }
 
     // ── DELETE /UserAuthorization/{userId} ─────────────────────
-    [AllowAnonymous]
     [HttpDelete("{userId:int}")]
     public IActionResult Delete(int userId)
     {

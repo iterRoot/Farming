@@ -22,14 +22,14 @@ public class PackageTypeController : ControllerBase
         _mapper     = mapper;
     }
 
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll()
     {
         var list = _repository.GetAll().OrderBy(x => x.Name).ToList();
         return Ok(_mapper.Map<List<PackageTypeResponse>>(list));
     }
 
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repository.GetSingle(x => x.Id == id);
@@ -37,7 +37,7 @@ public class PackageTypeController : ControllerBase
         return Ok(_mapper.Map<PackageTypeResponse>(e));
     }
 
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] PackageTypeRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -55,7 +55,7 @@ public class PackageTypeController : ControllerBase
         return Ok(_mapper.Map<PackageTypeResponse>(entity));
     }
 
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] PackageTypeRequest dto)
     {
         var entity = _repository.GetSingle(x => x.Id == id);
@@ -73,7 +73,7 @@ public class PackageTypeController : ControllerBase
         return Ok(_mapper.Map<PackageTypeResponse>(entity));
     }
 
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repository.GetSingle(x => x.Id == id);

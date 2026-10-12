@@ -6,8 +6,7 @@ public class StaffMapper : Profile
 {
 	public StaffMapper()
 	{
-		CreateMap<Staff, CompanyListResponse>();
-		CreateMap<Staff, CompanyDetailResponse>();
+		CreateMap<Staff, StaffListResponse>();
 		CreateMap<StaffInsertRequest, Staff>();
 		CreateMap<StaffUpdateRequest, Staff>();
         }

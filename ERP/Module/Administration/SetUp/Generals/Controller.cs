@@ -27,7 +27,7 @@ public class UserGroupController : ControllerBase
     }
 
     // ── GET /UserGroup ─────────────────────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll()
     {
         var list = _repo.GetAll()
@@ -40,7 +40,7 @@ public class UserGroupController : ControllerBase
     }
 
     // ── GET /UserGroup/{id} ────────────────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetAll()
@@ -53,7 +53,7 @@ public class UserGroupController : ControllerBase
 
     // ── GET /UserGroup/ByUser/{userCode} ──────────────────────
     // Returns all groups a user belongs to
-    [AllowAnonymous][HttpGet("ByUser/{userCode}")]
+    [HttpGet("ByUser/{userCode}")]
     public IActionResult GetByUser(string userCode)
     {
         var groups = _repo.GetAll()
@@ -65,7 +65,7 @@ public class UserGroupController : ControllerBase
     }
 
     // ── GET /UserGroup/{id}/CheckAccess?userCode=U001&module=Inventory&subModule=ItemMaster
-    [AllowAnonymous][HttpGet("{id:int}/CheckAccess")]
+    [HttpGet("{id:int}/CheckAccess")]
     public IActionResult CheckAccess(int id,
         [FromQuery] string module, [FromQuery] string subModule)
     {
@@ -89,7 +89,7 @@ public class UserGroupController : ControllerBase
     }
 
     // ── POST /UserGroup ────────────────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] UserGroupRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -108,7 +108,7 @@ public class UserGroupController : ControllerBase
     }
 
     // ── PUT /UserGroup/{id} ────────────────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] UserGroupRequest dto)
     {
         var entity = _repo.GetAll()
@@ -135,7 +135,7 @@ public class UserGroupController : ControllerBase
 
     // ── POST /UserGroup/{id}/CopyTo ───────────────────────────
     // Clone a group's permissions to a new group
-    [AllowAnonymous][HttpPost("{id:int}/CopyTo")]
+    [HttpPost("{id:int}/CopyTo")]
     public IActionResult CopyTo(int id, [FromBody] UserGroupRequest dto)
     {
         var source = _repo.GetAll()
@@ -171,7 +171,7 @@ public class UserGroupController : ControllerBase
     }
 
     // ── DELETE /UserGroup/{id} ─────────────────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);

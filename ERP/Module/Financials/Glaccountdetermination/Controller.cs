@@ -29,7 +29,6 @@ public class GLAccountDeterminationController : ControllerBase
 
     // ── GET /GLAccountDetermination ───────────────────────────
     // Returns the single settings record (or empty defaults)
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult Get()
     {
@@ -41,7 +40,6 @@ public class GLAccountDeterminationController : ControllerBase
 
     // ── POST /GLAccountDetermination ──────────────────────────
     // Creates the record (only if none exists)
-    [AllowAnonymous]
     [HttpPost]
     public IActionResult Create([FromBody] GLAccountDeterminationRequest dto)
     {
@@ -60,7 +58,6 @@ public class GLAccountDeterminationController : ControllerBase
 
     // ── PUT /GLAccountDetermination ───────────────────────────
     // Updates the single record (upsert — creates if missing)
-    [AllowAnonymous]
     [HttpPut]
     public IActionResult Update([FromBody] GLAccountDeterminationRequest dto)
     {

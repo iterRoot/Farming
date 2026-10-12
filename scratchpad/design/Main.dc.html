@@ -1,0 +1,492 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <style>
+    body { margin: 0; font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #8a5a00; text-decoration: none; }
+    a:hover { color: #6d4600; text-decoration: underline; }
+    * { box-sizing: border-box; }
+    input { font: inherit; }
+    button { font: inherit; cursor: pointer; }
+
+    .bp-grid {
+      display: grid;
+      grid-template-columns: 40px 108px minmax(0, 1fr) 104px 116px 132px 56px 124px 190px 128px 92px;
+      align-items: center;
+      column-gap: 0;
+    }
+    .bp-head-cell {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #7d7466;
+      padding: 0 10px;
+      background: none;
+      border: 0;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      height: 34px;
+      white-space: nowrap;
+    }
+    .bp-head-cell:hover { color: #201d17; }
+    .bp-cell { padding: 0 10px; font-size: 13px; color: #201d17; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bp-num { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; }
+    .bp-row { border-bottom: 1px solid #efeae0; cursor: pointer; }
+    .bp-row:hover { background: #fbf8f2; }
+    .bp-check {
+      width: 15px; height: 15px; border: 1.5px solid #cdc6b8; border-radius: 3px;
+      background: #fff; display: block; margin: 0 auto;
+    }
+    .bp-focusable:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; min-height: 900px; display: flex; background: #f7f4ee; color: #201d17; --accent: {{accent}};">
+
+  <!-- ── MODULE RAIL ────────────────────────────────────────────── -->
+  <div style="width: 216px; flex-shrink: 0; background: #211f19; display: flex; flex-direction: column; padding: 18px 0 0;">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 18px 22px;">
+      <div style="width: 26px; height: 26px; border-radius: 5px; background: {{accent}}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#211f19" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3 3 8v8l9 5 9-5V8z"></path>
+          <path d="M3 8l9 5 9-5"></path>
+          <path d="M12 13v8"></path>
+        </svg>
+      </div>
+      <div>
+        <div style="font-size: 13px; font-weight: 600; color: #f5f1e8; letter-spacing: -0.01em;">Farming ERP</div>
+        <div style="font-size: 10.5px; color: #857d6d; letter-spacing: 0.02em;">KOMNAKTRA</div>
+      </div>
+    </div>
+
+    <div style="font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #6d6558; padding: 0 18px 8px;">Modules</div>
+
+    <sc-for list="{{modules}}" as="m" hint-placeholder-count="7">
+      <div style="{{m.style}}">
+        <div style="{{m.markStyle}}"></div>
+        <span>{{m.label}}</span>
+      </div>
+    </sc-for>
+
+    <div style="margin-top: auto; padding: 16px 18px; border-top: 1px solid #302d25;">
+      <div style="font-size: 11px; color: #857d6d;">Signed in as</div>
+      <div style="font-size: 12.5px; color: #ded8cb; font-weight: 500;">prida · Administrator</div>
+    </div>
+  </div>
+
+  <!-- ── MAIN ───────────────────────────────────────────────────── -->
+  <div style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0;">
+
+    <!-- Header -->
+    <div style="padding: 24px 32px 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 24px;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 9px; font-size: 11.5px; color: #7d7466; margin-bottom: 7px;">
+          <span>Business Partners</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#b3aa99" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+          <span style="color: #201d17; font-weight: 500;">Master Data</span>
+        </div>
+        <h1 style="margin: 0; font-size: 25px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.15;">Business Partner List</h1>
+        <div style="margin-top: 6px; font-size: 12px; color: #7d7466; font-family: 'IBM Plex Mono', ui-monospace, monospace;">GET /BusinessPartnersMaster · table KOCR</div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 8px; padding-top: 4px;">
+        <button class="bp-focusable" style="height: 36px; padding: 0 13px; border-radius: 6px; border: 1px solid #ded7c9; background: #fff; color: #433d33; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 7px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b6459" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M7 10l5 5 5-5"></path><path d="M12 15V3"></path></svg>
+          Export
+        </button>
+        <button class="bp-focusable" style="{{primaryBtnStyle}}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+          New Business Partner
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div style="padding: 18px 32px 0; display: flex; align-items: center; gap: 2px; border-bottom: 1px solid #e5e0d6;">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="4">
+        <button class="bp-focusable" onClick="{{t.pick}}" style="{{t.style}}">
+          <span>{{t.label}}</span>
+          <span style="{{t.countStyle}}">{{t.count}}</span>
+        </button>
+      </sc-for>
+    </div>
+
+    <!-- Filter bar -->
+    <div style="padding: 14px 32px; display: flex; align-items: center; gap: 9px;">
+      <div style="position: relative; width: 300px;">
+        <svg style="position: absolute; left: 11px; top: 10px;" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a49b8a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+        <input class="bp-focusable" value="{{query}}" onInput="{{onSearch}}" placeholder="Search code, name or email" style="width: 100%; height: 36px; padding: 0 12px 0 33px; border-radius: 6px; border: 1px solid #ded7c9; background: #fff; font-size: 13px; color: #201d17;">
+      </div>
+
+      <button class="bp-focusable" style="height: 36px; padding: 0 12px; border-radius: 6px; border: 1px solid #ded7c9; background: #fff; color: #433d33; font-size: 13px; display: flex; align-items: center; gap: 7px;">
+        <span style="color: #7d7466;">Group</span>
+        <span style="font-weight: 500;">All</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#a49b8a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+      </button>
+
+      <button class="bp-focusable" style="height: 36px; padding: 0 12px; border-radius: 6px; border: 1px solid #ded7c9; background: #fff; color: #433d33; font-size: 13px; display: flex; align-items: center; gap: 7px;">
+        <span style="color: #7d7466;">Status</span>
+        <span style="font-weight: 500;">Any</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#a49b8a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+      </button>
+
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 12px; color: #7d7466;">{{resultLabel}}</span>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div style="margin: 0 32px 24px; background: #fff; border: 1px solid #e5e0d6; border-radius: 9px; overflow: hidden;">
+
+      <div class="bp-grid" style="background: #fbf9f4; border-bottom: 1px solid #e5e0d6;">
+        <div style="display: flex; align-items: center; justify-content: center;"><span class="bp-check"></span></div>
+        <sc-for list="{{headers}}" as="h" hint-placeholder-count="10">
+          <button class="bp-head-cell" onClick="{{h.sort}}" style="{{h.style}}">
+            <span>{{h.label}}</span>
+            <span style="{{h.caretStyle}}">{{h.caret}}</span>
+          </button>
+        </sc-for>
+      </div>
+
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="12">
+        <div class="bp-grid bp-row" onClick="{{r.pick}}" style="{{r.style}}">
+          <div style="display: flex; align-items: center; justify-content: center;"><span class="bp-check" style="{{r.checkStyle}}"></span></div>
+
+          <div class="bp-cell bp-num" style="{{r.codeStyle}}">{{r.code}}</div>
+
+          <div class="bp-cell">
+            <div style="font-weight: 500; overflow: hidden; text-overflow: ellipsis;">{{r.name}}</div>
+            <div style="font-size: 11.5px; color: #8b8271; overflow: hidden; text-overflow: ellipsis;">{{r.frgnName}}</div>
+          </div>
+
+          <div class="bp-cell" style="display: flex; align-items: center; gap: 7px;">
+            <span style="{{r.typeMarkStyle}}"></span>
+            <span>{{r.typeLabel}}</span>
+          </div>
+
+          <div class="bp-cell">
+            <span style="{{r.statusStyle}}">
+              <span style="{{r.statusDotStyle}}"></span>{{r.statusLabel}}
+            </span>
+          </div>
+
+          <div class="bp-cell" style="color: #4f4a41;">{{r.group}}</div>
+          <div class="bp-cell bp-num" style="color: #4f4a41;">{{r.currency}}</div>
+          <div class="bp-cell bp-num" style="color: #4f4a41;">{{r.phone}}</div>
+          <div class="bp-cell" style="color: #4f4a41;">{{r.email}}</div>
+          <div class="bp-cell bp-num" style="{{r.balanceStyle}}">{{r.balance}}</div>
+          <div class="bp-cell bp-num" style="color: #8b8271; font-size: 12px;">{{r.created}}</div>
+        </div>
+      </sc-for>
+
+      <sc-if value="{{isEmpty}}" hint-placeholder-val="{{false}}">
+        <div style="padding: 56px 24px; text-align: center;">
+          <div style="font-size: 14px; font-weight: 500; margin-bottom: 4px;">No business partners match “{{query}}”</div>
+          <div style="font-size: 12.5px; color: #7d7466;">Clear the search or switch tabs to see all records.</div>
+        </div>
+      </sc-if>
+
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; background: #fbf9f4; border-top: 1px solid #e5e0d6;">
+        <div style="font-size: 12px; color: #7d7466;">{{footerLabel}}</div>
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <div style="font-size: 12px; color: #7d7466;">Total balance</div>
+          <div class="bp-num" style="font-size: 13px; font-weight: 600;">{{totalBalance}}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selected record strip -->
+    <div style="{{selectedStripStyle}}">
+      <div style="display: flex; align-items: center; gap: 13px; min-width: 0;">
+        <div style="{{selectedAvatarStyle}}">{{selectedInitials}}</div>
+        <div style="min-width: 0;">
+          <div style="font-size: 13.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{selectedName}}</div>
+          <div style="font-size: 11.5px; color: #7d7466; font-family: 'IBM Plex Mono', ui-monospace, monospace;">{{selectedMeta}}</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button class="bp-focusable" style="height: 32px; padding: 0 12px; border-radius: 6px; border: 1px solid #ded7c9; background: #fff; color: #433d33; font-size: 12.5px; font-weight: 500;">Activities</button>
+        <button class="bp-focusable" style="height: 32px; padding: 0 12px; border-radius: 6px; border: 1px solid #ded7c9; background: #fff; color: #433d33; font-size: 12.5px; font-weight: 500;">Account Balance</button>
+        <button class="bp-focusable" style="{{selectedOpenStyle}}">Open Record</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"accent":{"editor":"color","default":"#eda20c","options":["#eda20c","#c47f08","#f2b93f","#8a5a00"],"section":"Theme"},"density":{"editor":"enum","default":"comfortable","options":["comfortable","compact"],"section":"Theme"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tab: 'all',
+      query: '',
+      selected: 'C-0001',
+      sortKey: 'code',
+      sortDir: 'asc',
+    };
+  }
+
+  // ── colour helpers ──────────────────────────────────────────────
+  _rgb(hex) {
+    var h = String(hex || '#eda20c').replace('#', '');
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    var n = parseInt(h, 16);
+    if (isNaN(n)) n = 0xeda20c;
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+  _hex(c) {
+    return '#' + c.map(function (v) {
+      var s = Math.max(0, Math.min(255, Math.round(v))).toString(16);
+      return s.length === 1 ? '0' + s : s;
+    }).join('');
+  }
+  tint(hex, amount) {
+    var c = this._rgb(hex);
+    return this._hex(c.map(function (v) { return v + (255 - v) * amount; }));
+  }
+  shade(hex, amount) {
+    var c = this._rgb(hex);
+    return this._hex(c.map(function (v) { return v * (1 - amount); }));
+  }
+  // Black or white, whichever reads on the accent.
+  onAccent(hex) {
+    var c = this._rgb(hex);
+    var lum = (0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]) / 255;
+    return lum > 0.6 ? '#231d0d' : '#ffffff';
+  }
+
+  money(v, ccy) {
+    var s = v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return ccy === 'KHR' ? '៛' + s : '$' + s;
+  }
+
+  data() {
+    return [
+      { id: 'C-0001', code: 'C-0001', name: 'Angkor Agro Supply Co., Ltd', frgnName: 'អង្គរ អាហ្គ្រូ សាប់ភ្លាយ', type: 0, status: 0, group: 'Wholesale',     ccy: 'USD', phone: '023 214 880', email: 'sales@angkoragro.com',      balance: 12480.00, created: '12 Feb 26' },
+      { id: 'V-0104', code: 'V-0104', name: 'Mekong Feed Mill Plc',        frgnName: 'មេគង្គ ហ្វីដ មីល',        type: 1, status: 0, group: 'Feed Suppliers', ccy: 'USD', phone: '023 990 117', email: 'ap@mekongfeed.com.kh',        balance: 38215.50, created: '03 Mar 26' },
+      { id: 'C-0007', code: 'C-0007', name: 'Battambang Rice Union',       frgnName: 'សហភាពស្រូវបាត់ដំបង',      type: 0, status: 0, group: 'Cooperatives',   ccy: 'KHR', phone: '053 730 402', email: 'office@bbrice.coop',          balance: 4127600.00, created: '19 Mar 26' },
+      { id: 'L-0022', code: 'L-0022', name: 'Kampot Pepper Growers',       frgnName: 'អ្នកដាំម្រេចកំពត',        type: 2, status: 2, group: 'Prospects',      ccy: 'USD', phone: '033 655 219', email: 'hello@kampotpepper.org',      balance: 0.00,     created: '01 Apr 26' },
+      { id: 'V-0111', code: 'V-0111', name: 'Siem Reap Veterinary Supply', frgnName: 'ឱសថសត្វសៀមរាប',           type: 1, status: 1, group: 'Veterinary',     ccy: 'USD', phone: '063 964 771', email: 'orders@srvetsupply.com',      balance: 0.00,     created: '08 Apr 26' },
+      { id: 'C-0013', code: 'C-0013', name: 'Phnom Penh Fresh Market Co.', frgnName: 'ផ្សារស្រស់ភ្នំពេញ',       type: 0, status: 0, group: 'Retail',         ccy: 'USD', phone: '023 880 145', email: 'buyer@ppfresh.com.kh',        balance: 9640.25,  created: '22 Apr 26' },
+      { id: 'V-0087', code: 'V-0087', name: 'CamFertilizer Import Co.',    frgnName: 'ខេមជី នាំចូល',            type: 1, status: 0, group: 'Agro Chemicals', ccy: 'USD', phone: '023 428 006', email: 'invoice@camfert.com',         balance: 21990.00, created: '05 May 26' },
+      { id: 'C-0031', code: 'C-0031', name: 'Takeo Dairy Collective',      frgnName: 'សហករណ៍ទឹកដោះគោតាកែវ',     type: 0, status: 0, group: 'Cooperatives',   ccy: 'KHR', phone: '032 710 588', email: 'admin@takeodairy.kh',         balance: 1885400.00, created: '17 May 26' },
+      { id: 'L-0035', code: 'L-0035', name: 'Kandal Greenhouse Project',   frgnName: 'គម្រោងផ្ទះកញ្ចក់កណ្តាល',  type: 2, status: 0, group: 'Prospects',      ccy: 'USD', phone: '024 390 622', email: 'contact@kandalgreen.kh',      balance: 0.00,     created: '02 Jun 26' },
+      { id: 'V-0142', code: 'V-0142', name: 'Sihanoukville Logistics Ltd', frgnName: 'ដឹកជញ្ជូនព្រះសីហនុ',      type: 1, status: 0, group: 'Transport',      ccy: 'USD', phone: '034 933 810', email: 'billing@svlogistics.com',     balance: 7350.00,  created: '14 Jun 26' },
+      { id: 'C-0044', code: 'C-0044', name: 'Kampong Cham Cassava Trade',  frgnName: 'ជំនួញដំឡូងមីកំពង់ចាម',    type: 0, status: 1, group: 'Wholesale',      ccy: 'USD', phone: '042 621 337', email: 'trade@kccassava.com',         balance: 0.00,     created: '28 Jun 26' },
+      { id: 'V-0159', code: 'V-0159', name: 'Prey Veng Seed Supply',       frgnName: 'ផ្គត់ផ្គង់គ្រាប់ពូជព្រៃវែង', type: 1, status: 0, group: 'Seeds',       ccy: 'USD', phone: '043 550 194', email: 'seeds@pvseed.com.kh',         balance: 5480.75,  created: '09 Jul 26' },
+      { id: 'C-0052', code: 'C-0052', name: 'Royal Farm Distribution',     frgnName: 'ចែកចាយកសិដ្ឋានរ៉ូយ៉ាល់',  type: 0, status: 0, group: 'Distributors',   ccy: 'USD', phone: '023 116 940', email: 'ar@royalfarmdist.com',        balance: 16205.00, created: '21 Jul 26' },
+      { id: 'L-0041', code: 'L-0041', name: 'Ratanakiri Cashew Venture',   frgnName: 'ស្វាយចន្ទីរតនគិរី',       type: 2, status: 0, group: 'Prospects',      ccy: 'USD', phone: '075 210 466', email: 'invest@rtncashew.com',        balance: 0.00,     created: '30 Aug 26' },
+    ];
+  }
+
+  renderVals() {
+    var self = this;
+    var accent = this.props.accent || '#eda20c';
+    var compact = (this.props.density || 'comfortable') === 'compact';
+    var rowH = compact ? 38 : 50;
+
+    var tintSoft = this.tint(accent, 0.90);   // row / pill wash
+    var tintMid = this.tint(accent, 0.72);    // borders on tinted surfaces
+    var deep = this.shade(accent, 0.42);      // accent text that passes on light
+    var fg = this.onAccent(accent);
+
+    var st = this.state;
+    var all = this.data();
+
+    // ── module rail ───────────────────────────────────────────────
+    var moduleNames = ['Administration', 'Financials', 'Banking', 'Business Partners', 'Sales A/R', 'Purchasing A/P', 'Inventory'];
+    var modules = moduleNames.map(function (label) {
+      var on = label === 'Business Partners';
+      return {
+        label: label,
+        style: 'display: flex; align-items: center; gap: 10px; height: 33px; padding: 0 18px; font-size: 12.5px; cursor: pointer;'
+          + (on
+            ? 'color: #fbf7ee; font-weight: 600; background: #2b2820;'
+            : 'color: #9a9284; font-weight: 400;'),
+        markStyle: 'width: 3px; height: 15px; border-radius: 2px; flex-shrink: 0; background: ' + (on ? accent : 'transparent') + ';',
+      };
+    });
+
+    // ── tabs ──────────────────────────────────────────────────────
+    var counts = {
+      all: all.length,
+      customer: all.filter(function (r) { return r.type === 0; }).length,
+      vendor: all.filter(function (r) { return r.type === 1; }).length,
+      lead: all.filter(function (r) { return r.type === 2; }).length,
+    };
+    var tabDefs = [
+      { id: 'all', label: 'All Partners' },
+      { id: 'customer', label: 'Customers' },
+      { id: 'vendor', label: 'Vendors' },
+      { id: 'lead', label: 'Leads' },
+    ];
+    var tabs = tabDefs.map(function (t) {
+      var on = st.tab === t.id;
+      return {
+        label: t.label,
+        count: counts[t.id],
+        pick: function () { self.setState({ tab: t.id }); },
+        style: 'height: 38px; padding: 0 13px; border: 0; background: none; display: flex; align-items: center; gap: 7px;'
+          + 'font-size: 13px; margin-bottom: -1px; border-bottom: 2px solid '
+          + (on ? accent : 'transparent') + ';'
+          + (on ? 'color: #201d17; font-weight: 600;' : 'color: #7d7466; font-weight: 500;'),
+        countStyle: 'font-size: 11px; font-family: "IBM Plex Mono", monospace; padding: 1px 6px; border-radius: 20px;'
+          + (on
+            ? 'background: ' + tintSoft + '; color: ' + deep + '; font-weight: 600;'
+            : 'background: #eeeae1; color: #857c6c;'),
+      };
+    });
+
+    // ── filter + sort ─────────────────────────────────────────────
+    var q = st.query.trim().toLowerCase();
+    var typeFor = { customer: 0, vendor: 1, lead: 2 };
+
+    var list = all.filter(function (r) {
+      if (st.tab !== 'all' && r.type !== typeFor[st.tab]) return false;
+      if (!q) return true;
+      return (r.code + ' ' + r.name + ' ' + r.email).toLowerCase().indexOf(q) !== -1;
+    });
+
+    var dir = st.sortDir === 'asc' ? 1 : -1;
+    list = list.slice().sort(function (a, b) {
+      var k = st.sortKey;
+      if (k === 'balance') return (a.balance - b.balance) * dir;
+      return String(a[k]).localeCompare(String(b[k])) * dir;
+    });
+
+    // ── header cells ──────────────────────────────────────────────
+    var headerDefs = [
+      { key: 'code', label: 'Code' },
+      { key: 'name', label: 'Business Partner' },
+      { key: 'type', label: 'Type' },
+      { key: 'status', label: 'Status' },
+      { key: 'group', label: 'Group' },
+      { key: 'ccy', label: 'Curr' },
+      { key: 'phone', label: 'Phone' },
+      { key: 'email', label: 'Email' },
+      { key: 'balance', label: 'Balance', right: true },
+      { key: 'created', label: 'Created' },
+    ];
+    var headers = headerDefs.map(function (h) {
+      var on = st.sortKey === h.key;
+      return {
+        label: h.label,
+        caret: on ? (st.sortDir === 'asc' ? '↑' : '↓') : '',
+        caretStyle: 'font-size: 10px; color: ' + deep + ';',
+        sort: function () {
+          self.setState({
+            sortKey: h.key,
+            sortDir: st.sortKey === h.key && st.sortDir === 'asc' ? 'desc' : 'asc',
+          });
+        },
+        style: (h.right ? 'justify-content: flex-end;' : '') + (on ? 'color: #201d17;' : ''),
+      };
+    });
+
+    // ── rows ──────────────────────────────────────────────────────
+    var typeLabels = ['Customer', 'Vendor', 'Lead'];
+    var typeMarks = ['#4a5f7a', deep, '#6f6a5c'];
+    var statusLabels = ['Active', 'Inactive', 'Advanced'];
+
+    var rows = list.map(function (r) {
+      var on = st.selected === r.id;
+      var statusStyle = 'display: inline-flex; align-items: center; gap: 6px; height: 21px; padding: 0 8px 0 7px; border-radius: 11px; font-size: 11.5px; font-weight: 500;';
+      var dot = 'width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; background: ';
+
+      if (r.status === 0) {
+        statusStyle += 'background: #edf3ee; color: #3d6b4b;';
+        dot += '#4a7c59;';
+      } else if (r.status === 1) {
+        statusStyle += 'background: #f1eee8; color: #6b6459;';
+        dot += '#a8a094;';
+      } else {
+        statusStyle += 'background: ' + tintSoft + '; color: ' + deep + ';';
+        dot += accent + ';';
+      }
+
+      return {
+        code: r.code,
+        name: r.name,
+        frgnName: r.frgnName,
+        typeLabel: typeLabels[r.type],
+        typeMarkStyle: 'width: 7px; height: 7px; border-radius: 2px; flex-shrink: 0; background: ' + typeMarks[r.type] + ';',
+        statusLabel: statusLabels[r.status],
+        statusStyle: statusStyle,
+        statusDotStyle: dot,
+        group: r.group,
+        currency: r.ccy,
+        phone: r.phone,
+        email: r.email,
+        balance: r.balance === 0 ? '—' : self.money(r.balance, r.ccy),
+        balanceStyle: 'text-align: right; font-weight: 500;' + (r.balance === 0 ? 'color: #b3aa99;' : 'color: #201d17;'),
+        created: r.created,
+        pick: function () { self.setState({ selected: r.id }); },
+        style: 'height: ' + rowH + 'px;'
+          + (on
+            ? 'background: ' + tintSoft + '; box-shadow: inset 3px 0 0 ' + accent + ';'
+            : ''),
+        codeStyle: 'font-weight: 500;' + (on ? 'color: ' + deep + ';' : 'color: #201d17;'),
+        checkStyle: on
+          ? 'background: ' + accent + '; border-color: ' + accent + ';'
+          : '',
+      };
+    });
+
+    // ── selection strip ───────────────────────────────────────────
+    var sel = list.filter(function (r) { return r.id === st.selected; })[0] || null;
+    var selName = sel ? sel.name : 'No record selected';
+    var selMeta = sel
+      ? sel.code + ' · ' + typeLabels[sel.type] + ' · ' + sel.group + ' · ' + sel.ccy
+      : 'Select a row to see its summary';
+    var initials = sel
+      ? sel.name.split(' ').slice(0, 2).map(function (w) { return w.charAt(0); }).join('').toUpperCase()
+      : '—';
+
+    // ── totals ────────────────────────────────────────────────────
+    var usdTotal = list
+      .filter(function (r) { return r.ccy === 'USD'; })
+      .reduce(function (a, r) { return a + r.balance; }, 0);
+
+    return {
+      accent: accent,
+      modules: modules,
+      tabs: tabs,
+      headers: headers,
+      rows: rows,
+      query: st.query,
+      isEmpty: list.length === 0,
+      onSearch: function (e) { self.setState({ query: e.target.value }); },
+
+      resultLabel: list.length + ' of ' + all.length + ' records',
+      footerLabel: sel ? '1 selected · ' + list.length + ' shown' : list.length + ' shown',
+      totalBalance: '$' + usdTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' USD',
+
+      selectedName: selName,
+      selectedMeta: selMeta,
+      selectedInitials: initials,
+      selectedStripStyle: 'margin: auto 32px 26px; display: flex; align-items: center; justify-content: space-between; gap: 20px;'
+        + 'padding: 12px 16px; border-radius: 9px; background: #fff; border: 1px solid #e5e0d6; border-left: 3px solid ' + accent + ';',
+      selectedAvatarStyle: 'width: 34px; height: 34px; border-radius: 7px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;'
+        + 'font-size: 12px; font-weight: 600; letter-spacing: 0.02em; background: ' + tintSoft + '; color: ' + deep + '; border: 1px solid ' + tintMid + ';',
+      selectedOpenStyle: 'height: 32px; padding: 0 14px; border-radius: 6px; border: 1px solid ' + accent + '; background: ' + accent + '; color: ' + fg + '; font-size: 12.5px; font-weight: 600;',
+
+      primaryBtnStyle: 'height: 36px; padding: 0 14px; border-radius: 6px; border: 1px solid ' + this.shade(accent, 0.12) + ';'
+        + 'background: ' + accent + '; color: ' + fg + '; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 7px;',
+    };
+  }
+}
+</script>
+</body>
+</html>

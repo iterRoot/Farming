@@ -20,7 +20,7 @@ public class TerritoryController : ControllerBase
 
     // ── GET /Territory ─────────────────────────────────────────
     // Returns flat list ordered by level then name
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll()
     {
         var list = _repo.GetAll()
@@ -35,7 +35,7 @@ public class TerritoryController : ControllerBase
 
     // ── GET /Territory/Tree ────────────────────────────────────
     // Returns nested tree (roots only, children embedded)
-    [AllowAnonymous][HttpGet("Tree")]
+    [HttpGet("Tree")]
     public IActionResult GetTree()
     {
         var all = _repo.GetAll()
@@ -50,7 +50,7 @@ public class TerritoryController : ControllerBase
     }
 
     // ── GET /Territory/{id} ────────────────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetAll()
@@ -62,7 +62,7 @@ public class TerritoryController : ControllerBase
     }
 
     // ── GET /Territory/{id}/Children ──────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}/Children")]
+    [HttpGet("{id:int}/Children")]
     public IActionResult GetChildren(int id)
     {
         var all  = _repo.GetAll().Include(x => x.Children).ToList();
@@ -71,7 +71,7 @@ public class TerritoryController : ControllerBase
     }
 
     // ── POST /Territory ────────────────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] TerritoryRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -90,7 +90,7 @@ public class TerritoryController : ControllerBase
         if (dto.ParentId.HasValue)
         {
             var parent = _repo.GetSingle(x => x.Id == dto.ParentId.Value);
-            if (parent != null)
+            if (parent == null) return BadRequest($"Parent territory {dto.ParentId} does not exist.");
             {
                 entity.ParentCode  = parent.Code;
                 entity.ParentName  = parent.Name;
@@ -106,7 +106,7 @@ public class TerritoryController : ControllerBase
     }
 
     // ── PUT /Territory/{id} ────────────────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] TerritoryRequest dto)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -123,10 +123,11 @@ public class TerritoryController : ControllerBase
 
         if (dto.ParentId.HasValue)
         {
+            var err = CheckParent(id, dto.ParentId.Value);
+            if (err != null) return BadRequest(err);
             var parent = _repo.GetSingle(x => x.Id == dto.ParentId.Value);
-            if (parent != null)
             {
-                entity.ParentCode = parent.Code;
+                entity.ParentCode = parent!.Code;
                 entity.ParentName = parent.Name;
                 entity.Level      = parent.Level + 1;
             }
@@ -145,13 +146,14 @@ public class TerritoryController : ControllerBase
 
     // ── POST /Territory/{id}/Move/{newParentId} ───────────────
     // Re-parent a territory node
-    [AllowAnonymous][HttpPost("{id:int}/Move/{newParentId:int}")]
+    [HttpPost("{id:int}/Move/{newParentId:int}")]
     public IActionResult Move(int id, int newParentId)
     {
         var entity    = _repo.GetSingle(x => x.Id == id);
         var newParent = _repo.GetSingle(x => x.Id == newParentId);
         if (entity == null || newParent == null) return NotFound();
-        if (newParentId == id) return BadRequest("Cannot move territory under itself");
+        var moveErr = CheckParent(id, newParentId);
+        if (moveErr != null) return BadRequest(moveErr);
 
         entity.ParentId   = newParentId;
         entity.ParentCode = newParent.Code;
@@ -164,16 +166,32 @@ public class TerritoryController : ControllerBase
     }
 
     // ── DELETE /Territory/{id} ─────────────────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
         if (entity == null) return NotFound();
-        if (_repo.GetAll().Any(x => x.ParentId == id))
+        if (_repo.GetAll().Any(x => x.ParentId == id && x.Id != id))
             return BadRequest("Cannot delete a territory that has children. Reassign or delete children first.");
         _repo.Remove(entity);
         _repo.Commit();
         return NoContent();
+    }
+
+    // A territory can't sit under itself or under one of its own descendants.
+    private string? CheckParent(int id, int parentId)
+    {
+        if (parentId == id) return "A territory can't be its own parent.";
+        var all = _repo.GetAll().Select(x => new { x.Id, x.ParentId }).ToList();
+        if (all.All(x => x.Id != parentId)) return $"Parent territory {parentId} does not exist.";
+        var seen = new HashSet<int>();
+        int? cur = parentId;
+        while (cur != null && seen.Add(cur.Value))
+        {
+            if (cur == id) return "A territory can't be moved under one of its own sub-territories.";
+            cur = all.FirstOrDefault(x => x.Id == cur)?.ParentId;
+        }
+        return null;
     }
 
     // ─── Helper: build full path + flat response ─────────────
@@ -181,10 +199,11 @@ public class TerritoryController : ControllerBase
     {
         var parts = new List<string> { t.Name };
         var cur   = t;
+        var seen  = new HashSet<int> { t.Id };
         while (cur.ParentId != null)
         {
             cur = all.FirstOrDefault(x => x.Id == cur.ParentId)!;
-            if (cur == null) break;
+            if (cur == null || !seen.Add(cur.Id)) break;   // stop on a parent loop in bad data
             parts.Insert(0, cur.Name);
         }
         var flat     = _mapper.Map<TerritoryFlatResponse>(t);

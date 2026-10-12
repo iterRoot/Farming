@@ -21,14 +21,14 @@ public class ItemGroupController : ControllerBase
         _mapper     = mapper;
     }
 
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll()
     {
         var list = _repository.GetAll().OrderBy(x => x.Code).ToList();
         return Ok(_mapper.Map<List<ItemGroupResponse>>(list));
     }
 
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repository.GetSingle(x => x.Id == id);
@@ -36,7 +36,7 @@ public class ItemGroupController : ControllerBase
         return Ok(_mapper.Map<ItemGroupResponse>(e));
     }
 
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] ItemGroupRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -54,7 +54,7 @@ public class ItemGroupController : ControllerBase
         return Ok(_mapper.Map<ItemGroupResponse>(entity));
     }
 
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] ItemGroupRequest dto)
     {
         var entity = _repository.GetSingle(x => x.Id == id);
@@ -72,7 +72,7 @@ public class ItemGroupController : ControllerBase
         return Ok(_mapper.Map<ItemGroupResponse>(entity));
     }
 
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repository.GetSingle(x => x.Id == id);

@@ -36,7 +36,7 @@ public class GoodsIssueController : MyController
     }
 
     // ── GET /GoodsIssue ───────────────────────────────────────
-    [AllowAnonymous]
+    
     [HttpGet]
     public IActionResult Gets()
     {
@@ -46,7 +46,7 @@ public class GoodsIssueController : MyController
     }
 
     // ── GET /GoodsIssue/{id} ──────────────────────────────────
-    [AllowAnonymous]
+    
     [HttpGet("{id:int}")]
     public IActionResult Get(int id)
     {
@@ -58,16 +58,11 @@ public class GoodsIssueController : MyController
     }
 
     // ── POST /GoodsIssue ──────────────────────────────────────
-    [AllowAnonymous]
+    
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] GoodsIssueInsertRequest request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-
-        // ✅ Auto-number
-        string docNo;
-        try { docNo = _docNumber.Next("GoodsIssue"); }
-        catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
 
         // ✅ Vendor lookup → CustomerCode / CustomerName
         if (request.VendorId.HasValue && request.VendorId > 0)
@@ -82,7 +77,6 @@ public class GoodsIssueController : MyController
         }
 
         var entity     = _mapper.Map<GoodsIssue>(request);
-        entity.DocNo   = docNo;
         entity.CreatedAt = DateTime.UtcNow;
         entity.InActive  = false;
 
@@ -104,26 +98,52 @@ public class GoodsIssueController : MyController
             line.LineNum = ln++;
         }
 
-        _repository.Add(entity);
-        _repository.Commit();
-
-        // Track each issued line in the Inventory Journal (default warehouse).
+        // Check batch / serial numbers for every line before anything is saved.
         var whs = await _inventoryPosting.ResolveWarehouseCodeAsync(null);
         var postDate = entity.PostingDate == default ? DateTime.UtcNow : entity.PostingDate;
+        var tally = new FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchTally();
         foreach (var line in entity.Lines)
         {
-            await _inventoryPosting.PostOutAsync(
-                line.ItemCode, whs, line.Qty,
-                "Goods Issue", "GoodsIssue", entity.Id, docNo, postDate,
-                entity.CustomerCode, entity.CustomerName);
+            var batchError = await _inventoryPosting.CheckBatchesAsync(tally, line.ItemCode, whs, line.Qty, line.Batches,
+                FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchFlow.WriteOff, postDate);
+            if (batchError != null) return BadRequest(batchError);
         }
-        await _db.SaveChangesAsync();
+
+        // Number the document only once it is known to be acceptable, so refusals don't burn numbers.
+        string docNo;
+        try { docNo = _docNumber.Next("GoodsIssue"); }
+        catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
+        entity.DocNo = docNo;
+
+        // Document and stock ledger are saved together: if posting fails, neither is kept.
+        await using var tx = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            _repository.Add(entity);
+            _repository.Commit();
+
+            // Track each issued line in the Inventory Journal (default warehouse).
+            foreach (var line in entity.Lines)
+            {
+                await _inventoryPosting.PostOutAsync(
+                    line.ItemCode, whs, line.Qty,
+                    "Goods Issue", "GoodsIssue", entity.Id, docNo, postDate,
+                    entity.CustomerCode, entity.CustomerName, batches: line.Batches, allowExpired: true);
+            }
+            await _db.SaveChangesAsync();
+            await tx.CommitAsync();
+        }
+        catch (InvalidOperationException ex)
+        {
+            await tx.RollbackAsync();
+            return BadRequest(ex.Message);
+        }
 
         return Ok(new { message = "Goods Issue saved successfully", id = entity.Id, docNo = entity.DocNo });
     }
 
     // ── PUT /GoodsIssue/{id} ──────────────────────────────────
-    [AllowAnonymous]
+    
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] GoodsIssueUpdateRequest request)
     {
@@ -176,7 +196,7 @@ public class GoodsIssueController : MyController
     }
 
     // ── POST /GoodsIssue/{id}/Close ───────────────────────────
-    [AllowAnonymous]
+    
     [HttpPost("{id:int}/Close")]
     public IActionResult Close(int id)
     {
@@ -192,7 +212,7 @@ public class GoodsIssueController : MyController
     }
 
     // ── DELETE /GoodsIssue/{id} ───────────────────────────────
-    [AllowAnonymous]
+    
     [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {

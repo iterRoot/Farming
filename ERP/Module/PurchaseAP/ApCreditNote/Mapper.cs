@@ -13,8 +13,7 @@ public class APCreditNoteMapper : Profile
         CreateMap<APCreditNoteLineRequest, APCreditNoteLine>()
             .ForMember(dest => dest.Item, opt => opt.Ignore())
             .ForMember(dest => dest.ItemCode,     opt => opt.Ignore())
-            .ForMember(dest => dest.ItemName,     opt => opt.Ignore())
-            .ForMember(dest => dest.BaseInvoice,  opt => opt.Ignore());
+            .ForMember(dest => dest.ItemName,     opt => opt.Ignore());
 
         CreateMap<APCreditNote, APCreditNoteResponse>()
             .ForMember(dest => dest.VendorCode, opt => opt.MapFrom(src => src.Vendor.Code))

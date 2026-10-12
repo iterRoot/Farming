@@ -21,6 +21,9 @@ public class ArDownPaymentRequestMapper : Profile
             .ForMember(dest => dest.CustomerId,   opt => opt.MapFrom(src => src.CustomerId))
             .ForMember(dest => dest.CustomerCode, opt => opt.MapFrom(src => src.Customer.Code))
             .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.CardName))
+            .ForMember(dest => dest.InvoiceId,     opt => opt.Ignore())
+            .ForMember(dest => dest.InvoiceDocNum, opt => opt.Ignore())
+            .ForMember(dest => dest.InvoiceStatus, opt => opt.Ignore())
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items));
 
         CreateMap<ArDownPaymentRequestLine, ArDownPaymentRequestLineResponse>();

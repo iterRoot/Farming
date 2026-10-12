@@ -33,6 +33,15 @@ public class Return : AuditableEntity          // ✅ not "Return" — reserved 
 // ══════════════════════════════════════════════════════════════════════════════
 public class ReturnLine : AuditableEntity
 {
+    // Document this line was copied from (Copy From) — quantities drawn from it are tracked.
+    public int?    BaseEntry { get; set; }
+    [System.ComponentModel.DataAnnotations.MaxLength(50)]
+    public string? BaseType  { get; set; }
+
+    // Batch / serial numbers entered for this line — used when the document posts stock; not stored on the line.
+    [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
+
     public int         ReturnId { get; set; }   // ✅ FK matches class name
     public Return Return   { get; set; } = null!;
 
@@ -45,6 +54,23 @@ public class ReturnLine : AuditableEntity
     public decimal  Quantity { get; set; }
     public decimal  Price    { get; set; }
     public decimal  Total    { get; set; }
+    public string?  Branch       { get; set; }
+    public decimal  Discount     { get; set; }   // line-level discount percent
+    public decimal  DiscountSum  { get; set; }
+    public decimal  Vat          { get; set; }   // line-level VAT percent
+    public decimal  VatSum       { get; set; }
+    public decimal  ItemCost     { get; set; }
+    public string?  UomName      { get; set; }
+    public string?  UomCode      { get; set; }
+    public string?  DocCurrency  { get; set; }
+    public decimal  GrossProfit  { get; set; }
+    public string?  Dimension1   { get; set; }
+    public string?  Dimension2   { get; set; }
+    public string?  Dimension3   { get; set; }
+    public string?  Dimension4   { get; set; }
+    public string?  Dimension5   { get; set; }
+    public string?  FreeText     { get; set; }
+    public string?  Remark       { get; set; }
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -91,6 +117,24 @@ public class ReturnLineConfig : IEntityTypeConfiguration<ReturnLine>
         builder.Property(m => m.Quantity).HasPrecision(18, 2);
         builder.Property(m => m.Price).HasPrecision(18, 2);
         builder.Property(m => m.Total).HasPrecision(18, 2);
+
+        builder.Property(m => m.Branch).HasMaxLength(50);
+        builder.Property(m => m.Discount).HasPrecision(18, 2);
+        builder.Property(m => m.DiscountSum).HasPrecision(18, 2);
+        builder.Property(m => m.Vat).HasPrecision(18, 2);
+        builder.Property(m => m.VatSum).HasPrecision(18, 2);
+        builder.Property(m => m.ItemCost).HasPrecision(18, 2);
+        builder.Property(m => m.UomName).HasMaxLength(50);
+        builder.Property(m => m.UomCode).HasMaxLength(50);
+        builder.Property(m => m.DocCurrency).HasMaxLength(10);
+        builder.Property(m => m.GrossProfit).HasPrecision(18, 2);
+        builder.Property(m => m.Dimension1).HasMaxLength(50);
+        builder.Property(m => m.Dimension2).HasMaxLength(50);
+        builder.Property(m => m.Dimension3).HasMaxLength(50);
+        builder.Property(m => m.Dimension4).HasMaxLength(50);
+        builder.Property(m => m.Dimension5).HasMaxLength(50);
+        builder.Property(m => m.FreeText).HasMaxLength(500);
+        builder.Property(m => m.Remark).HasMaxLength(500);
 
         builder.HasOne(m => m.Item)
                .WithMany()

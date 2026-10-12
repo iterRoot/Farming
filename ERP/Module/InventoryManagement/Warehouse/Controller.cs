@@ -24,7 +24,6 @@ public class WarehouseController : MyController
         _repository = repository;
     }
 
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult Gets()
     {
@@ -34,7 +33,6 @@ public class WarehouseController : MyController
         return Ok(results);
     }
 
-    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public IActionResult Get(int id)
     {
@@ -43,7 +41,6 @@ public class WarehouseController : MyController
         return Ok(_mapper.Map<WarehouseListResponse>(item));
     }
 
-    [AllowAnonymous]
     [HttpPost]
     public IActionResult Create([FromBody] WarehouseListRequest request)
     {
@@ -64,7 +61,6 @@ public class WarehouseController : MyController
         return Ok(new { id = entity.Id, code = entity.Code, message = "Warehouse created." });
     }
 
-    [AllowAnonymous]
     [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] WarehouseUpdateRequest request)
     {
@@ -88,7 +84,6 @@ public class WarehouseController : MyController
         return Ok(new { id = item.Id, message = "Warehouse updated." });
     }
 
-    [AllowAnonymous]
     [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {

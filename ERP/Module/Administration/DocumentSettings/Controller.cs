@@ -43,7 +43,6 @@ public class DocumentSettingController : MyController
     }
 
     // ── GET /DocumentSetting ───────────────────────────────────
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult Get()
     {
@@ -65,7 +64,6 @@ public class DocumentSettingController : MyController
     }
 
     // ── PUT /DocumentSetting/General ───────────────────────────
-    [AllowAnonymous]
     [HttpPut("General")]
     public IActionResult SaveGeneral([FromBody] DocumentTypeSettingSaveRequest request)
     {
@@ -84,7 +82,6 @@ public class DocumentSettingController : MyController
     }
 
     // ── GET /DocumentSetting/{docType} ─────────────────────────
-    [AllowAnonymous]
     [HttpGet("{docType}")]
     public IActionResult GetOne(string docType)
     {
@@ -99,7 +96,6 @@ public class DocumentSettingController : MyController
     }
 
     // ── PUT /DocumentSetting/{docType} ─────────────────────────
-    [AllowAnonymous]
     [HttpPut("{docType}")]
     public IActionResult SaveOne(string docType, [FromBody] DocumentTypeSettingSaveRequest request)
     {
@@ -120,7 +116,6 @@ public class DocumentSettingController : MyController
     }
 
     // ── DELETE /DocumentSetting/{docType} ──────────────────────
-    [AllowAnonymous]
     [HttpDelete("{docType}")]
     public IActionResult Delete(string docType)
     {

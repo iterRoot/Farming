@@ -44,6 +44,7 @@ public class PickPackLine : AuditableEntity
     public int      LineNum      { get; set; }
     public string   BaseDocType  { get; set; } = "SaleOrder";
     public int      BaseDocEntry { get; set; }
+    public int?     BaseLineId   { get; set; }   // the source document's own line, so it can't be picked twice
     public string?  BaseDocNum   { get; set; }
     public string?  CustomerName { get; set; }
     public DateTime? DueDate     { get; set; }
@@ -53,7 +54,7 @@ public class PickPackLine : AuditableEntity
     public string?  WhsCode    { get; set; }
     public decimal  RequiredQty { get; set; }
     public decimal  PickedQty   { get; set; }
-    public string   Status      { get; set; } = "Open";   // Open | Picked
+    public string   Status      { get; set; } = "Open";   // Open → Released → Picked
 }
 
 public class PickPackCriteriaConfig : IEntityTypeConfiguration<PickPackCriteria>

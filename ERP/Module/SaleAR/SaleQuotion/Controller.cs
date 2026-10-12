@@ -2,6 +2,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi;
+using FarmingApi.Core;
+using FarmingApi.Modules.Administration.ApprovalRequest;
 using FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster;
 using FarmingApi.Modules.Inventory.ItemsMaster;
 using QuestPDF.Fluent;
@@ -16,11 +18,14 @@ public class SaleQuotionController : ControllerBase
 {
     private readonly MyDbContext _db;
     private readonly IMapper     _mapper;
+    private readonly IApprovalGateService _approvalGate;
+    private readonly IPrintLayoutRenderService _printLayout;
 
-    public SaleQuotionController(MyDbContext db, IMapper mapper)
+    public SaleQuotionController(MyDbContext db, IMapper mapper, IApprovalGateService approvalGate, IPrintLayoutRenderService printLayout)
     {
         _db     = db;
         _mapper = mapper;
+        _approvalGate = approvalGate; _printLayout = printLayout;
     }
 
     // ── GET /SaleQuotion ────────────────────────────────────────────────────
@@ -87,6 +92,77 @@ public class SaleQuotionController : ControllerBase
             _mapper.Map<SaleQuotionListResponse>(created));
     }
 
+    // ── POST /SaleQuotion/{id}/Post ─── promotes a Draft quotation to Open.
+    // A quotation carries no GL/inventory side effect, so posting is just the
+    // status transition — but it's the only door out of Draft, same as SAP B1.
+    [HttpPost("{id:int}/Post")]
+    public async Task<IActionResult> Post(int id)
+    {
+        var order = await _db.Set<SaleQuotion>().FindAsync(id);
+        if (order == null) return NotFound();
+        if (order.Status != "D")
+            return BadRequest($"Only a Draft document can be posted (current status: {order.Status}).");
+
+        var gate = await _approvalGate.EvaluateAsync("SaleQuotion", order.Id, order.DocNum, order.Total, this.CurrentUserId() ?? 0);
+        if (gate.RequiresApproval)
+        {
+            order.Status    = "P";
+            order.UpdatedAt = DateTime.UtcNow;
+            await _db.SaveChangesAsync();
+            return Ok(new { message = "Submitted for approval", docNum = order.DocNum, approvalRequestId = gate.ApprovalRequestId });
+        }
+
+        order.Status    = "O";
+        order.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Quotation posted", docNum = order.DocNum });
+    }
+
+    // ── POST /SaleQuotion/{id}/Approve ── approves a Pending document and posts it
+    [HttpPost("{id:int}/Approve")]
+    public async Task<IActionResult> Approve(int id)
+    {
+        var order = await _db.Set<SaleQuotion>().FindAsync(id);
+        if (order == null) return NotFound();
+        if (order.Status != "P")
+            return BadRequest($"Only a document pending approval can be approved (current status: {order.Status}).");
+
+        var userId = this.CurrentUserId();
+        if (userId == null) return Forbid();
+
+        var decision = await _approvalGate.DecideAsync("SaleQuotion", order.Id, "Approved", userId.Value, null);
+        if (!decision.Success) return BadRequest(decision.Error);
+
+        order.Status    = "O";
+        order.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Quotation approved and posted", docNum = order.DocNum });
+    }
+
+    // ── POST /SaleQuotion/{id}/Reject ── rejects a Pending document back to Draft
+    [HttpPost("{id:int}/Reject")]
+    public async Task<IActionResult> Reject(int id, [FromBody] ApprovalDecisionRequest? body)
+    {
+        var order = await _db.Set<SaleQuotion>().FindAsync(id);
+        if (order == null) return NotFound();
+        if (order.Status != "P")
+            return BadRequest($"Only a document pending approval can be rejected (current status: {order.Status}).");
+
+        var userId = this.CurrentUserId();
+        if (userId == null) return Forbid();
+
+        var decision = await _approvalGate.DecideAsync("SaleQuotion", order.Id, "Rejected", userId.Value, body?.Remarks);
+        if (!decision.Success) return BadRequest(decision.Error);
+
+        order.Status    = "D";
+        order.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Quotation rejected", docNum = order.DocNum });
+    }
+
     // ── PUT /SaleQuotion/{id} ───────────────────────────────────────────────
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] SaleQuotionUpdateRequest dto)
@@ -130,6 +206,9 @@ public class SaleQuotionController : ControllerBase
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (quotation == null) return NotFound();
+
+        var customHtml = await _printLayout.TryRenderAsync("SaleQuotion", quotation, quotation.Items);
+        if (customHtml != null) return Content(customHtml, "text/html");
 
         var company = await _db.Set<CompanyEntity>()
             .OrderBy(x => x.Id)

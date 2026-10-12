@@ -16,6 +16,11 @@ public class GLAccountDeterminationResponse
     public string? InventoryAccount   { get; set; }
     public string? CostOfGoodsSold    { get; set; }
     public string? InventoryOffset    { get; set; }
+    public string? InventoryRevaluationIncrease { get; set; }
+    public string? InventoryRevaluationDecrease { get; set; }
+    public string? InventoryCountingGain { get; set; }
+    public string? InventoryCountingLoss { get; set; }
+    public string? PriceDifference { get; set; }
     public string? CashAccount        { get; set; }
     public string? BankAccount        { get; set; }
     public string? ExchangeGainLoss   { get; set; }
@@ -40,6 +45,11 @@ public class GLAccountDeterminationRequest
     public string? InventoryAccount   { get; set; }
     public string? CostOfGoodsSold    { get; set; }
     public string? InventoryOffset    { get; set; }
+    public string? InventoryRevaluationIncrease { get; set; }
+    public string? InventoryRevaluationDecrease { get; set; }
+    public string? InventoryCountingGain { get; set; }
+    public string? InventoryCountingLoss { get; set; }
+    public string? PriceDifference { get; set; }
     public string? CashAccount        { get; set; }
     public string? BankAccount        { get; set; }
     public string? ExchangeGainLoss   { get; set; }

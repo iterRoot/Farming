@@ -22,7 +22,7 @@ public class ElectronicDocumentController : ControllerBase
     }
 
     // ── GET /ElectronicDocument ────────────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll(
         [FromQuery] string? documentType = null,
         [FromQuery] string? status       = null,
@@ -54,7 +54,7 @@ public class ElectronicDocumentController : ControllerBase
     }
 
     // ── GET /ElectronicDocument/{id} ───────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetAll()
@@ -65,7 +65,7 @@ public class ElectronicDocumentController : ControllerBase
     }
 
     // ── GET /ElectronicDocument/ByNo/{docNo} ──────────────────
-    [AllowAnonymous][HttpGet("ByNo/{docNo}")]
+    [HttpGet("ByNo/{docNo}")]
     public IActionResult GetByNo(string docNo)
     {
         var e = _repo.GetAll()
@@ -76,7 +76,7 @@ public class ElectronicDocumentController : ControllerBase
     }
 
     // ── GET /ElectronicDocument/Summary ───────────────────────
-    [AllowAnonymous][HttpGet("Summary")]
+    [HttpGet("Summary")]
     public IActionResult GetSummary()
     {
         var all = _repo.GetAll().ToList();
@@ -93,7 +93,7 @@ public class ElectronicDocumentController : ControllerBase
     }
 
     // ── POST /ElectronicDocument ───────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] ElectronicDocumentRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -114,7 +114,7 @@ public class ElectronicDocumentController : ControllerBase
     }
 
     // ── PUT /ElectronicDocument/{id} ───────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] ElectronicDocumentRequest dto)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -131,7 +131,7 @@ public class ElectronicDocumentController : ControllerBase
     }
 
     // ── POST /ElectronicDocument/{id}/Submit ───────────────────
-    [AllowAnonymous][HttpPost("{id:int}/Submit")]
+    [HttpPost("{id:int}/Submit")]
     public IActionResult Submit(int id, [FromBody] SubmitRequest dto)
     {
         var entity = _repo.GetAll().Include(x => x.Logs).FirstOrDefault(x => x.Id == id);
@@ -156,7 +156,7 @@ public class ElectronicDocumentController : ControllerBase
     }
 
     // ── POST /ElectronicDocument/{id}/Acknowledge ─────────────
-    [AllowAnonymous][HttpPost("{id:int}/Acknowledge")]
+    [HttpPost("{id:int}/Acknowledge")]
     public IActionResult Acknowledge(int id, [FromBody] AcknowledgeRequest dto)
     {
         var entity = _repo.GetAll().Include(x => x.Logs).FirstOrDefault(x => x.Id == id);
@@ -190,7 +190,7 @@ public class ElectronicDocumentController : ControllerBase
     }
 
     // ── POST /ElectronicDocument/{id}/Sign ────────────────────
-    [AllowAnonymous][HttpPost("{id:int}/Sign")]
+    [HttpPost("{id:int}/Sign")]
     public IActionResult Sign(int id,
         [FromQuery] string? certThumbprint = null,
         [FromQuery] string? signedBy       = null)
@@ -210,7 +210,7 @@ public class ElectronicDocumentController : ControllerBase
     }
 
     // ── POST /ElectronicDocument/{id}/Retry ───────────────────
-    [AllowAnonymous][HttpPost("{id:int}/Retry")]
+    [HttpPost("{id:int}/Retry")]
     public IActionResult Retry(int id)
     {
         var entity = _repo.GetAll().Include(x => x.Logs).FirstOrDefault(x => x.Id == id);
@@ -230,7 +230,7 @@ public class ElectronicDocumentController : ControllerBase
     }
 
     // ── POST /ElectronicDocument/{id}/Cancel ──────────────────
-    [AllowAnonymous][HttpPost("{id:int}/Cancel")]
+    [HttpPost("{id:int}/Cancel")]
     public IActionResult Cancel(int id, [FromQuery] string? reason = null)
     {
         var entity = _repo.GetAll().Include(x => x.Logs).FirstOrDefault(x => x.Id == id);
@@ -250,7 +250,7 @@ public class ElectronicDocumentController : ControllerBase
     }
 
     // ── POST /ElectronicDocument/{id}/Archive ─────────────────
-    [AllowAnonymous][HttpPost("{id:int}/Archive")]
+    [HttpPost("{id:int}/Archive")]
     public IActionResult Archive(int id)
     {
         var entity = _repo.GetAll().Include(x => x.Logs).FirstOrDefault(x => x.Id == id);
@@ -269,7 +269,7 @@ public class ElectronicDocumentController : ControllerBase
     }
 
     // ── DELETE /ElectronicDocument/{id} ───────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);

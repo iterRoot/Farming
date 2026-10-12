@@ -20,5 +20,6 @@ public class InventoryJournalResponse
     public decimal  TransValue   { get; set; }
     public decimal  QtyBalance   { get; set; }
     public decimal  ValueBalance { get; set; }
+    public decimal  PriceVariance { get; set; }
     public DateTime CreatedAt    { get; set; }
 }

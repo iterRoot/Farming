@@ -21,6 +21,7 @@ public class UserDefinedField : AuditableEntity
     public int?    Length       { get; set; }            // max length for Text
     public string? DefaultValue { get; set; }
     public List<string> ValidValues { get; set; } = new(); // choices for Dropdown
+    public string? LinkedTable  { get; set; }            // Dropdown only: take the choices from this user-defined table's row codes
     public bool    Mandatory    { get; set; }
     public int     SortOrder    { get; set; }
     public bool    Active       { get; set; } = true;
@@ -38,8 +39,34 @@ public class UserDefinedFieldConfig : IEntityTypeConfiguration<UserDefinedField>
         b.Property(x => x.Label).HasMaxLength(100).IsRequired();
         b.Property(x => x.FieldType).HasMaxLength(20).IsRequired();
         b.Property(x => x.DefaultValue).HasMaxLength(300);
+        b.Property(x => x.LinkedTable).HasMaxLength(20);
 
         // One field name per table.
         b.HasIndex(x => new { x.TableName, x.FieldName }).IsUnique();
+    }
+}
+
+
+// One user-defined field's value on one record (KUDV): the record is the row of the form's own table
+// (a business partner, an AR invoice, ...) identified by its Id.
+public class UdfValue
+{
+    public int    Id        { get; set; }
+    public string TableName { get; set; } = null!;   // the UDF form key, e.g. "ARInvoice"
+    public int    RecordId  { get; set; }
+    public string FieldName { get; set; } = null!;
+    public string Value     { get; set; } = "";
+}
+
+public class UdfValueConfig : IEntityTypeConfiguration<UdfValue>
+{
+    public void Configure(EntityTypeBuilder<UdfValue> b)
+    {
+        b.ToTable("KUDV");
+        b.HasKey(x => x.Id);
+        b.Property(x => x.TableName).HasMaxLength(50).IsRequired();
+        b.Property(x => x.FieldName).HasMaxLength(50).IsRequired();
+        b.Property(x => x.Value).HasMaxLength(2000).IsRequired();
+        b.HasIndex(x => new { x.TableName, x.RecordId, x.FieldName }).IsUnique();
     }
 }

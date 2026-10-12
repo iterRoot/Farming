@@ -23,7 +23,7 @@ public class ReferenceFieldLinkController : ControllerBase
     }
 
     // ── GET /ReferenceFieldLink ────────────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll([FromQuery] string? sourceModule = null)
     {
         var list = _repo.GetAll()
@@ -36,7 +36,7 @@ public class ReferenceFieldLinkController : ControllerBase
     }
 
     // ── GET /ReferenceFieldLink/{id} ───────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetSingle(x => x.Id == id);
@@ -45,7 +45,7 @@ public class ReferenceFieldLinkController : ControllerBase
     }
 
     // ── GET /ReferenceFieldLink/ByField?module=ARInvoice&field=CustomerId
-    [AllowAnonymous][HttpGet("ByField")]
+    [HttpGet("ByField")]
     public IActionResult GetByField(
         [FromQuery] string module, [FromQuery] string field)
     {
@@ -56,7 +56,7 @@ public class ReferenceFieldLinkController : ControllerBase
     }
 
     // ── GET /ReferenceFieldLink/ByModule/{module} ──────────────
-    [AllowAnonymous][HttpGet("ByModule/{module}")]
+    [HttpGet("ByModule/{module}")]
     public IActionResult GetByModule(string module)
     {
         var list = _repo.GetAll()
@@ -68,7 +68,7 @@ public class ReferenceFieldLinkController : ControllerBase
     }
 
     // ── GET /ReferenceFieldLink/Modules ───────────────────────
-    [AllowAnonymous][HttpGet("Modules")]
+    [HttpGet("Modules")]
     public IActionResult GetModules()
     {
         var modules = _repo.GetAll()
@@ -80,7 +80,7 @@ public class ReferenceFieldLinkController : ControllerBase
     }
 
     // ── POST /ReferenceFieldLink ───────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] ReferenceFieldLinkRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -102,7 +102,7 @@ public class ReferenceFieldLinkController : ControllerBase
     }
 
     // ── PUT /ReferenceFieldLink/{id} ───────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] ReferenceFieldLinkRequest dto)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -125,7 +125,7 @@ public class ReferenceFieldLinkController : ControllerBase
     }
 
     // ── DELETE /ReferenceFieldLink/{id} ───────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -136,7 +136,7 @@ public class ReferenceFieldLinkController : ControllerBase
     }
 
     // ── POST /ReferenceFieldLink/Seed ──────────────────────────
-    [AllowAnonymous][HttpPost("Seed")]
+    [HttpPost("Seed")]
     public IActionResult Seed()
     {
         if (_repo.GetAll().Any())

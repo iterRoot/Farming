@@ -28,7 +28,6 @@ public class EmailAccountController : MyController
         }
     }
 
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult GetAll()
     {
@@ -44,7 +43,6 @@ public class EmailAccountController : MyController
         return Ok(list);
     }
 
-    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public IActionResult GetOne(int id)
     {
@@ -60,7 +58,6 @@ public class EmailAccountController : MyController
         });
     }
 
-    [AllowAnonymous]
     [HttpPost]
     public IActionResult Create([FromBody] EmailAccountSaveRequest req)
     {
@@ -84,7 +81,6 @@ public class EmailAccountController : MyController
         return Ok(new { id = e.Id, message = "Email account created." });
     }
 
-    [AllowAnonymous]
     [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] EmailAccountSaveRequest req)
     {
@@ -116,7 +112,6 @@ public class EmailAccountController : MyController
         return Ok(new { id = e.Id, message = "Email account updated." });
     }
 
-    [AllowAnonymous]
     [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {

@@ -23,7 +23,7 @@ public class CycleCountDeterminationController : ControllerBase
         _mapper     = mapper;
     }
 
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll()
     {
         var list = _repository.GetAll()
@@ -33,7 +33,7 @@ public class CycleCountDeterminationController : ControllerBase
         return Ok(_mapper.Map<List<CycleCountResponse>>(list));
     }
 
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repository.GetSingle(x => x.Id == id);
@@ -41,7 +41,7 @@ public class CycleCountDeterminationController : ControllerBase
         return Ok(_mapper.Map<CycleCountResponse>(e));
     }
 
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] CycleCountRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -59,7 +59,7 @@ public class CycleCountDeterminationController : ControllerBase
         return Ok(_mapper.Map<CycleCountResponse>(entity));
     }
 
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] CycleCountRequest dto)
     {
         var entity = _repository.GetSingle(x => x.Id == id);
@@ -77,7 +77,7 @@ public class CycleCountDeterminationController : ControllerBase
         return Ok(_mapper.Map<CycleCountResponse>(entity));
     }
 
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repository.GetSingle(x => x.Id == id);

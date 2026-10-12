@@ -78,4 +78,20 @@ public class BarCodeSearchResponse
     public string?  UoM             { get; set; }
     public string?  FreeText        { get; set; }
     public bool     IsDefault       { get; set; }
+
+    // What the barcode stands for right now — read live on every scan.
+    public string?  StockUoM        { get; set; }   // unit stock is counted in
+    public decimal  UnitPrice       { get; set; }   // selling price per unit
+    public string?  Currency        { get; set; }
+    public decimal  OnHand          { get; set; }   // all warehouses
+    public List<BarCodeStockRow> Warehouses { get; set; } = new();
+}
+
+public class BarCodeStockRow
+{
+    public string  WhsCode   { get; set; } = "";
+    public string? WhsName   { get; set; }
+    public decimal Qty       { get; set; }
+    public string? UoM       { get; set; }
+    public decimal UnitPrice { get; set; }
 }

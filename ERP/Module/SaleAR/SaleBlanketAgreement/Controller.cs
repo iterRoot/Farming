@@ -2,6 +2,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi;
+using FarmingApi.Core;
+using FarmingApi.Modules.Administration.ApprovalRequest;
 using FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster;
 using FarmingApi.Modules.Inventory.ItemsMaster;
 using FarmingApi.Services;
@@ -17,15 +19,20 @@ public class SaleBlanketAgreementController : ControllerBase
     private readonly MyDbContext           _db;
     private readonly IMapper               _mapper;
     private readonly IDocumentNumberService _docNumber; // ✅ auto-numbering
+    private readonly IApprovalGateService  _approvalGate;
+    private readonly IPrintLayoutRenderService _printLayout;
 
     public SaleBlanketAgreementController(
         MyDbContext            db,
         IMapper                mapper,
-        IDocumentNumberService docNumber)
+        IDocumentNumberService docNumber,
+        IApprovalGateService approvalGate,
+        IPrintLayoutRenderService printLayout)
     {
         _db        = db;
         _mapper    = mapper;
         _docNumber = docNumber;
+        _approvalGate = approvalGate; _printLayout = printLayout;
     }
 
     // ════════════════════════════════════════════════════════════════
@@ -39,6 +46,7 @@ public class SaleBlanketAgreementController : ControllerBase
         var list = await _db.Set<SaleBlanketAgreement>()
             .Include(x => x.Customer)
             .Include(x => x.Items).ThenInclude(l => l.Item)
+            .Include(x => x.Items).ThenInclude(l => l.ARInvoice)
             .OrderByDescending(x => x.CreatedAt)
             .ToListAsync();
 
@@ -52,6 +60,7 @@ public class SaleBlanketAgreementController : ControllerBase
         var agreement = await _db.Set<SaleBlanketAgreement>()
             .Include(x => x.Customer)
             .Include(x => x.Items).ThenInclude(l => l.Item)
+            .Include(x => x.Items).ThenInclude(l => l.ARInvoice)
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (agreement == null) return NotFound();
@@ -96,10 +105,81 @@ public class SaleBlanketAgreementController : ControllerBase
         var created = await _db.Set<SaleBlanketAgreement>()
             .Include(x => x.Customer)
             .Include(x => x.Items).ThenInclude(l => l.Item)
+            .Include(x => x.Items).ThenInclude(l => l.ARInvoice)
             .FirstAsync(x => x.Id == agreement.Id);
 
         return CreatedAtAction(nameof(GetById), new { id = agreement.Id },
             _mapper.Map<SaleBlanketAgreementListResponse>(created));
+    }
+
+    // ── POST /SaleBlanketAgreement/{id}/Post ─── promotes a Draft agreement
+    // to Open. No GL/inventory side effect — posting is the status transition.
+    [HttpPost("{id:int}/Post")]
+    public async Task<IActionResult> Post(int id)
+    {
+        var agreement = await _db.Set<SaleBlanketAgreement>().FindAsync(id);
+        if (agreement == null) return NotFound();
+        if (agreement.Status != "D")
+            return BadRequest($"Only a Draft document can be posted (current status: {agreement.Status}).");
+
+        var gate = await _approvalGate.EvaluateAsync("SaleBlanketAgreement", agreement.Id, agreement.DocNum, agreement.Total, this.CurrentUserId() ?? 0);
+        if (gate.RequiresApproval)
+        {
+            agreement.Status    = "P";
+            agreement.UpdatedAt = DateTime.UtcNow;
+            await _db.SaveChangesAsync();
+            return Ok(new { message = "Submitted for approval", docNum = agreement.DocNum, approvalRequestId = gate.ApprovalRequestId });
+        }
+
+        agreement.Status    = "O";
+        agreement.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Agreement posted", docNum = agreement.DocNum });
+    }
+
+    // ── POST /SaleBlanketAgreement/{id}/Approve ── approves a Pending document and posts it
+    [HttpPost("{id:int}/Approve")]
+    public async Task<IActionResult> Approve(int id)
+    {
+        var agreement = await _db.Set<SaleBlanketAgreement>().FindAsync(id);
+        if (agreement == null) return NotFound();
+        if (agreement.Status != "P")
+            return BadRequest($"Only a document pending approval can be approved (current status: {agreement.Status}).");
+
+        var userId = this.CurrentUserId();
+        if (userId == null) return Forbid();
+
+        var decision = await _approvalGate.DecideAsync("SaleBlanketAgreement", agreement.Id, "Approved", userId.Value, null);
+        if (!decision.Success) return BadRequest(decision.Error);
+
+        agreement.Status    = "O";
+        agreement.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Agreement approved and posted", docNum = agreement.DocNum });
+    }
+
+    // ── POST /SaleBlanketAgreement/{id}/Reject ── rejects a Pending document back to Draft
+    [HttpPost("{id:int}/Reject")]
+    public async Task<IActionResult> Reject(int id, [FromBody] ApprovalDecisionRequest? body)
+    {
+        var agreement = await _db.Set<SaleBlanketAgreement>().FindAsync(id);
+        if (agreement == null) return NotFound();
+        if (agreement.Status != "P")
+            return BadRequest($"Only a document pending approval can be rejected (current status: {agreement.Status}).");
+
+        var userId = this.CurrentUserId();
+        if (userId == null) return Forbid();
+
+        var decision = await _approvalGate.DecideAsync("SaleBlanketAgreement", agreement.Id, "Rejected", userId.Value, body?.Remarks);
+        if (!decision.Success) return BadRequest(decision.Error);
+
+        agreement.Status    = "D";
+        agreement.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Agreement rejected", docNum = agreement.DocNum });
     }
 
     // ── PUT /SaleBlanketAgreement/{id} ───────────────────────────
@@ -142,9 +222,13 @@ public class SaleBlanketAgreementController : ControllerBase
         var agreement = await _db.Set<SaleBlanketAgreement>()
             .Include(x => x.Customer)
             .Include(x => x.Items).ThenInclude(l => l.Item)
+            .Include(x => x.Items).ThenInclude(l => l.ARInvoice)
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (agreement == null) return NotFound();
+
+        var customHtml = await _printLayout.TryRenderAsync("SaleBlanketAgreement", agreement, agreement.Items);
+        if (customHtml != null) return Content(customHtml, "text/html");
 
         var company = await _db.Set<CompanyEntity>()
             .OrderBy(x => x.Id)
@@ -179,6 +263,7 @@ public class SaleBlanketAgreementController : ControllerBase
         var list = await _db.Set<SaleBlanketAgreement>()
             .Include(x => x.Customer)
             .Include(x => x.Items).ThenInclude(l => l.Item)
+            .Include(x => x.Items).ThenInclude(l => l.ARInvoice)
             .Where(x => x.CustomerId == customerId && x.Status == "O")
             .OrderByDescending(x => x.CreatedAt)
             .ToListAsync();
@@ -194,6 +279,7 @@ public class SaleBlanketAgreementController : ControllerBase
         var agreement = await _db.Set<SaleBlanketAgreement>()
             .Include(x => x.Customer)
             .Include(x => x.Items).ThenInclude(l => l.Item)
+            .Include(x => x.Items).ThenInclude(l => l.ARInvoice)
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (agreement == null)

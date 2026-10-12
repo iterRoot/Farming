@@ -21,14 +21,14 @@ public class LengthWidthUomController : ControllerBase
         _mapper     = mapper;
     }
 
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll()
     {
         var list = _repository.GetAll().OrderBy(x => x.ConversionToMeter).ToList();
         return Ok(_mapper.Map<List<LengthWidthUomResponse>>(list));
     }
 
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repository.GetSingle(x => x.Id == id);
@@ -36,7 +36,7 @@ public class LengthWidthUomController : ControllerBase
         return Ok(_mapper.Map<LengthWidthUomResponse>(e));
     }
 
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] LengthWidthUomRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -54,7 +54,7 @@ public class LengthWidthUomController : ControllerBase
         return Ok(_mapper.Map<LengthWidthUomResponse>(entity));
     }
 
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] LengthWidthUomRequest dto)
     {
         var entity = _repository.GetSingle(x => x.Id == id);
@@ -72,7 +72,7 @@ public class LengthWidthUomController : ControllerBase
         return Ok(_mapper.Map<LengthWidthUomResponse>(entity));
     }
 
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repository.GetSingle(x => x.Id == id);

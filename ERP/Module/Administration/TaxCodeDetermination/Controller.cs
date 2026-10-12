@@ -29,12 +29,10 @@ public class TaxDeterminationRuleController : MyController
         Priority = x.Priority, InActive = x.InActive ?? false,
     };
 
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult GetAll()
         => Ok(_repo.GetAll().OrderBy(x => x.Priority).ThenBy(x => x.Id).Select(ToDto).ToList());
 
-    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public IActionResult GetOne(int id)
     {
@@ -43,7 +41,6 @@ public class TaxDeterminationRuleController : MyController
         return Ok(ToDto(x));
     }
 
-    [AllowAnonymous]
     [HttpPost]
     public IActionResult Create([FromBody] TaxDeterminationRuleSaveRequest req)
     {
@@ -57,7 +54,6 @@ public class TaxDeterminationRuleController : MyController
         return Ok(new { id = e.Id, message = "Rule created." });
     }
 
-    [AllowAnonymous]
     [HttpPost("Bulk")]
     public IActionResult CreateBulk([FromBody] List<TaxDeterminationRuleSaveRequest> requests)
     {
@@ -79,7 +75,6 @@ public class TaxDeterminationRuleController : MyController
         return Ok(new { created, message = $"{created} rule(s) created." });
     }
 
-    [AllowAnonymous]
     [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] TaxDeterminationRuleSaveRequest req)
     {
@@ -95,7 +90,6 @@ public class TaxDeterminationRuleController : MyController
         return Ok(new { id = e.Id, message = "Rule updated." });
     }
 
-    [AllowAnonymous]
     [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {

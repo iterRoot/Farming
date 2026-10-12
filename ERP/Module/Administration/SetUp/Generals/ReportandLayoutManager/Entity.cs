@@ -46,6 +46,13 @@ public class ReportLayout : AuditableEntity
     public string?  FileHash       { get; set; }                   // MD5 for integrity check
     public DateTime? LastUploadedAt{ get; set; }
 
+    // ── HTML Template (LayoutEngine == "HTML") ──────────────────
+    // The only engine actually rendered at print time today: merge-field
+    // markup ({{DocNum}}, {{Customer.CardName}}, {{#each Items}}...{{/each}})
+    // substituted against the live document by PrintLayoutRenderService.
+    // Every other engine value stays a metadata pointer only, same as before.
+    public string?  HtmlTemplate   { get; set; }
+
     // ── Page Setup ────────────────────────────────────────────
     public string   PaperSize      { get; set; } = "A4";          // A4/A5/Letter/Legal/Custom
     public string   Orientation    { get; set; } = "Portrait";    // Portrait/Landscape
@@ -123,6 +130,7 @@ public class ReportLayoutConfig : IEntityTypeConfiguration<ReportLayout>
         b.Property(x => x.FileUrl).HasMaxLength(500);
         b.Property(x => x.FileName).HasMaxLength(200);
         b.Property(x => x.FileHash).HasMaxLength(64);
+        b.Property(x => x.HtmlTemplate).HasColumnType("text");
         b.Property(x => x.PaperSize).HasMaxLength(20);
         b.Property(x => x.Orientation).HasMaxLength(15);
         b.Property(x => x.PageWidth).HasColumnType("decimal(8,2)");

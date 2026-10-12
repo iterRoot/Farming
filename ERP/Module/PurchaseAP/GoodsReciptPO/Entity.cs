@@ -9,6 +9,9 @@ namespace FarmingApi.Modules.PurchaseAP.GoodsReceiptPO;
 // HEADER
 public class GoodsReceiptPO : AuditableEntity
 {
+    [System.ComponentModel.DataAnnotations.MaxLength(50)]
+    public string? BuyerCode { get; set; }   // buyer (KSEB code)
+
     public string DocNum { get; set; } = "";
     public DateTime? PostingDate { get; set; }
     public DateTime? DocDate     { get; set; }
@@ -26,6 +29,10 @@ public class GoodsReceiptPO : AuditableEntity
 // LINE
 public class GoodsReceiptPOLine : AuditableEntity
 {
+    // Batch / serial numbers entered for this line — used when the document posts stock; not stored on the line.
+    [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
+
     public int LineNum { get; set; }
 
     public int GoodsReceiptPOId { get; set; }
@@ -64,7 +71,10 @@ public class GoodsReceiptPOConfig : IEntityTypeConfiguration<GoodsReceiptPO>
         builder.Property(x => x.TaxAmount).HasPrecision(18, 2);
         builder.Property(x => x.Remarks).HasMaxLength(1000);
 
-        builder.HasCheckConstraint("CK_GRPO_Status","\"Status\" IN ('O','C')");
+        // Draft/Pending added alongside Open/Closed: a receipt can be saved
+        // before it posts stock/GL, or parked awaiting approval — see
+        // GoodsReceiptPOController's Draft/Post/Approve/Reject flow.
+        builder.HasCheckConstraint("CK_GRPO_Status","\"Status\" IN ('O','C','D','P')");
 
         builder.Property(x => x.Total).HasPrecision(18, 2);
 

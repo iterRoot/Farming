@@ -29,6 +29,10 @@ public class GoodsReturn : AuditableEntity
 // ══════════════════════════════════════════════════════════════════════════════
 public class GoodsReturnLine : AuditableEntity
 {
+    // Batch / serial numbers entered for this line — used when the document posts stock; not stored on the line.
+    [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
+
     public int         GoodsReturnId { get; set; }
     public GoodsReturn GoodsReturn   { get; set; } = null!;
 

@@ -2,6 +2,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi;
+using FarmingApi.Core;
+using FarmingApi.Modules.Administration.ApprovalRequest;
+using FarmingApi.Modules.Administration.DocumentNumberRange;
 using FarmingApi.Modules.Inventory.ItemsMaster;
 
 // ✅ Alias for BP entity
@@ -15,11 +18,15 @@ public class ReturnRequestController : ControllerBase
 {
     private readonly MyDbContext _db;
     private readonly IMapper     _mapper;
+    private readonly IApprovalGateService _approvalGate;
+    private readonly IDocumentNumberRangeRepository _docNums;
 
-    public ReturnRequestController(MyDbContext db, IMapper mapper)
+    public ReturnRequestController(MyDbContext db, IMapper mapper, IApprovalGateService approvalGate, IDocumentNumberRangeRepository docNums)
     {
         _db     = db;
         _mapper = mapper;
+        _approvalGate = approvalGate;
+        _docNums = docNums;
     }
 
     // ── GET /ReturnRequest ────────────────────────────────────────────────────
@@ -62,6 +69,14 @@ public class ReturnRequestController : ControllerBase
 
         var invoice = _mapper.Map<ReturnRequest>(dto);
 
+        // The screen reserves a number via /DocumentNumberRange/Next and sends it;
+        // any other caller sends none, and DocNum is required, so assign one.
+        if (string.IsNullOrWhiteSpace(invoice.DocNum))
+        {
+            try { invoice.DocNum = _docNums.GenerateNextNumber("ReturnRequest").DocNo; }
+            catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
+        }
+
         // Auto-fill ItemCode / ItemName from ItemsMaster
         foreach (var line in invoice.Items)
         {
@@ -84,6 +99,77 @@ public class ReturnRequestController : ControllerBase
 
         return CreatedAtAction(nameof(GetById), new { id = invoice.Id },
             _mapper.Map<ReturnRequestListResponse>(created));
+    }
+
+    // ── POST /ReturnRequest/{id}/Post ─── promotes a Draft request to Open.
+    // No GL/inventory side effect — the Return document itself is what
+    // brings goods back into stock; this is just the status transition.
+    [HttpPost("{id:int}/Post")]
+    public async Task<IActionResult> Post(int id)
+    {
+        var invoice = await _db.Set<ReturnRequest>().FindAsync(id);
+        if (invoice == null) return NotFound();
+        if (invoice.Status != "D")
+            return BadRequest($"Only a Draft document can be posted (current status: {invoice.Status}).");
+
+        var gate = await _approvalGate.EvaluateAsync("ReturnRequest", invoice.Id, invoice.DocNum, invoice.Total, this.CurrentUserId() ?? 0);
+        if (gate.RequiresApproval)
+        {
+            invoice.Status    = "P";
+            invoice.UpdatedAt = DateTime.UtcNow;
+            await _db.SaveChangesAsync();
+            return Ok(new { message = "Submitted for approval", docNum = invoice.DocNum, approvalRequestId = gate.ApprovalRequestId });
+        }
+
+        invoice.Status    = "O";
+        invoice.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Return Request posted", docNum = invoice.DocNum });
+    }
+
+    // ── POST /ReturnRequest/{id}/Approve ── approves a Pending document and posts it
+    [HttpPost("{id:int}/Approve")]
+    public async Task<IActionResult> Approve(int id)
+    {
+        var invoice = await _db.Set<ReturnRequest>().FindAsync(id);
+        if (invoice == null) return NotFound();
+        if (invoice.Status != "P")
+            return BadRequest($"Only a document pending approval can be approved (current status: {invoice.Status}).");
+
+        var userId = this.CurrentUserId();
+        if (userId == null) return Forbid();
+
+        var decision = await _approvalGate.DecideAsync("ReturnRequest", invoice.Id, "Approved", userId.Value, null);
+        if (!decision.Success) return BadRequest(decision.Error);
+
+        invoice.Status    = "O";
+        invoice.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Return Request approved and posted", docNum = invoice.DocNum });
+    }
+
+    // ── POST /ReturnRequest/{id}/Reject ── rejects a Pending document back to Draft
+    [HttpPost("{id:int}/Reject")]
+    public async Task<IActionResult> Reject(int id, [FromBody] ApprovalDecisionRequest? body)
+    {
+        var invoice = await _db.Set<ReturnRequest>().FindAsync(id);
+        if (invoice == null) return NotFound();
+        if (invoice.Status != "P")
+            return BadRequest($"Only a document pending approval can be rejected (current status: {invoice.Status}).");
+
+        var userId = this.CurrentUserId();
+        if (userId == null) return Forbid();
+
+        var decision = await _approvalGate.DecideAsync("ReturnRequest", invoice.Id, "Rejected", userId.Value, body?.Remarks);
+        if (!decision.Success) return BadRequest(decision.Error);
+
+        invoice.Status    = "D";
+        invoice.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Return Request rejected", docNum = invoice.DocNum });
     }
 
     // ── PUT /ReturnRequest/{id} ───────────────────────────────────────────────

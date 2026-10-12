@@ -14,6 +14,9 @@ namespace FarmingApi.Modules.PurchaseAP.PurchaseQuotation;
 // ══════════════════════════════════════════════════════════════════════════════
 public class PurchaseQuotation : AuditableEntity
 {
+    [System.ComponentModel.DataAnnotations.MaxLength(50)]
+    public string? BuyerCode { get; set; }   // buyer (KSEB code)
+
     public string    DocNum      { get; set; } = "";
     public DateTime? PostingDate { get; set; }
     public DateTime? DueDate     { get; set; }

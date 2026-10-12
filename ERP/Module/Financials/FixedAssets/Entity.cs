@@ -43,7 +43,8 @@ public class AssetMaster : AuditableEntity
     public decimal  SalvageValue          { get; set; }
     public decimal  AccumulatedDepreciation { get; set; }
     public string   AssetStatus   { get; set; } = "New";   // New | Active | Inactive | Deactivated
-    public string?  DepreciationAccount   { get; set; }
+    public string?  DepreciationAccount   { get; set; }   // expense, debited by a depreciation run
+    public string?  AccumulatedDepreciationAccount { get; set; }   // contra-asset, credited by a depreciation run
     public string?  AssetAccount          { get; set; }
 }
 

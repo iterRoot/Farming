@@ -19,7 +19,7 @@ public class MessagePreferenceController : ControllerBase
     }
 
     // ── GET /MessagePreference ─────────────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll(
         [FromQuery] string? userCode  = null,
         [FromQuery] string? category  = null,
@@ -40,7 +40,7 @@ public class MessagePreferenceController : ControllerBase
     }
 
     // ── GET /MessagePreference/{id} ────────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetSingle(x => x.Id == id);
@@ -49,7 +49,7 @@ public class MessagePreferenceController : ControllerBase
     }
 
     // ── GET /MessagePreference/ByUser/{userCode} ───────────────
-    [AllowAnonymous][HttpGet("ByUser/{userCode}")]
+    [HttpGet("ByUser/{userCode}")]
     public IActionResult GetByUser(string userCode)
     {
         var list = _repo.GetAll()
@@ -60,7 +60,7 @@ public class MessagePreferenceController : ControllerBase
     }
 
     // ── GET /MessagePreference/Users ───────────────────────────
-    [AllowAnonymous][HttpGet("Users")]
+    [HttpGet("Users")]
     public IActionResult GetUsers()
     {
         var users = _repo.GetAll()
@@ -72,12 +72,12 @@ public class MessagePreferenceController : ControllerBase
     }
 
     // ── GET /MessagePreference/EventCatalog ────────────────────
-    [AllowAnonymous][HttpGet("EventCatalog")]
+    [HttpGet("EventCatalog")]
     public IActionResult GetEventCatalog()
         => Ok(GetAllEvents());
 
     // ── POST /MessagePreference ────────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] MessagePreferenceRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -97,7 +97,7 @@ public class MessagePreferenceController : ControllerBase
     }
 
     // ── PUT /MessagePreference/{id} ────────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] MessagePreferenceRequest dto)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -118,7 +118,7 @@ public class MessagePreferenceController : ControllerBase
     }
 
     // ── PUT /MessagePreference/{id}/Toggle ─────────────────────
-    [AllowAnonymous][HttpPut("{id:int}/Toggle")]
+    [HttpPut("{id:int}/Toggle")]
     public IActionResult Toggle(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -131,7 +131,7 @@ public class MessagePreferenceController : ControllerBase
     }
 
     // ── PUT /MessagePreference/BulkToggle ──────────────────────
-    [AllowAnonymous][HttpPut("BulkToggle")]
+    [HttpPut("BulkToggle")]
     public IActionResult BulkToggle([FromBody] BulkToggleRequest dto)
     {
         var entities = _repo.GetAll().Where(x => dto.Ids.Contains(x.Id)).ToList();
@@ -146,7 +146,7 @@ public class MessagePreferenceController : ControllerBase
     }
 
     // ── POST /MessagePreference/CopyToUser ─────────────────────
-    [AllowAnonymous][HttpPost("CopyToUser/{fromUserCode}")]
+    [HttpPost("CopyToUser/{fromUserCode}")]
     public IActionResult CopyToUser(string fromUserCode, [FromBody] CopyToUserRequest dto)
     {
         var source      = _repo.GetAll().Where(x => x.UserCode == fromUserCode.Trim().ToUpper()).ToList();
@@ -196,7 +196,7 @@ public class MessagePreferenceController : ControllerBase
     }
 
     // ── DELETE /MessagePreference/{id} ─────────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -207,7 +207,7 @@ public class MessagePreferenceController : ControllerBase
     }
 
     // ── DELETE /MessagePreference/ByUser/{userCode} ────────────
-    [AllowAnonymous][HttpDelete("ByUser/{userCode}")]
+    [HttpDelete("ByUser/{userCode}")]
     public IActionResult DeleteByUser(string userCode)
     {
         var list = _repo.GetAll().Where(x => x.UserCode == userCode.Trim().ToUpper()).ToList();
@@ -217,7 +217,7 @@ public class MessagePreferenceController : ControllerBase
     }
 
     // ── POST /MessagePreference/Seed ───────────────────────────
-    [AllowAnonymous][HttpPost("Seed")]
+    [HttpPost("Seed")]
     public IActionResult Seed()
     {
         if (_repo.GetAll().Any())
@@ -230,7 +230,7 @@ public class MessagePreferenceController : ControllerBase
     }
 
     // ── POST /MessagePreference/SeedForUser/{userCode} ─────────
-    [AllowAnonymous][HttpPost("SeedForUser/{userCode}")]
+    [HttpPost("SeedForUser/{userCode}")]
     public IActionResult SeedForUser(string userCode, [FromQuery] string? userName = null)
     {
         var code = userCode.Trim().ToUpper();

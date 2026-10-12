@@ -19,7 +19,6 @@ public class BranchController : MyController
     }
 
     // ── GET /Branch ────────────────────────────────────────────
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult Gets()
     {
@@ -30,7 +29,6 @@ public class BranchController : MyController
     }
 
     // ── GET /Branch/{id} ───────────────────────────────────────
-    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public IActionResult Get(int id)
     {
@@ -40,7 +38,6 @@ public class BranchController : MyController
     }
 
     // ── POST /Branch ───────────────────────────────────────────
-    [AllowAnonymous]
     [HttpPost]
     public IActionResult Create([FromBody] BranchListRequest request)
     {
@@ -56,7 +53,6 @@ public class BranchController : MyController
 
     // ── POST /Branch/Bulk ──────────────────────────────────────
     // Saves the whole "Branches - Setup" matrix in one call.
-    [AllowAnonymous]
     [HttpPost("Bulk")]
     public IActionResult CreateBulk([FromBody] List<BranchListRequest> requests)
     {
@@ -93,7 +89,6 @@ public class BranchController : MyController
     }
 
     // ── PUT /Branch/{id} ───────────────────────────────────────
-    [AllowAnonymous]
     [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] BranchUpdateRequest request)
     {
@@ -126,7 +121,6 @@ public class BranchController : MyController
 
     // ── DELETE /Branch/{id} ────────────────────────────────────
     // (was [HttpDelete] with no template, so /Branch/{id} returned 405)
-    [AllowAnonymous]
     [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {

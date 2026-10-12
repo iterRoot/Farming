@@ -21,7 +21,7 @@ public class OpportunityController : ControllerBase
     }
 
     // ── GET /Opportunity ───────────────────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll(
         [FromQuery] string? status        = null,
         [FromQuery] string? salesEmployee = null,
@@ -37,7 +37,7 @@ public class OpportunityController : ControllerBase
     }
 
     // ── GET /Opportunity/{id} ──────────────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = IncludeAll(_repo.GetAll()).FirstOrDefault(x => x.Id == id);
@@ -46,7 +46,7 @@ public class OpportunityController : ControllerBase
     }
 
     // ── GET /Opportunity/Summary ───────────────────────────────
-    [AllowAnonymous][HttpGet("Summary")]
+    [HttpGet("Summary")]
     public IActionResult GetSummary()
     {
         var all = _repo.GetAll().ToList();
@@ -63,7 +63,7 @@ public class OpportunityController : ControllerBase
     }
 
     // ── POST /Opportunity ──────────────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] OpportunityRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -85,7 +85,7 @@ public class OpportunityController : ControllerBase
     }
 
     // ── PUT /Opportunity/{id} ──────────────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] OpportunityRequest dto)
     {
         var entity = IncludeAll(_repo.GetAll()).FirstOrDefault(x => x.Id == id);
@@ -114,7 +114,7 @@ public class OpportunityController : ControllerBase
 
     // ── PUT /Opportunity/{id}/Status ───────────────────────────
     // Transition to Won / Lost / Open
-    [AllowAnonymous][HttpPut("{id:int}/Status")]
+    [HttpPut("{id:int}/Status")]
     public IActionResult UpdateStatus(int id, [FromBody] OpportunityStatusRequest dto)
     {
         var allowed = new[] { "Open", "Won", "Lost" };
@@ -136,7 +136,7 @@ public class OpportunityController : ControllerBase
     }
 
     // ── DELETE /Opportunity/{id} ───────────────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);

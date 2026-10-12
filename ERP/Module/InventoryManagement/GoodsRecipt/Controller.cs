@@ -35,7 +35,6 @@ public class GoodsReceiptController : MyController
     }
 
     // ── GET /GoodsReceipt ──────────────────────────────────────
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult Gets()
     {
@@ -45,7 +44,6 @@ public class GoodsReceiptController : MyController
     }
 
     // ── GET /GoodsReceipt/{id} ─────────────────────────────────
-    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public IActionResult Get(int id)
     {
@@ -61,16 +59,10 @@ public class GoodsReceiptController : MyController
     // ✅ Fix 2: Auto DocNo from DocumentNumberRange
     // ✅ Fix 3: Vendor lookup → CustomerCode / CustomerName
     // ✅ Fix 4: Item lookup → ItemCode / ItemName per line
-    [AllowAnonymous]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] GoodsReceiptInsertListRequest request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-
-        // ✅ Auto-number
-        string docNo;
-        try { docNo = _docNumber.Next("GoodsReceipt"); }
-        catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
 
         // ✅ Vendor lookup → fill CustomerCode / CustomerName
         if (request.VendorId.HasValue && request.VendorId > 0)
@@ -106,26 +98,51 @@ public class GoodsReceiptController : MyController
             line.LineNum = ln++;
         }
 
-        _repository.Add(entity);
-        _repository.Commit();
-
-        // Track each received line in the Inventory Journal (default warehouse).
+        // Check batch / serial numbers for every line before anything is saved.
         var whs = await _inventoryPosting.ResolveWarehouseCodeAsync(null);
         var postDate = entity.PostingDate == default ? DateTime.UtcNow : entity.PostingDate;
+        var tally = new FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchTally();
         foreach (var line in entity.Lines)
         {
-            await _inventoryPosting.PostInAsync(
-                line.ItemCode, whs, line.Qty, line.Price,
-                "Goods Receipt", "GoodsReceipt", entity.Id, docNo, postDate,
-                entity.CustomerCode, entity.CustomerName);
+            var batchError = await _inventoryPosting.CheckBatchesAsync(tally, line.ItemCode, whs, line.Qty, line.Batches,
+                FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchFlow.In, postDate);
+            if (batchError != null) return BadRequest(batchError);
         }
-        await _db.SaveChangesAsync();
+
+        // Number the document only once it is known to be acceptable, so refusals don't burn numbers.
+        string docNo;
+        try { docNo = _docNumber.Next("GoodsReceipt"); }
+        catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
+        entity.DocNo = docNo;
+
+        // Document and stock ledger are saved together: if posting fails, neither is kept.
+        await using var tx = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            _repository.Add(entity);
+            _repository.Commit();
+
+            // Track each received line in the Inventory Journal (default warehouse).
+            foreach (var line in entity.Lines)
+            {
+                await _inventoryPosting.PostInAsync(
+                    line.ItemCode, whs, line.Qty, line.Price,
+                    "Goods Receipt", "GoodsReceipt", entity.Id, docNo, postDate,
+                    entity.CustomerCode, entity.CustomerName, batches: line.Batches);
+            }
+            await _db.SaveChangesAsync();
+            await tx.CommitAsync();
+        }
+        catch (InvalidOperationException ex)
+        {
+            await tx.RollbackAsync();
+            return BadRequest(ex.Message);
+        }
 
         return Ok(new { message = "Goods Receipt saved successfully", id = entity.Id, docNo });
     }
 
     // ── PUT /GoodsReceipt/{id} ─────────────────────────────────
-    [AllowAnonymous]
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] GoodsReceiptInsertListRequest request)
     {
@@ -178,7 +195,6 @@ public class GoodsReceiptController : MyController
     }
 
     // ── DELETE /GoodsReceipt/{id} ──────────────────────────────
-    [AllowAnonymous]
     [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {

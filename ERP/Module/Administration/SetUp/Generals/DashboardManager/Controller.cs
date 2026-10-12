@@ -22,7 +22,7 @@ public class DashboardManagerController : ControllerBase
     }
 
     // ── GET /DashboardManager ──────────────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll()
     {
         var list = _repo.GetAll()
@@ -34,7 +34,7 @@ public class DashboardManagerController : ControllerBase
     }
 
     // ── GET /DashboardManager/{id} ─────────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetAll()
@@ -45,7 +45,7 @@ public class DashboardManagerController : ControllerBase
     }
 
     // ── GET /DashboardManager/Default ─────────────────────────
-    [AllowAnonymous][HttpGet("Default")]
+    [HttpGet("Default")]
     public IActionResult GetDefault([FromQuery] string? role = null)
     {
         var query = _repo.GetAll()
@@ -71,7 +71,7 @@ public class DashboardManagerController : ControllerBase
     }
 
     // ── POST /DashboardManager ─────────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] DashboardConfigRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -94,7 +94,7 @@ public class DashboardManagerController : ControllerBase
     }
 
     // ── PUT /DashboardManager/{id} ─────────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] DashboardConfigRequest dto)
     {
         var entity = _repo.GetAll()
@@ -118,7 +118,7 @@ public class DashboardManagerController : ControllerBase
     }
 
     // ── POST /DashboardManager/{id}/SetDefault ─────────────────
-    [AllowAnonymous][HttpPost("{id:int}/SetDefault")]
+    [HttpPost("{id:int}/SetDefault")]
     public IActionResult SetDefault(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -133,7 +133,7 @@ public class DashboardManagerController : ControllerBase
     }
 
     // ── POST /DashboardManager/{id}/Duplicate ──────────────────
-    [AllowAnonymous][HttpPost("{id:int}/Duplicate")]
+    [HttpPost("{id:int}/Duplicate")]
     public IActionResult Duplicate(int id)
     {
         var source = _repo.GetAll()
@@ -169,7 +169,7 @@ public class DashboardManagerController : ControllerBase
 
     // ── PUT /DashboardManager/{id}/Reorder ─────────────────────
     // Drag-and-drop widget reorder / toggle visibility
-    [AllowAnonymous][HttpPut("{id:int}/Reorder")]
+    [HttpPut("{id:int}/Reorder")]
     public IActionResult Reorder(int id, [FromBody] WidgetReorderRequest dto)
     {
         var widgets = _db.Set<DashboardWidget>()
@@ -188,7 +188,7 @@ public class DashboardManagerController : ControllerBase
     }
 
     // ── DELETE /DashboardManager/{id} ─────────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);

@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using FarmingApi.Core;
 using FarmingApi.Modules.Inventory.ItemsMaster;
-using APINVEntity = FarmingApi.Modules.PurchaseAP.APInvoice.APInvoice;
 using BPEntity    = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
 namespace FarmingApi.Modules.PurchaseAP.APCreditNote;
@@ -46,11 +45,13 @@ public class APCreditNoteLine : AuditableEntity
     public decimal  Price    { get; set; }
     public decimal  Total    { get; set; }
 
-    // ── SAP base doc (from APInvoice) ─────────────────────────────────────
-    public int?    BaseEntry { get; set; }   // FK → APInvoice.Id
-    public string? BaseType  { get; set; }   // "APInvoice"
-
-    public APINVEntity? BaseInvoice { get; set; }
+    // ── SAP base doc — polymorphic, like ARCreditNote: BaseType names which
+    // table BaseEntry points into ("APInvoice" | "GoodsReturn" |
+    // "GoodsReturnRequest" | "APDownPaymentInvoice"), resolved in code rather
+    // than a single hard-coded DB foreign key, since more than one table can
+    // be the source of a copy.
+    public int?    BaseEntry { get; set; }
+    public string? BaseType  { get; set; }
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -102,11 +103,5 @@ public class APCreditNoteLineConfig : IEntityTypeConfiguration<APCreditNoteLine>
                .WithMany()
                .HasForeignKey(x => x.ItemId)
                .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasOne(x => x.BaseInvoice)
-               .WithMany()
-               .HasForeignKey(x => x.BaseEntry)
-               .OnDelete(DeleteBehavior.SetNull)
-               .IsRequired(false);
     }
 }

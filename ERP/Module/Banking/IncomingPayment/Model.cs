@@ -22,6 +22,8 @@ public class IncomingPaymentListResponse
     public string? PaymentMethod { get; set; }
     public string? CheckNumber { get; set; }
     public DateTime? CheckDate { get; set; }
+    public string? CheckStatus { get; set; }
+    public bool     Deposited { get; set; }
     public string? BankAccount { get; set; }
     public string? BankName { get; set; }
     public string ?Reference { get; set; }
@@ -134,4 +136,8 @@ public class OpenInvoiceResponse
     public decimal Balance { get; set; }
     public int DaysOverdue { get; set; }
     public string? Status { get; set; }
+}
+public class CheckStatusRequest
+{
+    public string Status { get; set; } = null!;
 }

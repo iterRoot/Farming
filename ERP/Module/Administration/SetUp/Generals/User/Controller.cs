@@ -5,6 +5,9 @@ using FarmingApi.Core;
 using System.Security.Cryptography;
 using System.Text;
 using UserGroupEntity = FarmingApi.Modules.Administration.SetUp.UserGroup.UserGroup;
+using ApprovalTemplateApproverEntity = FarmingApi.Modules.Administration.ApprovalProcess.ApprovalTemplateApprover;
+using ApprovalRequestEntity = FarmingApi.Modules.Administration.ApprovalRequest.ApprovalRequest;
+using FarmingApi.Modules.Administration.Security;
 
 namespace FarmingApi.Modules.Administration.SetUp.User;
 
@@ -14,13 +17,15 @@ public class UserController : MyController
     private readonly IUserRepository _repository;
     private readonly MyDbContext _db;
     private readonly ITotpService _totp;
+    private readonly IJwtTokenService _jwt;
 
-    public UserController(IUserRepository repository, IMapper mapper, MyDbContext db, ITotpService totp)
+    public UserController(IUserRepository repository, IMapper mapper, MyDbContext db, ITotpService totp, IJwtTokenService jwt)
     {
         _mapper = mapper;
         _repository = repository;
         _db = db;
         _totp = totp;
+        _jwt = jwt;
     }
 
     private string HashPassword(string password)
@@ -38,22 +43,39 @@ public class UserController : MyController
         return hashOfInput == hash;
     }
 
-    private bool ValidatePasswordStrength(string password)
+    // Reads the saved Password Administration policy, falling back to the
+    // rules this app always enforced when nothing has been saved yet — so
+    // a database with no KPWDPOL row behaves exactly as before this existed.
+    private PasswordPolicyDto GetPolicy() => PasswordPolicyController.GetPolicy(_db);
+
+    private static bool ValidatePasswordStrength(string password, PasswordPolicyDto policy)
     {
-        if (string.IsNullOrWhiteSpace(password) || password.Length < 8)
+        if (string.IsNullOrWhiteSpace(password) || password.Length < policy.MinLength)
             return false;
 
-        bool hasUpper = password.Any(c => char.IsUpper(c));
-        bool hasLower = password.Any(c => char.IsLower(c));
-        bool hasDigit = password.Any(c => char.IsDigit(c));
-        bool hasSpecial = password.Any(c => "@$!%*?&".Contains(c));
+        if (policy.RequireUppercase && !password.Any(char.IsUpper)) return false;
+        if (policy.RequireLowercase && !password.Any(char.IsLower)) return false;
+        if (policy.RequireDigit && !password.Any(char.IsDigit)) return false;
+        if (policy.RequireSpecial && !password.Any(c => "@$!%*?&".Contains(c))) return false;
 
-        return hasUpper && hasLower && hasDigit && hasSpecial;
+        return true;
+    }
+
+    private static string PolicyDescription(PasswordPolicyDto p)
+    {
+        var parts = new List<string> { $"at least {p.MinLength} characters" };
+        if (p.RequireUppercase) parts.Add("an uppercase letter");
+        if (p.RequireLowercase) parts.Add("a lowercase letter");
+        if (p.RequireDigit) parts.Add("a number");
+        if (p.RequireSpecial) parts.Add("a special character (@$!%*?&)");
+        return "Password must have " + string.Join(", ", parts) + ".";
     }
 
     // ── POST /User/Login ───────────────────────────────────────
-    // Accepts either UserId or Email. Locks the account after 5
-    // consecutive failures.
+    // Accepts either UserId or Email. Locks the account after the
+    // configured number of consecutive failures (Password Administration,
+    // default 5). The one endpoint that must stay public — it's how a
+    // client gets a token in the first place.
     [AllowAnonymous]
     [HttpPost("Login")]
     public IActionResult Login([FromBody] UserLoginRequest request)
@@ -78,16 +100,18 @@ public class UserController : MyController
         if (user.ActiveStatus != 'A')
             return StatusCode(403, "Account is inactive. Contact your administrator.");
 
+        var maxAttempts = GetPolicy().MaxFailedAttempts;
+
         if (!VerifyPassword(request.Password, user.PasswordHash))
         {
             user.LoginAttempts += 1;
-            if (user.LoginAttempts >= 5) user.IsLocked = true;
+            if (user.LoginAttempts >= maxAttempts) user.IsLocked = true;
             _repository.Update(user);
             _repository.Commit();
 
             return Unauthorized(user.IsLocked
-                ? "Account locked after 5 failed attempts. Contact your administrator."
-                : $"Invalid user ID or password ({5 - user.LoginAttempts} attempt(s) left)");
+                ? $"Account locked after {maxAttempts} failed attempts. Contact your administrator."
+                : $"Invalid user ID or password ({maxAttempts - user.LoginAttempts} attempt(s) left)");
         }
 
         // ── Second factor ──────────────────────────────────────────
@@ -121,13 +145,13 @@ public class UserController : MyController
             if (!okTotp && !okRecovery)
             {
                 user.LoginAttempts += 1;
-                if (user.LoginAttempts >= 5) user.IsLocked = true;
+                if (user.LoginAttempts >= maxAttempts) user.IsLocked = true;
                 _repository.Update(user);
                 _repository.Commit();
 
                 return Unauthorized(user.IsLocked
-                    ? "Account locked after 5 failed attempts. Contact your administrator."
-                    : $"Invalid authenticator code ({5 - user.LoginAttempts} attempt(s) left)");
+                    ? $"Account locked after {maxAttempts} failed attempts. Contact your administrator."
+                    : $"Invalid authenticator code ({maxAttempts - user.LoginAttempts} attempt(s) left)");
             }
         }
 
@@ -138,6 +162,7 @@ public class UserController : MyController
         _repository.Commit();
 
         var group = _db.Set<UserGroupEntity>().FirstOrDefault(g => g.Id == user.UserGroupId);
+        var (token, expiresAt) = _jwt.IssueToken(user, group?.GroupName);
 
         return Ok(new UserLoginResponse
         {
@@ -149,6 +174,8 @@ public class UserController : MyController
             GroupName    = group?.GroupName,
             ActiveStatus = user.ActiveStatus,
             LastLogin    = user.LastLogin,
+            Token          = token,
+            TokenExpiresAt = expiresAt,
         });
     }
 
@@ -159,7 +186,6 @@ public class UserController : MyController
     // ── POST /User/{id}/TwoFactor/Setup ────────────────────────
     // Generates a secret + QR URI. Does NOT enable 2FA yet — the
     // user must prove they can produce a code first.
-    [AllowAnonymous]
     [HttpPost("{id:int}/TwoFactor/Setup")]
     public IActionResult TwoFactorSetup(int id)
     {
@@ -182,7 +208,6 @@ public class UserController : MyController
 
     // ── POST /User/{id}/TwoFactor/Enable ───────────────────────
     // Verifies the first code, switches 2FA on, returns recovery codes.
-    [AllowAnonymous]
     [HttpPost("{id:int}/TwoFactor/Enable")]
     public IActionResult TwoFactorEnable(int id, [FromBody] TwoFactorVerifyRequest request)
     {
@@ -207,7 +232,6 @@ public class UserController : MyController
     }
 
     // ── POST /User/{id}/TwoFactor/Disable ──────────────────────
-    [AllowAnonymous]
     [HttpPost("{id:int}/TwoFactor/Disable")]
     public IActionResult TwoFactorDisable(int id, [FromBody] TwoFactorDisableRequest request)
     {
@@ -228,7 +252,6 @@ public class UserController : MyController
     }
 
     // ── GET /User/{id}/TwoFactor/Status ────────────────────────
-    [AllowAnonymous]
     [HttpGet("{id:int}/TwoFactor/Status")]
     public IActionResult TwoFactorStatus(int id)
     {
@@ -241,7 +264,6 @@ public class UserController : MyController
         return Ok(new { enabled = user.TwoFactorEnabled, recoveryCodesRemaining = remaining });
     }
 
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult Gets()
     {
@@ -276,8 +298,9 @@ public class UserController : MyController
         if (string.IsNullOrWhiteSpace(request.Password))
             return BadRequest("Password is required");
 
-        if (!ValidatePasswordStrength(request.Password))
-            return BadRequest("Password must be at least 8 characters with uppercase, lowercase, number, and special character (@$!%*?&)");
+        var policy = GetPolicy();
+        if (!ValidatePasswordStrength(request.Password, policy))
+            return BadRequest(PolicyDescription(policy));
 
         var existingUser = _repository.GetSingle(u => u.UserId == request.UserId);
         if (existingUser != null)
@@ -289,6 +312,7 @@ public class UserController : MyController
 
         var entity = _mapper.Map<User>(request);
         entity.PasswordHash = HashPassword(request.Password);
+        entity.PasswordChangedAt = DateTime.UtcNow;
         entity.CreatedAt = DateTime.UtcNow;
         entity.InActive = false;
 
@@ -325,9 +349,11 @@ public class UserController : MyController
 
         if (!string.IsNullOrWhiteSpace(request.Password))
         {
-            if (!ValidatePasswordStrength(request.Password))
-                return BadRequest("Password does not meet complexity requirements");
+            var policy = GetPolicy();
+            if (!ValidatePasswordStrength(request.Password, policy))
+                return BadRequest(PolicyDescription(policy));
             user.PasswordHash = HashPassword(request.Password);
+            user.PasswordChangedAt = DateTime.UtcNow;
         }
 
         user.UpdatedAt = DateTime.UtcNow;
@@ -346,6 +372,19 @@ public class UserController : MyController
         {
             return BadRequest($"Item not found {id}");
         }
+
+        // ApprovalTemplateApprover and ApprovalRequest both hold Restrict-behavior
+        // FKs to User (added with the approval engine) — deleting a user who is or
+        // was involved in an approval would otherwise throw an unhandled
+        // DbUpdateException, the same bug class fixed in ApprovalProcessController.
+        var isApprover = _db.Set<ApprovalTemplateApproverEntity>().Any(a => a.UserId == id);
+        if (isApprover)
+            return BadRequest("Cannot delete a user assigned as an approver on an approval template — remove them from the template first.");
+
+        var hasApprovalHistory = _db.Set<ApprovalRequestEntity>().Any(r => r.RequestedBy == id || r.DecidedBy == id);
+        if (hasApprovalHistory)
+            return BadRequest("Cannot delete a user with approval history (submitted or decided an approval request) — deactivate them instead.");
+
         user.DeletedAt = DateTime.UtcNow;
         _repository.Remove(user);
         _repository.Commit();
@@ -365,10 +404,12 @@ public class UserController : MyController
         if (request.NewPassword != request.ConfirmPassword)
             return BadRequest("New passwords do not match");
 
-        if (!ValidatePasswordStrength(request.NewPassword))
-            return BadRequest("New password does not meet complexity requirements");
+        var policy = GetPolicy();
+        if (!ValidatePasswordStrength(request.NewPassword, policy))
+            return BadRequest(PolicyDescription(policy));
 
         user.PasswordHash = HashPassword(request.NewPassword);
+        user.PasswordChangedAt = DateTime.UtcNow;
         user.UpdatedAt = DateTime.UtcNow;
 
         _repository.Update(user);

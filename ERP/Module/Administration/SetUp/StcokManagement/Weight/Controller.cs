@@ -21,14 +21,14 @@ public class WeightUomController : ControllerBase
         _mapper     = mapper;
     }
 
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll()
     {
         var list = _repository.GetAll().OrderBy(x => x.ConversionToKg).ToList();
         return Ok(_mapper.Map<List<WeightUomResponse>>(list));
     }
 
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repository.GetSingle(x => x.Id == id);
@@ -36,7 +36,7 @@ public class WeightUomController : ControllerBase
         return Ok(_mapper.Map<WeightUomResponse>(e));
     }
 
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] WeightUomRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -54,7 +54,7 @@ public class WeightUomController : ControllerBase
         return Ok(_mapper.Map<WeightUomResponse>(entity));
     }
 
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] WeightUomRequest dto)
     {
         var entity = _repository.GetSingle(x => x.Id == id);
@@ -72,7 +72,7 @@ public class WeightUomController : ControllerBase
         return Ok(_mapper.Map<WeightUomResponse>(entity));
     }
 
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repository.GetSingle(x => x.Id == id);

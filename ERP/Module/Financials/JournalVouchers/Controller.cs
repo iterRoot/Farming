@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi.Core;
 using FarmingApi.Modules.Financials.JournalEntry;
+using FarmingApi.Modules.Financials.ChartOfAccounts;
 
 namespace FarmingApi.Modules.Financials.JournalVoucher;
 
@@ -12,21 +13,46 @@ public class JournalVoucherController : MyController
     private readonly IMapper _mapper;
     private readonly IJournalVoucherRepository _repository;
     private readonly IJournalEntryRepository _journalEntryRepository;
+    private readonly IChartOfAccountsRepository _accounts;
 
     public JournalVoucherController(
         IJournalVoucherRepository repository,
         IJournalEntryRepository journalEntryRepository,
+        IChartOfAccountsRepository accounts,
         IMapper mapper)
     {
         _mapper = mapper;
         _repository = repository;
         _journalEntryRepository = journalEntryRepository;
+        _accounts = accounts;
+    }
+
+    /// <summary>
+    /// Fills in each line's AccountName from the chart of accounts.
+    /// JVH1.AccountName is NOT NULL and the request DTO carries no such field,
+    /// so without this every save failed on the database constraint.
+    /// Returns the first unknown account code, or null when all resolve.
+    /// </summary>
+    private string? ResolveAccountNames(ICollection<JournalVoucherLine> lines)
+    {
+        var codes = lines.Select(l => l.AccountCode).ToList();
+        var names = _accounts.GetAll()
+            .Where(a => codes.Contains(a.AcctCode))
+            .ToDictionary(a => a.AcctCode.ToUpper(), a => a.AcctName);
+
+        foreach (var line in lines)
+        {
+            if (string.IsNullOrWhiteSpace(line.AccountCode)) return "(blank)";
+            if (!names.TryGetValue(line.AccountCode.ToUpper(), out var name))
+                return line.AccountCode;
+            line.AccountName = name;
+        }
+        return null;
     }
 
     // ═══════════════════════════════════════════════════════════════
     // GET ALL
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult Gets()
     {
@@ -92,6 +118,10 @@ public class JournalVoucherController : MyController
             entity.Lines.Add(line);
         }
 
+        var unknown = ResolveAccountNames(entity.Lines);
+        if (unknown != null)
+            return BadRequest($"Account '{unknown}' is not in the chart of accounts.");
+
         _repository.Add(entity);
         _repository.Commit();
 
@@ -139,7 +169,7 @@ public class JournalVoucherController : MyController
         voucher.RefNo = request.RefNo;
         voucher.Description = request.Description;
         voucher.Memo = request.Memo;
-        voucher.Currency = request.Currency;
+        voucher.Currency = request.Currency ?? voucher.Currency;   // Currency is NOT NULL
         voucher.ExchangeRate = request.ExchangeRate;
         voucher.ProjectCode = request.ProjectCode;
         voucher.CostCenter = request.CostCenter;
@@ -159,6 +189,10 @@ public class JournalVoucherController : MyController
             line.InActive = false;
             voucher.Lines.Add(line);
         }
+
+        var unknownOnUpdate = ResolveAccountNames(voucher.Lines);
+        if (unknownOnUpdate != null)
+            return BadRequest($"Account '{unknownOnUpdate}' is not in the chart of accounts.");
 
         _repository.Update(voucher);
         _repository.Commit();

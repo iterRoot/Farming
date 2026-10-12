@@ -24,7 +24,7 @@ public class ServerPrintConfigController : ControllerBase
     }
 
     // ── GET /ServerPrintConfig ─────────────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll([FromQuery] string? printerType = null)
     {
         var list = _repo.GetAll()
@@ -38,7 +38,7 @@ public class ServerPrintConfigController : ControllerBase
     }
 
     // ── GET /ServerPrintConfig/{id} ────────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetAll()
@@ -49,7 +49,7 @@ public class ServerPrintConfigController : ControllerBase
     }
 
     // ── GET /ServerPrintConfig/Default ────────────────────────
-    [AllowAnonymous][HttpGet("Default")]
+    [HttpGet("Default")]
     public IActionResult GetDefault()
     {
         var e = _repo.GetAll()
@@ -63,7 +63,7 @@ public class ServerPrintConfigController : ControllerBase
     // ── GET /ServerPrintConfig/ForDocument/{docType} ──────────
     // Returns the best printer for a given document type
     // Priority: route-specific → default printer → first active
-    [AllowAnonymous][HttpGet("ForDocument/{docType}")]
+    [HttpGet("ForDocument/{docType}")]
     public IActionResult ForDocument(string docType, [FromQuery] string? userCode = null)
     {
         // Find printer with a matching route for this document
@@ -96,7 +96,7 @@ public class ServerPrintConfigController : ControllerBase
     }
 
     // ── POST /ServerPrintConfig ────────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] ServerPrintConfigRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -116,7 +116,7 @@ public class ServerPrintConfigController : ControllerBase
     }
 
     // ── PUT /ServerPrintConfig/{id} ────────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] ServerPrintConfigRequest dto)
     {
         var entity = _repo.GetAll()
@@ -140,7 +140,7 @@ public class ServerPrintConfigController : ControllerBase
     }
 
     // ── POST /ServerPrintConfig/{id}/SetDefault ────────────────
-    [AllowAnonymous][HttpPost("{id:int}/SetDefault")]
+    [HttpPost("{id:int}/SetDefault")]
     public IActionResult SetDefault(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -154,7 +154,7 @@ public class ServerPrintConfigController : ControllerBase
     }
 
     // ── POST /ServerPrintConfig/{id}/Test ─────────────────────
-    [AllowAnonymous][HttpPost("{id:int}/Test")]
+    [HttpPost("{id:int}/Test")]
     public IActionResult Test(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -205,7 +205,7 @@ public class ServerPrintConfigController : ControllerBase
     }
 
     // ── DELETE /ServerPrintConfig/{id} ────────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -218,7 +218,7 @@ public class ServerPrintConfigController : ControllerBase
     }
 
     // ── POST /ServerPrintConfig/Seed ──────────────────────────
-    [AllowAnonymous][HttpPost("Seed")]
+    [HttpPost("Seed")]
     public IActionResult Seed()
     {
         if (_repo.GetAll().Any())

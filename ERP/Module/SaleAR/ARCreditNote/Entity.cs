@@ -6,6 +6,9 @@ using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.Busi
 namespace FarmingApi.Modules.SaleAR.ARCreditNote;
 public class ARCreditNote : AuditableEntity
 {
+    [System.ComponentModel.DataAnnotations.MaxLength(50)]
+    public string? SalesEmployeeCode { get; set; }   // sales employee (KSEB code)
+
     public string DocNum { get; set; } = "";
     public DateTime? PostingDate { get; set; }
     public DateTime? DueDate { get; set; }
@@ -22,6 +25,10 @@ public class ARCreditNote : AuditableEntity
 }
 public class ARCreditNoteLine : AuditableEntity  // ✅ renamed
 {
+    // Batch / serial numbers entered for this line — used when the document posts stock; not stored on the line.
+    [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
+
     public int ARCreditNoteId { get; set; }  // ✅ renamed FK
     public ARCreditNote ARCreditNote   { get; set; } = null!;
     public int ItemId { get; set; }
@@ -32,6 +39,23 @@ public class ARCreditNoteLine : AuditableEntity  // ✅ renamed
     public decimal  Quantity { get; set; }
     public decimal  Price    { get; set; }
     public decimal  Total    { get; set; }
+    public string?  Branch       { get; set; }
+    public decimal  Discount     { get; set; }   // line-level discount percent
+    public decimal  DiscountSum  { get; set; }
+    public decimal  Vat          { get; set; }   // line-level VAT percent
+    public decimal  VatSum       { get; set; }
+    public decimal  ItemCost     { get; set; }
+    public string?  UomName      { get; set; }
+    public string?  UomCode      { get; set; }
+    public string?  DocCurrency  { get; set; }
+    public decimal  GrossProfit  { get; set; }
+    public string?  Dimension1   { get; set; }
+    public string?  Dimension2   { get; set; }
+    public string?  Dimension3   { get; set; }
+    public string?  Dimension4   { get; set; }
+    public string?  Dimension5   { get; set; }
+    public string?  FreeText     { get; set; }
+    public string?  Remark       { get; set; }
 
     // Source document this line was copied from. A line based on a Return has
     // already had the goods received back there, so the credit note must not
@@ -82,6 +106,24 @@ public class ARCreditNoteLineConfig : IEntityTypeConfiguration<ARCreditNoteLine>
         builder.Property(m => m.Quantity).HasPrecision(18, 2);
         builder.Property(m => m.Price).HasPrecision(18, 2);
         builder.Property(m => m.Total).HasPrecision(18, 2);
+
+        builder.Property(m => m.Branch).HasMaxLength(50);
+        builder.Property(m => m.Discount).HasPrecision(18, 2);
+        builder.Property(m => m.DiscountSum).HasPrecision(18, 2);
+        builder.Property(m => m.Vat).HasPrecision(18, 2);
+        builder.Property(m => m.VatSum).HasPrecision(18, 2);
+        builder.Property(m => m.ItemCost).HasPrecision(18, 2);
+        builder.Property(m => m.UomName).HasMaxLength(50);
+        builder.Property(m => m.UomCode).HasMaxLength(50);
+        builder.Property(m => m.DocCurrency).HasMaxLength(10);
+        builder.Property(m => m.GrossProfit).HasPrecision(18, 2);
+        builder.Property(m => m.Dimension1).HasMaxLength(50);
+        builder.Property(m => m.Dimension2).HasMaxLength(50);
+        builder.Property(m => m.Dimension3).HasMaxLength(50);
+        builder.Property(m => m.Dimension4).HasMaxLength(50);
+        builder.Property(m => m.Dimension5).HasMaxLength(50);
+        builder.Property(m => m.FreeText).HasMaxLength(500);
+        builder.Property(m => m.Remark).HasMaxLength(500);
 
         builder.HasOne(m => m.Item)
                .WithMany()

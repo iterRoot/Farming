@@ -18,6 +18,7 @@ public class StaffConfig : IEntityTypeConfiguration<Staff>
 {
 	public void Configure(EntityTypeBuilder<Staff> builder)
 	{
+		builder.ToTable("KAFF");
 		builder.Property(m => m.StaffName)
 			.HasMaxLength(100);
 		builder.Property(m => m.StaffCode)

@@ -22,7 +22,7 @@ public class ElectronicCertificateController : ControllerBase
     }
 
     // ── GET /ElectronicCertificate ─────────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll(
         [FromQuery] string? certType    = null,
         [FromQuery] string? holderType  = null,
@@ -67,7 +67,7 @@ public class ElectronicCertificateController : ControllerBase
     }
 
     // ── GET /ElectronicCertificate/{id} ────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetAll()
@@ -78,7 +78,7 @@ public class ElectronicCertificateController : ControllerBase
     }
 
     // ── GET /ElectronicCertificate/ByNo/{certNo} ──────────────
-    [AllowAnonymous][HttpGet("ByNo/{certNo}")]
+    [HttpGet("ByNo/{certNo}")]
     public IActionResult GetByNo(string certNo)
     {
         var e = _repo.GetAll()
@@ -90,7 +90,7 @@ public class ElectronicCertificateController : ControllerBase
 
     // ── GET /ElectronicCertificate/ExpiryAlerts ───────────────
     // Returns certs expiring within N days (default 90)
-    [AllowAnonymous][HttpGet("ExpiryAlerts")]
+    [HttpGet("ExpiryAlerts")]
     public IActionResult GetExpiryAlerts([FromQuery] int days = 90)
     {
         var threshold = DateTime.UtcNow.Date.AddDays(days);
@@ -105,7 +105,7 @@ public class ElectronicCertificateController : ControllerBase
     }
 
     // ── GET /ElectronicCertificate/Summary ────────────────────
-    [AllowAnonymous][HttpGet("Summary")]
+    [HttpGet("Summary")]
     public IActionResult GetSummary()
     {
         var all = _repo.GetAll().ToList();
@@ -139,7 +139,7 @@ public class ElectronicCertificateController : ControllerBase
     }
 
     // ── POST /ElectronicCertificate ────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] ElectronicCertificateRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -160,7 +160,7 @@ public class ElectronicCertificateController : ControllerBase
     }
 
     // ── PUT /ElectronicCertificate/{id} ────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] ElectronicCertificateRequest dto)
     {
         var entity = _repo.GetAll()
@@ -184,7 +184,7 @@ public class ElectronicCertificateController : ControllerBase
     }
 
     // ── POST /ElectronicCertificate/{id}/Verify ───────────────
-    [AllowAnonymous][HttpPost("{id:int}/Verify")]
+    [HttpPost("{id:int}/Verify")]
     public IActionResult Verify(int id, [FromQuery] string? verifiedBy = null)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -201,7 +201,7 @@ public class ElectronicCertificateController : ControllerBase
     }
 
     // ── POST /ElectronicCertificate/{id}/Revoke ───────────────
-    [AllowAnonymous][HttpPost("{id:int}/Revoke")]
+    [HttpPost("{id:int}/Revoke")]
     public IActionResult Revoke(int id, [FromBody] RevokeRequest dto)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -220,7 +220,7 @@ public class ElectronicCertificateController : ControllerBase
 
     // ── POST /ElectronicCertificate/{id}/Renew ────────────────
     // Creates a new certificate as the renewal of an existing one
-    [AllowAnonymous][HttpPost("{id:int}/Renew")]
+    [HttpPost("{id:int}/Renew")]
     public IActionResult Renew(int id, [FromBody] RenewRequest dto)
     {
         var old = _repo.GetAll()
@@ -291,7 +291,7 @@ public class ElectronicCertificateController : ControllerBase
     }
 
     // ── POST /ElectronicCertificate/{id}/Sign ─────────────────
-    [AllowAnonymous][HttpPost("{id:int}/Sign")]
+    [HttpPost("{id:int}/Sign")]
     public IActionResult Sign(int id,
         [FromQuery] string? certThumbprint = null,
         [FromQuery] string? hashValue      = null)
@@ -309,7 +309,7 @@ public class ElectronicCertificateController : ControllerBase
     }
 
     // ── DELETE /ElectronicCertificate/{id} ────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -322,7 +322,7 @@ public class ElectronicCertificateController : ControllerBase
     }
 
     // ── POST /ElectronicCertificate/Seed ──────────────────────
-    [AllowAnonymous][HttpPost("Seed")]
+    [HttpPost("Seed")]
     public IActionResult Seed()
     {
         if (_repo.GetAll().Any()) return BadRequest("Certificates already seeded.");

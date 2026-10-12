@@ -19,7 +19,6 @@ public class GeneralSettingsController : MyController
         _repository = repository;
     }
 
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult Get()
     {
@@ -29,7 +28,6 @@ public class GeneralSettingsController : MyController
         return Content(item?.Settings ?? "{}", "application/json");
     }
 
-    [AllowAnonymous]
     [HttpPut]
     public IActionResult Save([FromBody] JsonElement body)
     {

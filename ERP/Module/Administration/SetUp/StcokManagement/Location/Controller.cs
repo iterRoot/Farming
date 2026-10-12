@@ -21,7 +21,7 @@ public class LocationController : ControllerBase
         _mapper     = mapper;
     }
 
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll([FromQuery] string? warehouse = null)
     {
         var query = _repository.GetAll()
@@ -35,7 +35,7 @@ public class LocationController : ControllerBase
         return Ok(_mapper.Map<List<LocationResponse>>(query));
     }
 
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repository.GetSingle(x => x.Id == id);
@@ -43,7 +43,7 @@ public class LocationController : ControllerBase
         return Ok(_mapper.Map<LocationResponse>(e));
     }
 
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] LocationRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -62,7 +62,7 @@ public class LocationController : ControllerBase
         return Ok(_mapper.Map<LocationResponse>(entity));
     }
 
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] LocationRequest dto)
     {
         var entity = _repository.GetSingle(x => x.Id == id);
@@ -81,7 +81,7 @@ public class LocationController : ControllerBase
         return Ok(_mapper.Map<LocationResponse>(entity));
     }
 
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repository.GetSingle(x => x.Id == id);

@@ -74,7 +74,7 @@ public class OutgoingPaymentJournalService : IOutgoingPaymentJournalService
 
         var je = new JournalEntry
         {
-            JrnlNo          = GenerateJournalNumber(),
+            JrnlNo          = JournalEntryNumberService.Next(_db, payment.DocDate),
             TransDate       = payment.DocDate,
             DueDate         = payment.DueDate,
             DocDate         = payment.DocDate,
@@ -197,24 +197,5 @@ public class OutgoingPaymentJournalService : IOutgoingPaymentJournalService
 
         _db.Set<JournalEntry>().Add(je);
         return je;
-    }
-
-    private string GenerateJournalNumber()
-    {
-        var year   = DateTime.Now.Year;
-        var prefix = $"JE-{year}-";
-
-        var last = _db.Set<JournalEntry>()
-            .Where(j => j.JrnlNo.StartsWith(prefix))
-            .OrderByDescending(j => j.Id)
-            .FirstOrDefault();
-
-        if (last == null) return $"{prefix}00001";
-
-        var parts = last.JrnlNo.Split('-');
-        if (parts.Length >= 3 && int.TryParse(parts[2], out int lastNum))
-            return $"{prefix}{(lastNum + 1):D5}";
-
-        return $"{prefix}00001";
     }
 }

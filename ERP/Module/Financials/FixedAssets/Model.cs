@@ -38,10 +38,15 @@ public class AssetMasterDto
     public decimal  AccumulatedDepreciation { get; set; }
     public string   AssetStatus   { get; set; } = "New";
     public string?  DepreciationAccount   { get; set; }
+    public string?  AccumulatedDepreciationAccount { get; set; }
     public string?  AssetAccount          { get; set; }
 
     // Net book value is derived, not stored.
     public decimal  NetBookValue  { get; set; }
+
+    // True once a posted depreciation run includes this asset: the cost,
+    // life, method and account fields are then locked.
+    public bool     HasPostedDepreciation { get; set; }
 }
 
 // Same business fields as the DTO minus Id / derived values.
@@ -80,5 +85,6 @@ public class AssetMasterSaveRequest
     public decimal  AccumulatedDepreciation { get; set; }
     public string   AssetStatus   { get; set; } = "New";
     public string?  DepreciationAccount   { get; set; }
+    public string?  AccumulatedDepreciationAccount { get; set; }
     public string?  AssetAccount          { get; set; }
 }

@@ -18,7 +18,7 @@ public class InventoryConfig : IEntityTypeConfiguration<Inventory>
 {
     public void Configure(EntityTypeBuilder<Inventory> builder)
     {
-        builder.ToTable("Inventory");
+        builder.ToTable("KIVY");
 
         builder.HasKey(x => x.Id);
 

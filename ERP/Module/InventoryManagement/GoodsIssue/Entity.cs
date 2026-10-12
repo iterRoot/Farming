@@ -40,6 +40,10 @@ public class GoodsIssue : AuditableEntity
 // ═══════════════════════════════════════════════════════════════
 public class GoodsIssueLine
 {
+    // Batch / serial numbers entered for this line — used when the document posts stock; not stored on the line.
+    [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
+
     public int  Id           { get; set; }
     public int  GoodsIssueId { get; set; }
     public int  LineNum      { get; set; }
@@ -61,7 +65,7 @@ public class GoodsIssueConfig : IEntityTypeConfiguration<GoodsIssue>
 {
     public void Configure(EntityTypeBuilder<GoodsIssue> builder)
     {
-        builder.ToTable("GoodsIssue");
+        builder.ToTable("KGIE");
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.DocNo).HasMaxLength(50);
@@ -89,7 +93,7 @@ public class GoodsIssueLineConfig : IEntityTypeConfiguration<GoodsIssueLine>
 {
     public void Configure(EntityTypeBuilder<GoodsIssueLine> builder)
     {
-        builder.ToTable("GoodsIssueLine");
+        builder.ToTable("GIE1");
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.ItemCode).HasMaxLength(50).IsRequired();

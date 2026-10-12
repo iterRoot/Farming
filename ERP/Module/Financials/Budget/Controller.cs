@@ -12,12 +12,15 @@ public class BudgetController : MyController
     private readonly IMapper                   _mapper;
     private readonly IBudgetRepository         _repository;
     private readonly IChartOfAccountsRepository _coaRepository;
+    private readonly MyDbContext                _db;
 
     public BudgetController(
         IBudgetRepository         repository,
         IChartOfAccountsRepository coaRepository,
-        IMapper mapper)
+        IMapper mapper,
+        MyDbContext db)
     {
+        _db            = db;
         _mapper        = mapper;
         _repository    = repository;
         _coaRepository = coaRepository;
@@ -26,7 +29,6 @@ public class BudgetController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET ALL
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult Gets([FromQuery] int? year = null, [FromQuery] string? status = null)
     {
@@ -46,7 +48,6 @@ public class BudgetController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET BY ID
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public IActionResult Get(int id)
     {
@@ -70,6 +71,9 @@ public class BudgetController : MyController
         if (request.StartDate >= request.EndDate)
             return BadRequest("End Date must be after Start Date");
 
+        var dimError = CheckDimensions(request.Lines.Select(l => (l.Project, l.CostCenter)));
+        if (dimError != null) return BadRequest(dimError);
+
         var entity = _mapper.Map<Budget>(request);
         entity.BudgetNo  = GenerateBudgetNumber(request.FiscalYear);
         entity.Status    = "D";   // Draft
@@ -83,6 +87,8 @@ public class BudgetController : MyController
         {
             var line = _mapper.Map<BudgetLine>(lr);
             line.LineNum    = lineNum++;
+            line.Project    = CanonProject(line.Project);
+            line.CostCenter = CanonCostCenter(line.CostCenter);
             line.AcctName   = string.IsNullOrWhiteSpace(lr.AcctName) ? lr.AcctCode : lr.AcctName.Trim();
             line.AcctType   = lr.AcctType ?? "A";
             // Auto-distribute annual to months if months are all zero
@@ -115,6 +121,9 @@ public class BudgetController : MyController
         if (budget.Status == "C")
             return BadRequest("Cannot edit a Closed budget.");
 
+        var dimError = CheckDimensions(request.Lines.Select(l => (l.Project, l.CostCenter)));
+        if (dimError != null) return BadRequest(dimError);
+
         _mapper.Map(request, budget);
         budget.UpdatedAt  = DateTime.UtcNow;
         budget.VersionNum += 1;
@@ -125,6 +134,8 @@ public class BudgetController : MyController
         {
             var line = _mapper.Map<BudgetLine>(lr);
             line.LineNum   = lineNum++;
+            line.Project   = CanonProject(line.Project);
+            line.CostCenter = CanonCostCenter(line.CostCenter);
             line.AcctName  = string.IsNullOrWhiteSpace(lr.AcctName) ? lr.AcctCode : lr.AcctName.Trim();
             line.AcctType  = lr.AcctType ?? "A";
             if (lr.Annual > 0 && AllMonthsZero(lr))
@@ -146,7 +157,7 @@ public class BudgetController : MyController
     [HttpPost("{id:int}/Approve")]
     public IActionResult Approve(int id)
     {
-        var budget = _repository.GetSingle(b => b.Id == id);
+        var budget = _repository.GetAll().Include(b => b.Lines).FirstOrDefault(b => b.Id == id);
         if (budget == null) return NotFound($"Budget {id} not found");
         if (budget.Status != "D")
             return BadRequest($"Only Draft budgets can be approved (current: {budget.Status})");
@@ -202,7 +213,6 @@ public class BudgetController : MyController
     // BUDGET VS ACTUAL
     // Compares budget lines against current KCOA account balances
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet("{id:int}/VsActual")]
     public IActionResult GetVsActual(int id)
     {
@@ -302,4 +312,38 @@ public class BudgetController : MyController
             ? $"{prefix}{(n + 1):D5}"
             : $"{prefix}00001";
     }
+
+    // Budget lines tagged with a project or cost centre must name real, active ones.
+    private string? CheckDimensions(IEnumerable<(string? Project, string? CostCenter)> lines)
+    {
+        var n = 0;
+        foreach (var (project, center) in lines)
+        {
+            n++;
+            if (!string.IsNullOrWhiteSpace(project))
+            {
+                var p = project.Trim().ToUpper();
+                var found = _db.Set<FarmingApi.Modules.Financials.FinancialProjects.FinancialProject>().FirstOrDefault(x => x.ProjectCode.ToUpper() == p);
+                if (found == null) return $"Line {n}: project '{project.Trim()}' doesn't exist.";
+                if (found.InActive == true) return $"Line {n}: project '{found.ProjectCode}' is inactive.";
+            }
+            if (!string.IsNullOrWhiteSpace(center))
+            {
+                var c = center.Trim().ToUpper();
+                var found = _db.Set<FarmingApi.Modules.Financials.CostAccounting.CostCenter>().FirstOrDefault(x => x.CostCenterCode == c);
+                if (found == null) return $"Line {n}: cost centre '{center.Trim()}' doesn't exist.";
+                if (!found.IsActive || found.InActive == true) return $"Line {n}: cost centre '{found.CostCenterCode}' is inactive.";
+            }
+        }
+        return null;
+    }
+
+    private string? CanonProject(string? code)
+    {
+        if (string.IsNullOrWhiteSpace(code)) return null;
+        var c = code.Trim().ToUpper();
+        return _db.Set<FarmingApi.Modules.Financials.FinancialProjects.FinancialProject>().Where(x => x.ProjectCode.ToUpper() == c).Select(x => x.ProjectCode).FirstOrDefault() ?? code.Trim();
+    }
+
+    private static string? CanonCostCenter(string? code) => string.IsNullOrWhiteSpace(code) ? null : code.Trim().ToUpperInvariant();
 }

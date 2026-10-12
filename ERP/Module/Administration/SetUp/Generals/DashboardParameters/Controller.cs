@@ -19,7 +19,7 @@ public class DashboardParameterController : ControllerBase
     }
 
     // ── GET /DashboardParameter ────────────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll([FromQuery] string? category = null)
     {
         var query = _repo.GetAll()
@@ -31,7 +31,7 @@ public class DashboardParameterController : ControllerBase
     }
 
     // ── GET /DashboardParameter/{id} ──────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetSingle(x => x.Id == id);
@@ -40,7 +40,7 @@ public class DashboardParameterController : ControllerBase
     }
 
     // ── GET /DashboardParameter/ByCode/{code} ─────────────────
-    [AllowAnonymous][HttpGet("ByCode/{code}")]
+    [HttpGet("ByCode/{code}")]
     public IActionResult GetByCode(string code)
     {
         var e = _repo.GetSingle(x => x.Code == code.Trim().ToUpper());
@@ -49,7 +49,7 @@ public class DashboardParameterController : ControllerBase
     }
 
     // ── GET /DashboardParameter/Categories ────────────────────
-    [AllowAnonymous][HttpGet("Categories")]
+    [HttpGet("Categories")]
     public IActionResult GetCategories()
     {
         var cats = _repo.GetAll()
@@ -61,7 +61,7 @@ public class DashboardParameterController : ControllerBase
     }
 
     // ── POST /DashboardParameter ───────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] DashboardParameterRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -79,7 +79,7 @@ public class DashboardParameterController : ControllerBase
     }
 
     // ── PUT /DashboardParameter/{id} ──────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] DashboardParameterRequest dto)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -102,7 +102,7 @@ public class DashboardParameterController : ControllerBase
 
     // ── PUT /DashboardParameter/BulkSave ──────────────────────
     // Update only the Value field for many params at once (settings page)
-    [AllowAnonymous][HttpPut("BulkSave")]
+    [HttpPut("BulkSave")]
     public IActionResult BulkSave([FromBody] List<ParameterValueRequest> items)
     {
         var updated = new List<string>();
@@ -122,7 +122,7 @@ public class DashboardParameterController : ControllerBase
 
     // ── POST /DashboardParameter/{id}/Reset ───────────────────
     // Restore a parameter to its DefaultValue
-    [AllowAnonymous][HttpPost("{id:int}/Reset")]
+    [HttpPost("{id:int}/Reset")]
     public IActionResult Reset(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -143,7 +143,7 @@ public class DashboardParameterController : ControllerBase
     }
 
     // ── POST /DashboardParameter/ResetAll ─────────────────────
-    [AllowAnonymous][HttpPost("ResetAll")]
+    [HttpPost("ResetAll")]
     public IActionResult ResetAll()
     {
         var all = _repo.GetAll().ToList();
@@ -159,7 +159,7 @@ public class DashboardParameterController : ControllerBase
 
     // ── POST /DashboardParameter/Seed ─────────────────────────
     // Seed factory default parameters if none exist
-    [AllowAnonymous][HttpPost("Seed")]
+    [HttpPost("Seed")]
     public IActionResult Seed()
     {
         if (_repo.GetAll().Any())
@@ -177,7 +177,7 @@ public class DashboardParameterController : ControllerBase
     }
 
     // ── DELETE /DashboardParameter/{id} ───────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);

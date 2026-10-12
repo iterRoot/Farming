@@ -14,8 +14,7 @@ public class APInvoiceMapper : Profile
         CreateMap<APInvoiceLineRequest, APInvoiceLine>()
             .ForMember(dest => dest.Item,                 opt => opt.Ignore())
             .ForMember(dest => dest.ItemCode,             opt => opt.Ignore())
-            .ForMember(dest => dest.ItemName,             opt => opt.Ignore())
-            .ForMember(dest => dest.BaseGoodsReceipt,     opt => opt.Ignore());
+            .ForMember(dest => dest.ItemName,             opt => opt.Ignore());
 
         // ── Read ──────────────────────────────────────────────────────────
         CreateMap<APInvoice, APInvoiceResponse>()

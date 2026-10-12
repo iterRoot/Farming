@@ -3,8 +3,9 @@ namespace FarmingApi.Modules.PurchaseAP.APInvoice;
 // ══════════════════════════════════════════════════════════════════════════════
 // REQUEST
 // ══════════════════════════════════════════════════════════════════════════════
-public class APInvoiceRequest
+public class APInvoiceRequest : FarmingApi.Core.IHasBuyer
 {
+    public string? BuyerCode { get; set; }
     public string    DocNum      { get; set; } = "";
     public int       VendorId    { get; set; }
     public DateTime? PostingDate { get; set; }
@@ -22,6 +23,9 @@ public class APInvoiceRequest
 
 public class APInvoiceLineRequest
 {
+    /// <summary>Batch / serial numbers for this line — required when the item is managed by them.</summary>
+    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
+
     public int     ItemId    { get; set; }
     /// <summary>Optional — falls back to the default warehouse when omitted.</summary>
     public string? WhsCode   { get; set; }
@@ -39,6 +43,7 @@ public class APInvoiceUpdateRequest : APInvoiceRequest { }
 // ══════════════════════════════════════════════════════════════════════════════
 public class APInvoiceResponse
 {
+    public string? BuyerCode { get; set; }
     public int       Id         { get; set; }
     public string    DocNum     { get; set; } = "";
     public DateTime? PostingDate { get; set; }

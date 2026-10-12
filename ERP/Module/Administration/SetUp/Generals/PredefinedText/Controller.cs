@@ -18,7 +18,7 @@ public class PredefinedTextController : ControllerBase
     }
 
     // ── GET /PredefinedText ────────────────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll(
         [FromQuery] string? category = null,
         [FromQuery] string? module   = null,
@@ -36,7 +36,7 @@ public class PredefinedTextController : ControllerBase
     }
 
     // ── GET /PredefinedText/{id} ───────────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetSingle(x => x.Id == id);
@@ -45,7 +45,7 @@ public class PredefinedTextController : ControllerBase
     }
 
     // ── GET /PredefinedText/Search?q=payment ──────────────────
-    [AllowAnonymous][HttpGet("Search")]
+    [HttpGet("Search")]
     public IActionResult Search([FromQuery] string q)
     {
         if (string.IsNullOrWhiteSpace(q))
@@ -67,7 +67,7 @@ public class PredefinedTextController : ControllerBase
     }
 
     // ── GET /PredefinedText/Categories ────────────────────────
-    [AllowAnonymous][HttpGet("Categories")]
+    [HttpGet("Categories")]
     public IActionResult GetCategories()
     {
         var cats = _repo.GetAll()
@@ -80,7 +80,7 @@ public class PredefinedTextController : ControllerBase
     }
 
     // ── GET /PredefinedText/Languages ─────────────────────────
-    [AllowAnonymous][HttpGet("Languages")]
+    [HttpGet("Languages")]
     public IActionResult GetLanguages()
     {
         var langs = _repo.GetAll()
@@ -92,7 +92,7 @@ public class PredefinedTextController : ControllerBase
     }
 
     // ── POST /PredefinedText ───────────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] PredefinedTextRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -110,7 +110,7 @@ public class PredefinedTextController : ControllerBase
     }
 
     // ── PUT /PredefinedText/{id} ───────────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] PredefinedTextRequest dto)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -128,7 +128,7 @@ public class PredefinedTextController : ControllerBase
     }
 
     // ── POST /PredefinedText/{id}/Copy ─────────────────────────
-    [AllowAnonymous][HttpPost("{id:int}/Copy")]
+    [HttpPost("{id:int}/Copy")]
     public IActionResult Copy(int id, [FromBody] CopyTextRequest dto)
     {
         var source = _repo.GetSingle(x => x.Id == id);
@@ -157,7 +157,7 @@ public class PredefinedTextController : ControllerBase
     }
 
     // ── DELETE /PredefinedText/{id} ────────────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -168,7 +168,7 @@ public class PredefinedTextController : ControllerBase
     }
 
     // ── POST /PredefinedText/Seed ──────────────────────────────
-    [AllowAnonymous][HttpPost("Seed")]
+    [HttpPost("Seed")]
     public IActionResult Seed()
     {
         if (_repo.GetAll().Any())

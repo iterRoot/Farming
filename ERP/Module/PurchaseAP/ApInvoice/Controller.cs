@@ -2,6 +2,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi;
+using FarmingApi.Core;
+using FarmingApi.Modules.Administration.ApprovalRequest;
 using FarmingApi.Modules.Inventory.ItemsMaster;
 using FarmingApi.Modules.Financials.JournalEntry;
 using FarmingApi.Modules.InventoryManagement.InventoryJournal;
@@ -19,15 +21,20 @@ public class APInvoiceController : ControllerBase
     private readonly IMapper     _mapper;
     private readonly IAPInvoiceJournalService _journalService;
     private readonly IInventoryPostingService _inventoryPosting;
+    private readonly IApprovalGateService _approvalGate;
+    private readonly IPrintLayoutRenderService _printLayout;
 
     public APInvoiceController(
         MyDbContext db,
         IMapper mapper,
         IAPInvoiceJournalService journalService,
-        IInventoryPostingService inventoryPosting)
+        IInventoryPostingService inventoryPosting,
+        IApprovalGateService approvalGate,
+        IPrintLayoutRenderService printLayout)
     {
         _db = db; _mapper = mapper; _journalService = journalService;
         _inventoryPosting = inventoryPosting;
+        _approvalGate = approvalGate; _printLayout = printLayout;
     }
 
     // ── GET /APInvoice ─────────────────────────────────────────────────
@@ -79,30 +86,33 @@ public class APInvoiceController : ControllerBase
             catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
         }
 
+        // A Draft invoice is saved as-is, with no stock/GL movement yet —
+        // those only happen when it's posted (here, if not a draft, or later
+        // via POST /APInvoice/{id}/Post).
+        bool isDraft = string.Equals(dto.Status, "D", StringComparison.OrdinalIgnoreCase);
+        inv.Status = isDraft ? "D" : "O";
+
+        if (isDraft)
+        {
+            _db.Set<APInvoice>().Add(inv);
+            await _db.SaveChangesAsync();
+
+            var draftCreated = await _db.Set<APInvoice>()
+                .Include(x => x.Vendor)
+                .Include(x => x.Items).ThenInclude(l => l.Item)
+                .FirstAsync(x => x.Id == inv.Id);
+
+            return CreatedAtAction(nameof(GetById), new { id = inv.Id },
+                _mapper.Map<APInvoiceResponse>(draftCreated));
+        }
+
         // Save the document + its Journal Entry in one transaction (DR Purchase Expense / DR Input VAT / CR Accounts Payable).
         await using var transaction = await _db.Database.BeginTransactionAsync();
         try
         {
             _db.Set<APInvoice>().Add(inv);
             await _db.SaveChangesAsync();
-            var je = _journalService.CreateJournalEntry(inv, vendor);
-            je.BaseDocEntry = inv.Id;
-
-            // Post stock in — only for lines NOT based on a Goods Receipt PO.
-            // A GRPO already received the goods, so posting here too would
-            // double-count them. Lines booked directly on the invoice (a
-            // purchase with no prior receipt) are the ones that bring stock in,
-            // at the line price, which is the purchase cost.
-            var stockDate = inv.PostingDate ?? DateTime.UtcNow;
-            foreach (var line in inv.Items.Where(l => !IsBasedOnGoodsReceipt(l)))
-            {
-                await _inventoryPosting.PostInAsync(
-                    line.ItemCode!, line.WhsCode!, line.Quantity, line.Price,
-                    "AP Invoice", "ApInvoice", inv.Id, inv.DocNum, stockDate,
-                    vendor.Code, vendor.CardName);
-            }
-
-            await _db.SaveChangesAsync();
+            await PostAPInvoiceAsync(inv, vendor);
             await transaction.CommitAsync();
         }
         catch (Exception ex)
@@ -118,6 +128,126 @@ public class APInvoiceController : ControllerBase
 
         return CreatedAtAction(nameof(GetById), new { id = inv.Id },
             _mapper.Map<APInvoiceResponse>(created));
+    }
+
+    // ── POST /APInvoice/{id}/Post ─── promotes a Draft invoice to Open,
+    // running the same inventory + Journal Entry posting Create runs for a
+    // non-draft invoice.
+    [HttpPost("{id:int}/Post")]
+    public async Task<IActionResult> Post(int id)
+    {
+        var inv = await _db.Set<APInvoice>()
+            .Include(x => x.Vendor)
+            .Include(x => x.Items).ThenInclude(l => l.Item)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (inv == null) return NotFound();
+        if (inv.Status != "D")
+            return BadRequest($"Only a Draft document can be posted (current status: {inv.Status}).");
+
+        var gate = await _approvalGate.EvaluateAsync("APInvoice", inv.Id, inv.DocNum, inv.Total, this.CurrentUserId() ?? 0);
+        if (gate.RequiresApproval)
+        {
+            inv.Status = "P";
+            await _db.SaveChangesAsync();
+            return Ok(new { message = "Submitted for approval", docNum = inv.DocNum, approvalRequestId = gate.ApprovalRequestId });
+        }
+
+        await using var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            var (jeId, jeNo) = await PostAPInvoiceAsync(inv, inv.Vendor);
+            inv.Status = "O";
+            await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return Ok(new { message = "AP Invoice posted", docNum = inv.DocNum, journalEntryId = jeId, journalNo = jeNo });
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            return BadRequest(ex.InnerException?.Message ?? ex.Message);
+        }
+    }
+
+    // ── POST /APInvoice/{id}/Approve ── approves a Pending document and posts it
+    [HttpPost("{id:int}/Approve")]
+    public async Task<IActionResult> Approve(int id)
+    {
+        var inv = await _db.Set<APInvoice>()
+            .Include(x => x.Vendor)
+            .Include(x => x.Items).ThenInclude(l => l.Item)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (inv == null) return NotFound();
+        if (inv.Status != "P")
+            return BadRequest($"Only a document pending approval can be approved (current status: {inv.Status}).");
+
+        var userId = this.CurrentUserId();
+        if (userId == null) return Forbid();
+
+        var decision = await _approvalGate.DecideAsync("APInvoice", inv.Id, "Approved", userId.Value, null);
+        if (!decision.Success) return BadRequest(decision.Error);
+
+        await using var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            var (jeId, jeNo) = await PostAPInvoiceAsync(inv, inv.Vendor);
+            inv.Status = "O";
+            await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return Ok(new { message = "AP Invoice approved and posted", docNum = inv.DocNum, journalEntryId = jeId, journalNo = jeNo });
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            return BadRequest(ex.InnerException?.Message ?? ex.Message);
+        }
+    }
+
+    // ── POST /APInvoice/{id}/Reject ── rejects a Pending document back to Draft
+    [HttpPost("{id:int}/Reject")]
+    public async Task<IActionResult> Reject(int id, [FromBody] ApprovalDecisionRequest? body)
+    {
+        var inv = await _db.Set<APInvoice>().FindAsync(id);
+        if (inv == null) return NotFound();
+        if (inv.Status != "P")
+            return BadRequest($"Only a document pending approval can be rejected (current status: {inv.Status}).");
+
+        var userId = this.CurrentUserId();
+        if (userId == null) return Forbid();
+
+        var decision = await _approvalGate.DecideAsync("APInvoice", inv.Id, "Rejected", userId.Value, body?.Remarks);
+        if (!decision.Success) return BadRequest(decision.Error);
+
+        inv.Status = "D";
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "AP Invoice rejected", docNum = inv.DocNum });
+    }
+
+    /// <summary>
+    /// Creates the AP Invoice's Journal Entry and posts stock in for lines
+    /// not already received by a prior Goods Receipt PO. Shared by Create
+    /// (non-draft) and Post (draft → open) so both post identically.
+    /// </summary>
+    private async Task<(int? jeId, string? jeNo)> PostAPInvoiceAsync(APInvoice inv, BPEntity vendor)
+    {
+        var je = _journalService.CreateJournalEntry(inv, vendor);
+        je.BaseDocEntry = inv.Id;
+
+        var stockDate = inv.PostingDate ?? DateTime.UtcNow;
+        foreach (var line in inv.Items.Where(l => !IsBasedOnGoodsReceipt(l)))
+        {
+            await _inventoryPosting.PostInAsync(
+                line.ItemCode!, line.WhsCode!, line.Quantity, line.Price,
+                "AP Invoice", "ApInvoice", inv.Id, inv.DocNum, stockDate,
+                vendor.Code, vendor.CardName, batches: line.Batches);
+        }
+
+        await _db.SaveChangesAsync();
+        return (je.Id, je.JrnlNo);
     }
 
     // ── PUT /APInvoice/{id} ────────────────────────────────────────────
@@ -170,6 +300,9 @@ public class APInvoiceController : ControllerBase
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (inv == null) return NotFound();
+
+        var customHtml = await _printLayout.TryRenderAsync("APInvoice", inv, inv.Items);
+        if (customHtml != null) return Content(customHtml, "text/html");
 
         var company = await _db.Set<CompanyEntity>().OrderBy(x => x.Id).FirstOrDefaultAsync();
         var pdfBytes = new APInvoicePdfDocument(inv, company).GeneratePdf();

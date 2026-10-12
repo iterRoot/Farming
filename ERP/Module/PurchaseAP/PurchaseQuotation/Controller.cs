@@ -2,6 +2,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi;
+using FarmingApi.Core;
+using FarmingApi.Modules.Administration.ApprovalRequest;
 using FarmingApi.Modules.Inventory.ItemsMaster;
 using QuestPDF.Fluent;
 using FarmingApi.Modules.Administration.DocumentNumberRange;
@@ -17,11 +19,14 @@ public class PurchaseQuotationController : ControllerBase
     private readonly MyDbContext _db;
     private readonly IMapper     _mapper;
     private readonly IDocumentNumberRangeRepository _docNums;
+    private readonly IApprovalGateService _approvalGate;
+    private readonly IPrintLayoutRenderService _printLayout;
 
     public PurchaseQuotationController(MyDbContext db, IMapper mapper,
-                                       IDocumentNumberRangeRepository docNums)
+                                       IDocumentNumberRangeRepository docNums,
+                                       IApprovalGateService approvalGate, IPrintLayoutRenderService printLayout)
     {
-        _db = db; _mapper = mapper; _docNums = docNums;
+        _db = db; _mapper = mapper; _docNums = docNums; _approvalGate = approvalGate; _printLayout = printLayout;
     }
 
     // ── GET /PurchaseQuotation ─────────────────────────────────────────────
@@ -93,6 +98,76 @@ public class PurchaseQuotationController : ControllerBase
             _mapper.Map<PurchaseQuotationResponse>(created));
     }
 
+    // ── POST /PurchaseQuotation/{id}/Post ─── promotes a Draft quotation to
+    // Open. No GL/inventory side effect — posting is the status transition.
+    [HttpPost("{id:int}/Post")]
+    public async Task<IActionResult> Post(int id)
+    {
+        var pq = await _db.Set<PurchaseQuotation>().FindAsync(id);
+        if (pq == null) return NotFound();
+        if (pq.Status != "D")
+            return BadRequest($"Only a Draft document can be posted (current status: {pq.Status}).");
+
+        var gate = await _approvalGate.EvaluateAsync("PurchaseQuotation", pq.Id, pq.DocNum, pq.Total, this.CurrentUserId() ?? 0);
+        if (gate.RequiresApproval)
+        {
+            pq.Status    = "P";
+            pq.UpdatedAt = DateTime.UtcNow;
+            await _db.SaveChangesAsync();
+            return Ok(new { message = "Submitted for approval", docNum = pq.DocNum, approvalRequestId = gate.ApprovalRequestId });
+        }
+
+        pq.Status    = "O";
+        pq.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Purchase Quotation posted", docNum = pq.DocNum });
+    }
+
+    // ── POST /PurchaseQuotation/{id}/Approve ── approves a Pending document and posts it
+    [HttpPost("{id:int}/Approve")]
+    public async Task<IActionResult> Approve(int id)
+    {
+        var pq = await _db.Set<PurchaseQuotation>().FindAsync(id);
+        if (pq == null) return NotFound();
+        if (pq.Status != "P")
+            return BadRequest($"Only a document pending approval can be approved (current status: {pq.Status}).");
+
+        var userId = this.CurrentUserId();
+        if (userId == null) return Forbid();
+
+        var decision = await _approvalGate.DecideAsync("PurchaseQuotation", pq.Id, "Approved", userId.Value, null);
+        if (!decision.Success) return BadRequest(decision.Error);
+
+        pq.Status    = "O";
+        pq.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Purchase Quotation approved and posted", docNum = pq.DocNum });
+    }
+
+    // ── POST /PurchaseQuotation/{id}/Reject ── rejects a Pending document back to Draft
+    [HttpPost("{id:int}/Reject")]
+    public async Task<IActionResult> Reject(int id, [FromBody] ApprovalDecisionRequest? body)
+    {
+        var pq = await _db.Set<PurchaseQuotation>().FindAsync(id);
+        if (pq == null) return NotFound();
+        if (pq.Status != "P")
+            return BadRequest($"Only a document pending approval can be rejected (current status: {pq.Status}).");
+
+        var userId = this.CurrentUserId();
+        if (userId == null) return Forbid();
+
+        var decision = await _approvalGate.DecideAsync("PurchaseQuotation", pq.Id, "Rejected", userId.Value, body?.Remarks);
+        if (!decision.Success) return BadRequest(decision.Error);
+
+        pq.Status    = "D";
+        pq.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Purchase Quotation rejected", docNum = pq.DocNum });
+    }
+
     // ── PUT /PurchaseQuotation/{id} ────────────────────────────────────────
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] PurchaseQuotationUpdateRequest dto)
@@ -131,6 +206,9 @@ public class PurchaseQuotationController : ControllerBase
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (pq == null) return NotFound();
+
+        var customHtml = await _printLayout.TryRenderAsync("PurchaseQuotation", pq, pq.Items);
+        if (customHtml != null) return Content(customHtml, "text/html");
 
         var company = await _db.Set<CompanyEntity>().OrderBy(x => x.Id).FirstOrDefaultAsync();
         var pdfBytes = new PurchaseQuotationPdfDocument(pq, company).GeneratePdf();

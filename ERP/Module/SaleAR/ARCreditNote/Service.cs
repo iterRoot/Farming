@@ -13,10 +13,17 @@ public class ARCreditNoteJournalService : IARCreditNoteJournalService
 {
     private readonly MyDbContext _db;
 
-    public ARCreditNoteJournalService(MyDbContext db)
+    private readonly GLAccountResolver _resolver;
+
+    public ARCreditNoteJournalService(MyDbContext db, GLAccountResolver resolver)
     {
         _db = db;
+        _resolver = resolver;
     }
+
+    /// <summary>Pick the first non-empty account code from a list of candidates.</summary>
+    private static string? FirstNonEmpty(params string?[] values)
+        => values.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v));
 
     public JournalEntry CreateJournalEntry(ARCreditNote creditNote, BPEntity customer)
     {
@@ -26,13 +33,11 @@ public class ARCreditNoteJournalService : IARCreditNoteJournalService
                      "Go to Administration → GL Account Determination and add " +
                      "ARControlAccount, RevenueAccount, TaxOutputAccount.");
 
-        // Prefer the BP-level AR control account, fall back to the global default.
-        var arCode = !string.IsNullOrWhiteSpace(customer.ARControlAccount)
-            ? customer.ARControlAccount
-            : gl.ARControlAccount;
-
-        var revenueCode = gl.RevenueAccount;
-        var taxCode     = gl.TaxOutputAccount;
+        // Prefer the BP-level AR control account, fall back to the KGLD new field,
+        // then the legacy field the GL Account Determination screen actually writes.
+        var arCode = FirstNonEmpty(customer.ARControlAccount, _resolver.ForBpGroup("AccountsReceivable", customer.GroupCode, null), gl.ARControlAccount, gl.AccountsReceivable);
+        var revenueCode = FirstNonEmpty(gl.RevenueAccount, gl.SalesRevenue);
+        var taxCode     = FirstNonEmpty(gl.TaxOutputAccount, gl.SalesTax);
 
         if (string.IsNullOrWhiteSpace(arCode))
             throw new InvalidOperationException(
@@ -53,7 +58,7 @@ public class ARCreditNoteJournalService : IARCreditNoteJournalService
 
         var je = new JournalEntry
         {
-            JrnlNo          = GenerateJournalNumber(),
+            JrnlNo          = JournalEntryNumberService.Next(_db, postingDate),
             TransDate       = postingDate,
             DueDate         = creditNote.DueDate ?? postingDate,
             DocDate         = postingDate,
@@ -145,6 +150,10 @@ public class ARCreditNoteJournalService : IARCreditNoteJournalService
             InActive    = false,
         });
 
+        // Revenue is reversed on each line's item-group account when an override is set.
+        GLAccountResolver.SplitLine(je, l => l.AccountName == "Sales Revenue",
+            _resolver.SplitByItemGroup("SalesRevenue", revenueCode, netRevenue, creditNote.Items.Select(l => (l.ItemCode, l.Total - l.VatSum))));
+
         var totalDr = je.Lines.Sum(l => l.Debit);
         var totalCr = je.Lines.Sum(l => l.Credit);
         if (Math.Abs(totalDr - totalCr) > 0.01m)
@@ -159,25 +168,5 @@ public class ARCreditNoteJournalService : IARCreditNoteJournalService
 
         _db.Set<JournalEntry>().Add(je);
         return je;
-    }
-
-    private string GenerateJournalNumber()
-    {
-        var year   = DateTime.Now.Year;
-        var prefix = $"JE-{year}-";
-
-        var last = _db.Set<JournalEntry>()
-            .Where(j => j.JrnlNo.StartsWith(prefix))
-            .OrderByDescending(j => j.Id)
-            .FirstOrDefault();
-
-        if (last == null)
-            return $"{prefix}00001";
-
-        var parts = last.JrnlNo.Split('-');
-        if (parts.Length >= 3 && int.TryParse(parts[2], out int lastNum))
-            return $"{prefix}{(lastNum + 1):D5}";
-
-        return $"{prefix}00001";
     }
 }

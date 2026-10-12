@@ -2,6 +2,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi;
+using FarmingApi.Core;
+using FarmingApi.Modules.Administration.ApprovalRequest;
 using FarmingApi.Modules.Inventory.ItemsMaster;
 using FarmingApi.Modules.Financials.JournalEntry;
 using FarmingApi.Modules.InventoryManagement.InventoryJournal;
@@ -21,16 +23,21 @@ public class ARCreditNoteController : ControllerBase  // ✅ renamed
     private readonly IDocumentNumberService _docNumber;
     private readonly IARCreditNoteJournalService _journalService;
     private readonly IInventoryPostingService _inventoryPosting;
+    private readonly IApprovalGateService _approvalGate;
+    private readonly IPrintLayoutRenderService _printLayout;
 
     public ARCreditNoteController(
         MyDbContext db,
         IMapper mapper,
         IDocumentNumberService docNumber,
         IARCreditNoteJournalService journalService,
-        IInventoryPostingService inventoryPosting)
+        IInventoryPostingService inventoryPosting,
+        IApprovalGateService approvalGate,
+        IPrintLayoutRenderService printLayout)
     {
         _db = db; _mapper = mapper; _docNumber = docNumber; _journalService = journalService;
         _inventoryPosting = inventoryPosting;
+        _approvalGate = approvalGate; _printLayout = printLayout;
     }
 
     [HttpGet]
@@ -80,6 +87,25 @@ public class ARCreditNoteController : ControllerBase  // ✅ renamed
             catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
         }
 
+        // A Draft credit note is saved as-is, with no stock/GL movement yet —
+        // those only happen when it's posted (here, if not a draft, or later
+        // via POST /ARCreditNote/{id}/Post).
+        bool isDraft = string.Equals(dto.Status, "D", StringComparison.OrdinalIgnoreCase);
+        cn.Status = isDraft ? "D" : "O";
+
+        if (isDraft)
+        {
+            _db.Set<ARCreditNote>().Add(cn);
+            await _db.SaveChangesAsync();
+
+            var draftCreated = await _db.Set<ARCreditNote>()
+                .Include(x => x.Customer).Include(x => x.Items).ThenInclude(l => l.Item)
+                .FirstAsync(x => x.Id == cn.Id);
+
+            return CreatedAtAction(nameof(GetById), new { id = cn.Id },
+                _mapper.Map<ARCreditNoteListResponse>(draftCreated));
+        }
+
         // Save the credit note + its Journal Entry in one transaction —
         // reverse of AR Invoice: DR Revenue / DR Output VAT / CR Accounts Receivable.
         int?    jeId = null;
@@ -91,24 +117,7 @@ public class ARCreditNoteController : ControllerBase  // ✅ renamed
             _db.Set<ARCreditNote>().Add(cn);
             await _db.SaveChangesAsync();           // cn.Id populated
 
-            var je = _journalService.CreateJournalEntry(cn, customer);
-            je.BaseDocEntry = cn.Id;
-
-            // Bring the returned goods back into stock — but not for lines copied
-            // from a Return, which already received them. Returns come back at the
-            // item's current average cost, so the average is left undisturbed.
-            var stockDate = cn.PostingDate ?? DateTime.UtcNow;
-            foreach (var line in cn.Items.Where(l => !IsBasedOnReturn(l)))
-            {
-                await _inventoryPosting.PostReturnInAsync(
-                    line.ItemCode!, line.WhsCode!, line.Quantity,
-                    "AR Credit Note", "ARCreditNote", cn.Id, cn.DocNum, stockDate,
-                    customer.Code, customer.CardName);
-            }
-
-            await _db.SaveChangesAsync();
-            jeId = je.Id;
-            jeNo = je.JrnlNo;
+            (jeId, jeNo) = await PostCreditNoteAsync(cn, customer);
 
             await transaction.CommitAsync();
         }
@@ -127,6 +136,136 @@ public class ARCreditNoteController : ControllerBase  // ✅ renamed
         response.JournalNo       = jeNo;
 
         return CreatedAtAction(nameof(GetById), new { id = cn.Id }, response);
+    }
+
+    // ── POST /ARCreditNote/{id}/Post ─── promotes a Draft credit note to
+    // Open, running the same inventory-return + Journal Entry posting Create
+    // runs for a non-draft credit note.
+    [HttpPost("{id:int}/Post")]
+    public async Task<IActionResult> Post(int id)
+    {
+        var cn = await _db.Set<ARCreditNote>()
+            .Include(x => x.Customer)
+            .Include(x => x.Items).ThenInclude(l => l.Item)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (cn == null) return NotFound();
+        if (cn.Status != "D")
+            return BadRequest($"Only a Draft document can be posted (current status: {cn.Status}).");
+
+        var gate = await _approvalGate.EvaluateAsync("ARCreditNote", cn.Id, cn.DocNum, cn.Total, this.CurrentUserId() ?? 0);
+        if (gate.RequiresApproval)
+        {
+            cn.Status = "P";
+            await _db.SaveChangesAsync();
+            return Ok(new { message = "Submitted for approval", docNum = cn.DocNum, approvalRequestId = gate.ApprovalRequestId });
+        }
+
+        int?    jeId = null;
+        string? jeNo = null;
+
+        await using var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            (jeId, jeNo) = await PostCreditNoteAsync(cn, cn.Customer);
+            cn.Status = "O";
+            await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            return BadRequest(ex.InnerException?.Message ?? ex.Message);
+        }
+
+        return Ok(new { message = "AR Credit Note posted", docNum = cn.DocNum, journalEntryId = jeId, journalNo = jeNo });
+    }
+
+    // ── POST /ARCreditNote/{id}/Approve ── approves a Pending document and posts it
+    [HttpPost("{id:int}/Approve")]
+    public async Task<IActionResult> Approve(int id)
+    {
+        var cn = await _db.Set<ARCreditNote>()
+            .Include(x => x.Customer)
+            .Include(x => x.Items).ThenInclude(l => l.Item)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (cn == null) return NotFound();
+        if (cn.Status != "P")
+            return BadRequest($"Only a document pending approval can be approved (current status: {cn.Status}).");
+
+        var userId = this.CurrentUserId();
+        if (userId == null) return Forbid();
+
+        var decision = await _approvalGate.DecideAsync("ARCreditNote", cn.Id, "Approved", userId.Value, null);
+        if (!decision.Success) return BadRequest(decision.Error);
+
+        int?    jeId = null;
+        string? jeNo = null;
+
+        await using var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            (jeId, jeNo) = await PostCreditNoteAsync(cn, cn.Customer);
+            cn.Status = "O";
+            await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            return BadRequest(ex.InnerException?.Message ?? ex.Message);
+        }
+
+        return Ok(new { message = "AR Credit Note approved and posted", docNum = cn.DocNum, journalEntryId = jeId, journalNo = jeNo });
+    }
+
+    // ── POST /ARCreditNote/{id}/Reject ── rejects a Pending document back to Draft
+    [HttpPost("{id:int}/Reject")]
+    public async Task<IActionResult> Reject(int id, [FromBody] ApprovalDecisionRequest? body)
+    {
+        var cn = await _db.Set<ARCreditNote>().FindAsync(id);
+        if (cn == null) return NotFound();
+        if (cn.Status != "P")
+            return BadRequest($"Only a document pending approval can be rejected (current status: {cn.Status}).");
+
+        var userId = this.CurrentUserId();
+        if (userId == null) return Forbid();
+
+        var decision = await _approvalGate.DecideAsync("ARCreditNote", cn.Id, "Rejected", userId.Value, body?.Remarks);
+        if (!decision.Success) return BadRequest(decision.Error);
+
+        cn.Status = "D";
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "AR Credit Note rejected", docNum = cn.DocNum });
+    }
+
+    /// <summary>
+    /// Creates the AR Credit Note's Journal Entry and brings returned goods
+    /// back into stock for lines not already received by a prior Return.
+    /// Shared by Create (non-draft) and Post (draft → open) so both post
+    /// identically.
+    /// </summary>
+    private async Task<(int? jeId, string? jeNo)> PostCreditNoteAsync(ARCreditNote cn, BPEntity customer)
+    {
+        var je = _journalService.CreateJournalEntry(cn, customer);
+        je.BaseDocEntry = cn.Id;
+
+        // Bring the returned goods back into stock — but not for lines copied
+        // from a Return, which already received them. Returns come back at the
+        // item's current average cost, so the average is left undisturbed.
+        var stockDate = cn.PostingDate ?? DateTime.UtcNow;
+        foreach (var line in cn.Items.Where(l => !IsBasedOnReturn(l)))
+        {
+            await _inventoryPosting.PostReturnInAsync(
+                line.ItemCode!, line.WhsCode!, line.Quantity,
+                "AR Credit Note", "ARCreditNote", cn.Id, cn.DocNum, stockDate,
+                customer.Code, customer.CardName, batches: line.Batches);
+        }
+
+        await _db.SaveChangesAsync();
+        return (je.Id, je.JrnlNo);
     }
 
     [HttpPut("{id}")]
@@ -171,6 +310,9 @@ public class ARCreditNoteController : ControllerBase  // ✅ renamed
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (cn == null) return NotFound();
+
+        var customHtml = await _printLayout.TryRenderAsync("ARCreditNote", cn, cn.Items);
+        if (customHtml != null) return Content(customHtml, "text/html");
 
         var company = await _db.Set<CompanyEntity>()
             .OrderBy(x => x.Id)

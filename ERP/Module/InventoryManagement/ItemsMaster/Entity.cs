@@ -132,6 +132,8 @@ public class ItemsMasterConfig : IEntityTypeConfiguration<ItemsMaster>
         builder.HasKey(x => x.Id);
 
         builder.HasIndex(x => x.ItemCode).IsUnique();
+        // A barcode identifies one item; blank ones are allowed until one is generated.
+        builder.HasIndex(x => x.Barcode).IsUnique().HasFilter("\"Barcode\" <> ''");
 
         builder.Property(x => x.ItemCode).HasMaxLength(50).IsRequired();
         builder.Property(x => x.ItemName).HasMaxLength(100).IsRequired();

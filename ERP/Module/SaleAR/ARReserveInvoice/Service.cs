@@ -18,6 +18,10 @@ public class ARReserveInvoiceJournalService : IARReserveInvoiceJournalService
         _db = db;
     }
 
+    /// <summary>Pick the first non-empty account code from a list of candidates.</summary>
+    private static string? FirstNonEmpty(params string?[] values)
+        => values.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v));
+
     public JournalEntry CreateJournalEntry(ARReserveInvoice reserveInvoice, BPEntity customer)
     {
         var gl = _db.Set<GLAccountDetermination>().FirstOrDefault()
@@ -26,13 +30,11 @@ public class ARReserveInvoiceJournalService : IARReserveInvoiceJournalService
                      "Go to Administration → GL Account Determination and add " +
                      "ARControlAccount, RevenueAccount, TaxOutputAccount.");
 
-        // Prefer the BP-level AR control account, fall back to the global default.
-        var arCode = !string.IsNullOrWhiteSpace(customer.ARControlAccount)
-            ? customer.ARControlAccount
-            : gl.ARControlAccount;
-
-        var revenueCode = gl.RevenueAccount;
-        var taxCode     = gl.TaxOutputAccount;
+        // Prefer the BP-level AR control account, fall back to the KGLD new field,
+        // then the legacy field the GL Account Determination screen actually writes.
+        var arCode = FirstNonEmpty(customer.ARControlAccount, gl.ARControlAccount, gl.AccountsReceivable);
+        var revenueCode = FirstNonEmpty(gl.RevenueAccount, gl.SalesRevenue);
+        var taxCode     = FirstNonEmpty(gl.TaxOutputAccount, gl.SalesTax);
 
         if (string.IsNullOrWhiteSpace(arCode))
             throw new InvalidOperationException(
@@ -53,7 +55,7 @@ public class ARReserveInvoiceJournalService : IARReserveInvoiceJournalService
 
         var je = new JournalEntry
         {
-            JrnlNo          = GenerateJournalNumber(),
+            JrnlNo          = JournalEntryNumberService.Next(_db, postingDate),
             TransDate       = postingDate,
             DueDate         = reserveInvoice.DueDate ?? postingDate,
             DocDate         = postingDate,
@@ -158,25 +160,5 @@ public class ARReserveInvoiceJournalService : IARReserveInvoiceJournalService
 
         _db.Set<JournalEntry>().Add(je);
         return je;
-    }
-
-    private string GenerateJournalNumber()
-    {
-        var year   = DateTime.Now.Year;
-        var prefix = $"JE-{year}-";
-
-        var last = _db.Set<JournalEntry>()
-            .Where(j => j.JrnlNo.StartsWith(prefix))
-            .OrderByDescending(j => j.Id)
-            .FirstOrDefault();
-
-        if (last == null)
-            return $"{prefix}00001";
-
-        var parts = last.JrnlNo.Split('-');
-        if (parts.Length >= 3 && int.TryParse(parts[2], out int lastNum))
-            return $"{prefix}{(lastNum + 1):D5}";
-
-        return $"{prefix}00001";
     }
 }

@@ -3,8 +3,9 @@ namespace FarmingApi.Modules.PurchaseAP.PurchaseOrder;
 // ══════════════════════════════════════════════════════════════════════════════
 // REQUEST
 // ══════════════════════════════════════════════════════════════════════════════
-public class PurchaseOrderRequest
+public class PurchaseOrderRequest : FarmingApi.Core.IHasBuyer
 {
+    public string? BuyerCode { get; set; }
     public string    DocNum      { get; set; } = "";
     public int       VendorId    { get; set; }
     public DateTime? PostingDate { get; set; }
@@ -37,6 +38,7 @@ public class PurchaseOrderUpdateRequest : PurchaseOrderRequest { }
 // ══════════════════════════════════════════════════════════════════════════════
 public class PurchaseOrderResponse
 {
+    public string? BuyerCode { get; set; }
     public int       Id         { get; set; }
     public string    DocNum     { get; set; } = "";
     public DateTime? PostingDate { get; set; }

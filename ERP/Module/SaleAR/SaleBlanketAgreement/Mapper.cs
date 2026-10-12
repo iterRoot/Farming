@@ -23,7 +23,9 @@ public class SaleBlanketAgreementMapper : Profile
             .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.CardName))
             .ForMember(dest => dest.Items,        opt => opt.MapFrom(src => src.Items));
 
-        CreateMap<SaleBlanketAgreementLine, SaleBlanketAgreementLineResponse>();
+        CreateMap<SaleBlanketAgreementLine, SaleBlanketAgreementLineResponse>()
+            .ForMember(dest => dest.ARInvoiceDocNum,
+                opt => opt.MapFrom(src => src.ARInvoice != null ? src.ARInvoice.DocNum : null));
 
         // ── Update ────────────────────────────────────────────────────────
         CreateMap<SaleBlanketAgreementUpdateRequest, SaleBlanketAgreement>()

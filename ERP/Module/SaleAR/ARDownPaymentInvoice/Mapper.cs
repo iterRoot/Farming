@@ -19,12 +19,15 @@ public class ARDownPaymentMapper : Profile  // ✅ renamed
             .ForMember(dest => dest.CustomerId,   opt => opt.MapFrom(src => src.CustomerId))
             .ForMember(dest => dest.CustomerCode, opt => opt.MapFrom(src => src.Customer.Code))
             .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.CardName))
-
+            .ForMember(dest => dest.BaseDocNum,   opt => opt.Ignore())
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items));
 
         CreateMap<ARDownPaymentLine, ARDownPaymentLineResponse>();  // ✅ renamed
 
         CreateMap<ARDownPaymentUpdateRequest, ARDownPaymentInvoice>()
+            .ForMember(dest => dest.BaseEntry, opt => opt.Ignore())
+            .ForMember(dest => dest.BaseType,  opt => opt.Ignore())
+            .ForMember(dest => dest.DocNum,    opt => opt.Ignore())   // server-assigned, never taken from the request
             .ForMember(dest => dest.Id,        opt => opt.Ignore())
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.Customer,  opt => opt.Ignore())

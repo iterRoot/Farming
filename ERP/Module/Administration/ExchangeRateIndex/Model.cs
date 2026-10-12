@@ -57,3 +57,24 @@ public class PriceIndexRequest
     public string?  Remarks       { get; set; }
     public bool     IsActive      { get; set; } = true;
 }
+
+// ── Auto-update settings ──────────────────────────────────────
+public class ExchangeRateSettingsDto
+{
+    public bool      AutoFetchEnabled { get; set; }
+    public string    BaseCurrency     { get; set; } = "KHR";
+    public string    Currencies       { get; set; } = "USD";
+    public int       RunAtHourUtc     { get; set; }
+    public DateTime? LastAttemptAt    { get; set; }
+    public DateTime? LastSuccessAt    { get; set; }
+    public string?   LastStatus       { get; set; }
+    public string?   LastMessage      { get; set; }
+}
+
+public class ExchangeRateSettingsRequest
+{
+    public bool    AutoFetchEnabled { get; set; }
+    public string? BaseCurrency     { get; set; }
+    public string? Currencies       { get; set; }
+    public int     RunAtHourUtc     { get; set; }
+}

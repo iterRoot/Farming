@@ -32,12 +32,10 @@ public class WithholdingTaxCodeController : MyController
         Account = x.Account,
     };
 
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult GetAll()
         => Ok(_repo.GetAll().OrderBy(x => x.Code).Select(ToDto).ToList());
 
-    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public IActionResult GetOne(int id)
     {
@@ -46,7 +44,6 @@ public class WithholdingTaxCodeController : MyController
         return Ok(ToDto(x));
     }
 
-    [AllowAnonymous]
     [HttpPost]
     public IActionResult Create([FromBody] WithholdingTaxCodeSaveRequest req)
     {
@@ -60,7 +57,6 @@ public class WithholdingTaxCodeController : MyController
         return Ok(new { id = e.Id, message = "Withholding tax code created." });
     }
 
-    [AllowAnonymous]
     [HttpPost("Bulk")]
     public IActionResult CreateBulk([FromBody] List<WithholdingTaxCodeSaveRequest> requests)
     {
@@ -90,7 +86,6 @@ public class WithholdingTaxCodeController : MyController
         return Ok(new { created, message = $"{created} withholding tax code(s) created." });
     }
 
-    [AllowAnonymous]
     [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] WithholdingTaxCodeSaveRequest req)
     {
@@ -106,7 +101,6 @@ public class WithholdingTaxCodeController : MyController
         return Ok(new { id = e.Id, message = "Withholding tax code updated." });
     }
 
-    [AllowAnonymous]
     [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {

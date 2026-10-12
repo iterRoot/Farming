@@ -31,6 +31,11 @@ public class GLAccountDetermination : AuditableEntity
     public string? InventoryAccount { get; set; }  // Debit on GR           e.g. 1300
     public string? CostOfGoodsSold { get; set; }  // Debit on GI           e.g. 5200
     public string? InventoryOffset { get; set; }  // Credit on GR          e.g. 2000
+    public string? InventoryRevaluationIncrease { get; set; }  // Credit when a Stock Revaluation raises inventory value
+    public string? InventoryRevaluationDecrease { get; set; }  // Debit when a Stock Revaluation lowers inventory value
+    public string? InventoryCountingGain { get; set; }  // Credit when a stock count finds more than the books
+    public string? InventoryCountingLoss { get; set; }  // Debit when a stock count finds less than the books
+    public string? PriceDifference { get; set; }  // Dr/Cr when a standard-cost item is received above/below its standard
 
     // ── Banking ───────────────────────────────────────────────
     public string? CashAccount { get; set; }  // Debit on payment      e.g. 1000
@@ -74,6 +79,11 @@ public class GLAccountDeterminationConfig
             nameof(GLAccountDetermination.InventoryAccount),
             nameof(GLAccountDetermination.CostOfGoodsSold),
             nameof(GLAccountDetermination.InventoryOffset),
+            nameof(GLAccountDetermination.InventoryRevaluationIncrease),
+            nameof(GLAccountDetermination.InventoryRevaluationDecrease),
+            nameof(GLAccountDetermination.InventoryCountingGain),
+            nameof(GLAccountDetermination.InventoryCountingLoss),
+            nameof(GLAccountDetermination.PriceDifference),
             nameof(GLAccountDetermination.CashAccount),
             nameof(GLAccountDetermination.BankAccount),
             nameof(GLAccountDetermination.ExchangeGainLoss),

@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using FarmingApi.Core;
 using FarmingApi.Modules.Inventory.ItemsMaster;
-using GRPOEntity = FarmingApi.Modules.PurchaseAP.GoodsReceiptPO.GoodsReceiptPO;
 using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
 namespace FarmingApi.Modules.PurchaseAP.APInvoice;
@@ -12,6 +11,9 @@ namespace FarmingApi.Modules.PurchaseAP.APInvoice;
 // ══════════════════════════════════════════════════════════════════════════════
 public class APInvoice : AuditableEntity
 {
+    [System.ComponentModel.DataAnnotations.MaxLength(50)]
+    public string? BuyerCode { get; set; }   // buyer (KSEB code)
+
     public string    DocNum      { get; set; } = "";
     public DateTime? PostingDate { get; set; }
     public DateTime? DueDate     { get; set; }
@@ -36,6 +38,10 @@ public class APInvoice : AuditableEntity
 // ══════════════════════════════════════════════════════════════════════════════
 public class APInvoiceLine : AuditableEntity
 {
+    // Batch / serial numbers entered for this line — used when the document posts stock; not stored on the line.
+    [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
+
     public int          APInvoiceId { get; set; }
     public APInvoice    APInvoice   { get; set; } = null!;
 
@@ -49,11 +55,13 @@ public class APInvoiceLine : AuditableEntity
     public decimal  Price    { get; set; }
     public decimal  Total    { get; set; }
 
-    // ── SAP-style base document linkage (from GoodsReceiptPO) ──────────────
-    public int?    BaseEntry { get; set; }   // FK → GoodsReceiptPO.Id
-    public string? BaseType  { get; set; }   // "GoodsReceiptPO"
-
-    public GRPOEntity? BaseGoodsReceipt { get; set; }
+    // ── SAP-style base document linkage — polymorphic, like ARInvoice:
+    // BaseType names which table BaseEntry points into ("GoodsReceiptPO" |
+    // "PurchaseBlanketAgreement" | "PurchaseOrder" | "PurchaseQuotation" |
+    // "Delivery"), resolved in code rather than a single hard-coded DB
+    // foreign key, since the Create page can copy from any of them.
+    public int?    BaseEntry { get; set; }
+    public string? BaseType  { get; set; }
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -106,12 +114,5 @@ public class APInvoiceLineConfig : IEntityTypeConfiguration<APInvoiceLine>
                .WithMany()
                .HasForeignKey(x => x.ItemId)
                .OnDelete(DeleteBehavior.Restrict);
-
-        // ✅ Optional FK → GoodsReceiptPO (nullable)
-        builder.HasOne(x => x.BaseGoodsReceipt)
-               .WithMany()
-               .HasForeignKey(x => x.BaseEntry)
-               .OnDelete(DeleteBehavior.SetNull)
-               .IsRequired(false);
     }
 }

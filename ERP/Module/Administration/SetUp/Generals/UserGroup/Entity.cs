@@ -24,7 +24,7 @@ public class UserGroupConfig : IEntityTypeConfiguration<UserGroup>
 {
     public void Configure(EntityTypeBuilder<UserGroup> builder)
     {
-        builder.ToTable("UserGroup");
+        builder.ToTable("KUSG");
 
         builder.HasKey(x => x.Id);
 

@@ -13,6 +13,8 @@ public class ARDownPaymentListRequest  // ✅ renamed
     public decimal   TaxAmount   { get; set; }
     public decimal   Total       { get; set; }
     public string?   Remarks     { get; set; }
+    public int?      BaseEntry   { get; set; }   // request being invoiced (set on create only)
+    public string?   BaseType    { get; set; }
 
     public List<ARDownPaymentLineRequest> Items { get; set; } = new();
 }
@@ -23,6 +25,24 @@ public class ARDownPaymentLineRequest  // ✅ renamed
     public decimal Quantity { get; set; }
     public decimal Price    { get; set; }
     public decimal Total    { get; set; }
+    public string? WhsCode     { get; set; }
+    public string? Branch      { get; set; }
+    public decimal Discount    { get; set; }
+    public decimal DiscountSum { get; set; }
+    public decimal Vat         { get; set; }
+    public decimal VatSum      { get; set; }
+    public decimal ItemCost    { get; set; }
+    public string? UomName     { get; set; }
+    public string? UomCode     { get; set; }
+    public string? DocCurrency { get; set; }
+    public decimal GrossProfit { get; set; }
+    public string? Dimension1  { get; set; }
+    public string? Dimension2  { get; set; }
+    public string? Dimension3  { get; set; }
+    public string? Dimension4  { get; set; }
+    public string? Dimension5  { get; set; }
+    public string? FreeText    { get; set; }
+    public string? Remark      { get; set; }
 }
 
 public class ARDownPaymentUpdateRequest : ARDownPaymentListRequest { }
@@ -41,6 +61,9 @@ public class ARDownPaymentListResponse  // ✅ renamed
     public decimal   Total       { get; set; }
     public string?   Remarks     { get; set; }
     public DateTime  CreatedAt   { get; set; }
+    public int?      BaseEntry   { get; set; }
+    public string?   BaseType    { get; set; }
+    public string?   BaseDocNum  { get; set; }
 
     // Auto-created Journal Entry (DR AR / CR Customer Deposit).
     public int?      JournalEntryId { get; set; }
@@ -61,4 +84,22 @@ public class ARDownPaymentLineResponse  // ✅ renamed
     public decimal Quantity { get; set; }
     public decimal Price    { get; set; }
     public decimal Total    { get; set; }
+    public string? WhsCode     { get; set; }
+    public string? Branch      { get; set; }
+    public decimal Discount    { get; set; }
+    public decimal DiscountSum { get; set; }
+    public decimal Vat         { get; set; }
+    public decimal VatSum      { get; set; }
+    public decimal ItemCost    { get; set; }
+    public string? UomName     { get; set; }
+    public string? UomCode     { get; set; }
+    public string? DocCurrency { get; set; }
+    public decimal GrossProfit { get; set; }
+    public string? Dimension1  { get; set; }
+    public string? Dimension2  { get; set; }
+    public string? Dimension3  { get; set; }
+    public string? Dimension4  { get; set; }
+    public string? Dimension5  { get; set; }
+    public string? FreeText    { get; set; }
+    public string? Remark      { get; set; }
 }

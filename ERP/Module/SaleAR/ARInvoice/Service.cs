@@ -10,10 +10,17 @@ public interface IARInvoiceJournalService
 public class ARInvoiceJournalService : IARInvoiceJournalService
 {
     private readonly MyDbContext _db;
-    public ARInvoiceJournalService(MyDbContext db)
+    private readonly GLAccountResolver _resolver;
+    public ARInvoiceJournalService(MyDbContext db, GLAccountResolver resolver)
     {
         _db = db;
+        _resolver = resolver;
     }
+
+    /// <summary>Pick the first non-empty account code from a list of candidates.</summary>
+    private static string? FirstNonEmpty(params string?[] values)
+        => values.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v));
+
     public JournalEntry CreateJournalEntry(ARInvoice invoice, BPEntity customer)
     {
         // ── 1. Load KGLD row ──────────────────────────────────────
@@ -23,13 +30,13 @@ public class ARInvoiceJournalService : IARInvoiceJournalService
                 "Go to Administration → GL Account Determination and add " +
                 "ARControlAccount, RevenueAccount, TaxOutputAccount.");
 
-        // ── 2. Resolve account codes (BP override → KGLD default) ─
-        var arCode = !string.IsNullOrWhiteSpace(customer.ARControlAccount)
-            ? customer.ARControlAccount
-            : gl.ARControlAccount;
-
-        var revenueCode = gl.RevenueAccount;
-        var taxCode     = gl.TaxOutputAccount;
+        // ── 2. Resolve account codes (BP override → KGLD new field → KGLD legacy field) ─
+        // The GL Account Determination screen only exposes the legacy fields
+        // (AccountsReceivable/SalesRevenue/SalesTax), so those must be checked
+        // too — not just the newer ARControlAccount/RevenueAccount/TaxOutputAccount.
+        var arCode = FirstNonEmpty(customer.ARControlAccount, _resolver.ForBpGroup("AccountsReceivable", customer.GroupCode, null), gl.ARControlAccount, gl.AccountsReceivable);
+        var revenueCode = FirstNonEmpty(gl.RevenueAccount, gl.SalesRevenue);
+        var taxCode     = FirstNonEmpty(gl.TaxOutputAccount, gl.SalesTax);
 
         if (string.IsNullOrWhiteSpace(arCode))
             throw new InvalidOperationException(
@@ -52,7 +59,7 @@ public class ARInvoiceJournalService : IARInvoiceJournalService
 
         var je = new JournalEntry
         {
-            JrnlNo          = GenerateJournalNumber(),
+            JrnlNo          = JournalEntryNumberService.Next(_db, postingDate),
             TransDate       = postingDate,
             DueDate         = invoice.DueDate ?? postingDate,
             DocDate         = postingDate,
@@ -143,6 +150,10 @@ public class ARInvoiceJournalService : IARInvoiceJournalService
             });
         }
 
+        // Revenue follows each line's item group when an override is set for it.
+        GLAccountResolver.SplitLine(je, l => l.AccountName == "Sales Revenue",
+            _resolver.SplitByItemGroup("SalesRevenue", revenueCode, netRevenue, invoice.Items.Select(l => (l.ItemCode, l.Total - l.VatSum))));
+
         // ── 8. Balance check + totals ─────────────────────────────
         var totalDr = je.Lines.Sum(l => l.Debit);
         var totalCr = je.Lines.Sum(l => l.Credit);
@@ -163,24 +174,4 @@ public class ARInvoiceJournalService : IARInvoiceJournalService
         return je;
     }
 
-    // ── Generate JE number: JE-2026-00001 ─────────────────────────
-    private string GenerateJournalNumber()
-    {
-        var year   = DateTime.Now.Year;
-        var prefix = $"JE-{year}-";
-
-        var last = _db.Set<JournalEntry>()
-            .Where(j => j.JrnlNo.StartsWith(prefix))
-            .OrderByDescending(j => j.Id)
-            .FirstOrDefault();
-
-        if (last == null)
-            return $"{prefix}00001";
-
-        var parts = last.JrnlNo.Split('-');
-        if (parts.Length >= 3 && int.TryParse(parts[2], out int lastNum))
-            return $"{prefix}{(lastNum + 1):D5}";
-
-        return $"{prefix}00001";
-    }
 }

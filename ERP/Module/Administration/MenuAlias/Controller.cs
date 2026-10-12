@@ -24,7 +24,6 @@ public class MenuAliasController : MyController
         Module = x.Module, Language = x.Language, InActive = x.InActive ?? false,
     };
 
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult GetAll([FromQuery] string? search)
     {
@@ -40,7 +39,6 @@ public class MenuAliasController : MyController
         return Ok(list);
     }
 
-    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public IActionResult GetOne(int id)
     {
@@ -49,7 +47,6 @@ public class MenuAliasController : MyController
         return Ok(ToDto(x));
     }
 
-    [AllowAnonymous]
     [HttpPost]
     public IActionResult Create([FromBody] MenuAliasSaveRequest req)
     {
@@ -63,7 +60,6 @@ public class MenuAliasController : MyController
         return Ok(new { id = e.Id, message = "Alias created." });
     }
 
-    [AllowAnonymous]
     [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] MenuAliasSaveRequest req)
     {
@@ -79,7 +75,6 @@ public class MenuAliasController : MyController
         return Ok(new { id = e.Id, message = "Alias updated." });
     }
 
-    [AllowAnonymous]
     [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {

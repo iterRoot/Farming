@@ -8,7 +8,8 @@ public class AssetMasterProfile : Profile
     {
         CreateMap<AssetMaster, AssetMasterDto>()
             .ForMember(d => d.NetBookValue,
-                o => o.MapFrom(s => s.AcquisitionCost - s.AccumulatedDepreciation));
+                o => o.MapFrom(s => s.AcquisitionCost - s.AccumulatedDepreciation))
+            .ForMember(d => d.HasPostedDepreciation, o => o.Ignore());
 
         CreateMap<AssetMasterSaveRequest, AssetMaster>()
             // never let the request touch identity / audit fields

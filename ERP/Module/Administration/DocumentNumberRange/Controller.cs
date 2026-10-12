@@ -14,7 +14,7 @@ public class DocumentNumberRangeController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET ALL — grouped by module
     // ═══════════════════════════════════════════════════════════════
-    // [Authorize(Policy = "Numbering.Read")]
+    [Authorize(Policy = "Numbering.Read")]
     [HttpGet]
     public IActionResult Gets([FromQuery] string? documentType = null)
     {
@@ -33,7 +33,6 @@ public class DocumentNumberRangeController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET BY ID
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public IActionResult Get(int id)
     {
@@ -46,7 +45,6 @@ public class DocumentNumberRangeController : MyController
     // GET NEXT NUMBER — called by other modules when creating a doc
     // GET /DocumentNumberRange/Next/{documentType}
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet("Next/{documentType}")]
     public IActionResult GetNext(string documentType, [FromQuery] string? series = null)
     {
@@ -64,7 +62,6 @@ public class DocumentNumberRangeController : MyController
     // ═══════════════════════════════════════════════════════════════
     // PEEK NEXT — preview next number WITHOUT reserving it
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet("Peek/{documentType}")]
     public IActionResult PeekNext(string documentType, [FromQuery] string? series = null)
     {

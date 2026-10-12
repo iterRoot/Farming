@@ -22,7 +22,7 @@ public class ElectronicFileController : ControllerBase
     }
 
     // ── GET /ElectronicFile ────────────────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll(
         [FromQuery] string? category      = null,
         [FromQuery] string? linkedModule  = null,
@@ -60,7 +60,7 @@ public class ElectronicFileController : ControllerBase
     }
 
     // ── GET /ElectronicFile/{id} ───────────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetAll()
@@ -71,7 +71,7 @@ public class ElectronicFileController : ControllerBase
     }
 
     // ── GET /ElectronicFile/ByCode/{code} ─────────────────────
-    [AllowAnonymous][HttpGet("ByCode/{code}")]
+    [HttpGet("ByCode/{code}")]
     public IActionResult GetByCode(string code)
     {
         var e = _repo.GetAll()
@@ -82,7 +82,7 @@ public class ElectronicFileController : ControllerBase
     }
 
     // ── GET /ElectronicFile/ForDocument?module=ARInvoice&docId=5
-    [AllowAnonymous][HttpGet("ForDocument")]
+    [HttpGet("ForDocument")]
     public IActionResult GetForDocument(
         [FromQuery] string linkedModule,
         [FromQuery] int    linkedDocId)
@@ -95,7 +95,7 @@ public class ElectronicFileController : ControllerBase
     }
 
     // ── GET /ElectronicFile/Search?q=contract ─────────────────
-    [AllowAnonymous][HttpGet("Search")]
+    [HttpGet("Search")]
     public IActionResult Search([FromQuery] string q, [FromQuery] int limit = 20)
     {
         if (string.IsNullOrWhiteSpace(q))
@@ -117,7 +117,7 @@ public class ElectronicFileController : ControllerBase
     }
 
     // ── GET /ElectronicFile/Summary ───────────────────────────
-    [AllowAnonymous][HttpGet("Summary")]
+    [HttpGet("Summary")]
     public IActionResult GetSummary()
     {
         var all = _repo.GetAll().ToList();
@@ -140,7 +140,7 @@ public class ElectronicFileController : ControllerBase
     }
 
     // ── POST /ElectronicFile ───────────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] ElectronicFileRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -177,20 +177,22 @@ public class ElectronicFileController : ControllerBase
     }
 
     // ── PUT /ElectronicFile/{id} ───────────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] ElectronicFileRequest dto)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
         if (entity == null) return NotFound();
         _mapper.Map(dto, entity);
-        entity.UpdatedAt = DateTime.UtcNow;
+        entity.FileName      = SanitizeFileName(dto.OriginalName);
+        entity.FileExtension = Path.GetExtension(dto.OriginalName).ToLower();
+        entity.UpdatedAt     = DateTime.UtcNow;
         _repo.Update(entity);
         _repo.Commit();
         return Ok(_mapper.Map<ElectronicFileResponse>(entity));
     }
 
     // ── POST /ElectronicFile/{id}/NewVersion ──────────────────
-    [AllowAnonymous][HttpPost("{id:int}/NewVersion")]
+    [HttpPost("{id:int}/NewVersion")]
     public IActionResult NewVersion(int id, [FromBody] ElectronicFileRequest dto)
     {
         var entity = _repo.GetAll()
@@ -218,6 +220,7 @@ public class ElectronicFileController : ControllerBase
 
         entity.OriginalName    = dto.OriginalName;
         entity.FileName        = SanitizeFileName(dto.OriginalName);
+        entity.FileExtension   = Path.GetExtension(dto.OriginalName).ToLower();
         entity.StoragePath     = dto.StoragePath;
         entity.PublicUrl       = dto.PublicUrl;
         entity.FileSizeBytes   = dto.FileSizeBytes;
@@ -230,7 +233,7 @@ public class ElectronicFileController : ControllerBase
     }
 
     // ── POST /ElectronicFile/{id}/Download ────────────────────
-    [AllowAnonymous][HttpPost("{id:int}/Download")]
+    [HttpPost("{id:int}/Download")]
     public IActionResult RecordDownload(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -243,7 +246,7 @@ public class ElectronicFileController : ControllerBase
     }
 
     // ── POST /ElectronicFile/{id}/Archive ─────────────────────
-    [AllowAnonymous][HttpPost("{id:int}/Archive")]
+    [HttpPost("{id:int}/Archive")]
     public IActionResult Archive(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -256,7 +259,7 @@ public class ElectronicFileController : ControllerBase
     }
 
     // ── POST /ElectronicFile/{id}/Restore ─────────────────────
-    [AllowAnonymous][HttpPost("{id:int}/Restore")]
+    [HttpPost("{id:int}/Restore")]
     public IActionResult Restore(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -269,7 +272,7 @@ public class ElectronicFileController : ControllerBase
     }
 
     // ── PUT /ElectronicFile/BulkUpdate ─────────────────────────
-    [AllowAnonymous][HttpPut("BulkUpdate")]
+    [HttpPut("BulkUpdate")]
     public IActionResult BulkUpdate([FromBody] BulkUpdateRequest dto)
     {
         var entities = _repo.GetAll().Where(x => dto.Ids.Contains(x.Id)).ToList();
@@ -287,7 +290,7 @@ public class ElectronicFileController : ControllerBase
     }
 
     // ── DELETE /ElectronicFile/{id} ────────────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -298,7 +301,7 @@ public class ElectronicFileController : ControllerBase
     }
 
     // ── DELETE /ElectronicFile/BulkDelete ─────────────────────
-    [AllowAnonymous][HttpDelete("BulkDelete")]
+    [HttpDelete("BulkDelete")]
     public IActionResult BulkDelete([FromBody] List<int> ids)
     {
         var entities = _repo.GetAll().Where(x => ids.Contains(x.Id)).ToList();

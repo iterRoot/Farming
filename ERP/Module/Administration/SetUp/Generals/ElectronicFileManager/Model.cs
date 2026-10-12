@@ -7,7 +7,9 @@ public class ElectronicFileResponse
     public string   FileCode        { get; set; } = null!;
     public string   FileName        { get; set; } = null!;
     public string   OriginalName    { get; set; } = null!;
-    public string   FileExtension   { get; set; } = null!;
+    // Server-derived from OriginalName — see ElectronicFileController.Create.
+    // Kept optional so a client is not forced to send a value that is discarded.
+    public string?  FileExtension   { get; set; }
     public string   MimeType        { get; set; } = null!;
     public long     FileSizeBytes   { get; set; }
     public string   FileSizeDisplay { get; set; } = null!; // "2.4 MB"
@@ -62,7 +64,9 @@ public class FileVersionResponse
 public class ElectronicFileRequest
 {
     public string   OriginalName    { get; set; } = null!;
-    public string   FileExtension   { get; set; } = null!;
+    // Server-derived from OriginalName — see ElectronicFileController.Create.
+    // Kept optional so a client is not forced to send a value that is discarded.
+    public string?  FileExtension   { get; set; }
     public string   MimeType        { get; set; } = null!;
     public long     FileSizeBytes   { get; set; }
     public string   StoragePath     { get; set; } = null!;

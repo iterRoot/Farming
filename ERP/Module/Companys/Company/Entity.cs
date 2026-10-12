@@ -118,6 +118,7 @@ public class CompanyConfig : IEntityTypeConfiguration<Company>
 {
     public void Configure(EntityTypeBuilder<Company> builder)
     {
+        builder.ToTable("KCOM");
         builder.Property(m => m.Logo).HasMaxLength(100);
         builder.Property(m => m.Name).HasMaxLength(100);
         builder.Property(m => m.ShortName).HasMaxLength(20);

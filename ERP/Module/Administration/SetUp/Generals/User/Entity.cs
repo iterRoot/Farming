@@ -17,6 +17,8 @@ public class User : AuditableEntity
     public DateTime? LastLogin { get; set; }
     public int LoginAttempts { get; set; } = 0;
     public bool IsLocked { get; set; } = false;
+    /// <summary>Set by POST /User/{id}/ChangePassword. Null means never changed through that endpoint (a user created or migrated before this field existed) — treated as unknown age, not overdue.</summary>
+    public DateTime? PasswordChangedAt { get; set; }
 
     // ── Two-factor (TOTP — Microsoft/Google Authenticator) ────────
     /// <summary>Base32 shared secret. Set at setup; only trusted once TwoFactorEnabled is true.</summary>
@@ -33,7 +35,7 @@ public class UserConfig : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToTable("User");
+        builder.ToTable("KUSR");
 
         builder.HasKey(x => x.Id);
 

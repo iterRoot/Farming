@@ -42,6 +42,8 @@ public class PickPackLineDto
     public decimal  RequiredQty  { get; set; }
     public decimal  PickedQty    { get; set; }
     public string   Status       { get; set; } = "";
+    public int?     BaseLineId   { get; set; }
+    public string?  GroupKey     { get; set; }   // what the list is grouped by, when it is
 }
 
 public class PickPackCriteriaResponse
@@ -59,4 +61,25 @@ public class PickPackCriteriaResponse
     public DateTime CreatedAt    { get; set; }
     public DateTime? UpdatedAt   { get; set; }
     public List<PickPackLineDto> Lines { get; set; } = new();
+}
+
+public class PickPackLineUpdate
+{
+    public int     Id        { get; set; }
+    public decimal PickedQty { get; set; }
+}
+
+public class PickPackReleaseRequest
+{
+    public List<int>? LineIds { get; set; }   // empty or missing = every line not yet released
+}
+
+public static class PickPackOptions
+{
+    public static readonly string[] GroupBy = { "None", "Customer", "Item", "Warehouse" };
+    public static readonly string[] SortBy  = { "Delivery/Due Date", "Posting Date", "Sales Order No.", "Customer" };
+
+    // Filter fields that are applied to the source documents.
+    public static readonly string[] DateFields = { "Posting Date", "Delivery/Due Date", "Required Date" };
+    public static readonly string[] TextFields = { "Sales Order No.", "Customer", "Item" };
 }

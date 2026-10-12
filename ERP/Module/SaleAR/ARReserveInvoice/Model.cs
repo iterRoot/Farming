@@ -26,6 +26,24 @@ public class ARReserveInvoiceLineRequest
     public decimal Quantity { get; set; }
     public decimal Price    { get; set; }
     public decimal Total    { get; set; }
+    public string? WhsCode     { get; set; }
+    public string? Branch      { get; set; }
+    public decimal Discount    { get; set; }
+    public decimal DiscountSum { get; set; }
+    public decimal Vat         { get; set; }
+    public decimal VatSum      { get; set; }
+    public decimal ItemCost    { get; set; }
+    public string? UomName     { get; set; }
+    public string? UomCode     { get; set; }
+    public string? DocCurrency { get; set; }
+    public decimal GrossProfit { get; set; }
+    public string? Dimension1  { get; set; }
+    public string? Dimension2  { get; set; }
+    public string? Dimension3  { get; set; }
+    public string? Dimension4  { get; set; }
+    public string? Dimension5  { get; set; }
+    public string? FreeText    { get; set; }
+    public string? Remark      { get; set; }
 }
 
 public class ARReserveInvoiceUpdateRequest : ARReserveInvoiceRequest { }
@@ -68,4 +86,22 @@ public class ARReserveInvoiceLineResponse
     public decimal Quantity { get; set; }
     public decimal Price    { get; set; }
     public decimal Total    { get; set; }
+    public string? WhsCode     { get; set; }
+    public string? Branch      { get; set; }
+    public decimal Discount    { get; set; }
+    public decimal DiscountSum { get; set; }
+    public decimal Vat         { get; set; }
+    public decimal VatSum      { get; set; }
+    public decimal ItemCost    { get; set; }
+    public string? UomName     { get; set; }
+    public string? UomCode     { get; set; }
+    public string? DocCurrency { get; set; }
+    public decimal GrossProfit { get; set; }
+    public string? Dimension1  { get; set; }
+    public string? Dimension2  { get; set; }
+    public string? Dimension3  { get; set; }
+    public string? Dimension4  { get; set; }
+    public string? Dimension5  { get; set; }
+    public string? FreeText    { get; set; }
+    public string? Remark      { get; set; }
 }

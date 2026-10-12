@@ -9,6 +9,7 @@ public class UserDefinedFieldRequest
     public int?    Length       { get; set; }
     public string? DefaultValue { get; set; }
     public List<string> ValidValues { get; set; } = new();
+    public string? LinkedTable  { get; set; }
     public bool    Mandatory    { get; set; }
     public int     SortOrder    { get; set; }
     public bool    Active       { get; set; } = true;

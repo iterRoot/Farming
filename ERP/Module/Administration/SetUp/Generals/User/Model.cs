@@ -85,6 +85,10 @@ public class UserLoginResponse
     public string?  GroupName   { get; set; }
     public char     ActiveStatus{ get; set; }
     public DateTime? LastLogin  { get; set; }
+
+    /// <summary>Bearer token — send as "Authorization: Bearer {token}" on every later request.</summary>
+    public string   Token       { get; set; } = null!;
+    public DateTime TokenExpiresAt { get; set; }
 }
 
 public class ChangePasswordRequest

@@ -18,6 +18,7 @@ public class ReportLayoutResponse
     public long?    FileSizeBytes     { get; set; }
     public string?  FileHash          { get; set; }
     public DateTime? LastUploadedAt   { get; set; }
+    public string?  HtmlTemplate      { get; set; }
     public string   PaperSize         { get; set; } = null!;
     public string   Orientation       { get; set; } = null!;
     public decimal? PageWidth         { get; set; }
@@ -72,6 +73,7 @@ public class ReportLayoutRequest
     public string?  FilePath          { get; set; }
     public string?  FileUrl           { get; set; }
     public string?  FileName          { get; set; }
+    public string?  HtmlTemplate      { get; set; }
     public string   PaperSize         { get; set; } = "A4";
     public string   Orientation       { get; set; } = "Portrait";
     public decimal? PageWidth         { get; set; }
@@ -106,6 +108,13 @@ public class ReportParameterRequest
     public string? Options      { get; set; }
     public bool    IsRequired   { get; set; } = false;
     public bool    IsVisible    { get; set; } = true;
+}
+
+// For the layout editor's live preview
+public class PreviewHtmlRequest
+{
+    public string  DocumentType { get; set; } = null!;
+    public string? HtmlTemplate { get; set; }
 }
 
 // For the print/run dialog

@@ -54,6 +54,9 @@ public class GoodsReceiptInsertListRequest
 
 public class GoodsReceiptLineRequest
 {
+    /// <summary>Batch / serial numbers for this line — required when the item is managed by them.</summary>
+    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
+
     public int     ItemId   { get; set; }
     public string? ItemCode { get; set; }   // auto-filled in controller
     public string? ItemName { get; set; }   // auto-filled in controller

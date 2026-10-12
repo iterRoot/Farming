@@ -23,7 +23,7 @@ public class SAPLinkController : ControllerBase
     }
 
     // ── GET /SAPLink ───────────────────────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll(
         [FromQuery] string? category      = null,
         [FromQuery] string? linkType      = null,
@@ -46,7 +46,7 @@ public class SAPLinkController : ControllerBase
     }
 
     // ── GET /SAPLink/{id} ──────────────────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetAll()
@@ -57,7 +57,7 @@ public class SAPLinkController : ControllerBase
     }
 
     // ── GET /SAPLink/ByCode/{code} ─────────────────────────────
-    [AllowAnonymous][HttpGet("ByCode/{code}")]
+    [HttpGet("ByCode/{code}")]
     public IActionResult GetByCode(string code)
     {
         var e = _repo.GetSingle(x => x.Code == code.Trim().ToUpper());
@@ -66,7 +66,7 @@ public class SAPLinkController : ControllerBase
     }
 
     // ── GET /SAPLink/ByModule/{module} ─────────────────────────
-    [AllowAnonymous][HttpGet("ByModule/{module}")]
+    [HttpGet("ByModule/{module}")]
     public IActionResult GetByModule(string module)
     {
         var list = _repo.GetAll()
@@ -79,7 +79,7 @@ public class SAPLinkController : ControllerBase
 
     // ── GET /SAPLink/QuickLaunch ───────────────────────────────
     // Returns pinned + dashboard links for quick-access panel
-    [AllowAnonymous][HttpGet("QuickLaunch")]
+    [HttpGet("QuickLaunch")]
     public IActionResult GetQuickLaunch()
     {
         var list = _repo.GetAll()
@@ -91,7 +91,7 @@ public class SAPLinkController : ControllerBase
     }
 
     // ── GET /SAPLink/Summary ───────────────────────────────────
-    [AllowAnonymous][HttpGet("Summary")]
+    [HttpGet("Summary")]
     public IActionResult GetSummary()
     {
         var all = _repo.GetAll().ToList();
@@ -111,7 +111,7 @@ public class SAPLinkController : ControllerBase
     }
 
     // ── POST /SAPLink ──────────────────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] SAPLinkRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -129,7 +129,7 @@ public class SAPLinkController : ControllerBase
     }
 
     // ── PUT /SAPLink/{id} ──────────────────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] SAPLinkRequest dto)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -146,7 +146,7 @@ public class SAPLinkController : ControllerBase
     }
 
     // ── POST /SAPLink/{id}/Click ───────────────────────────────
-    [AllowAnonymous][HttpPost("{id:int}/Click")]
+    [HttpPost("{id:int}/Click")]
     public IActionResult RecordClick(int id, [FromBody] RecordClickRequest? dto)
     {
         var entity = _repo.GetAll()
@@ -180,7 +180,7 @@ public class SAPLinkController : ControllerBase
     }
 
     // ── POST /SAPLink/{id}/TogglePin ───────────────────────────
-    [AllowAnonymous][HttpPost("{id:int}/TogglePin")]
+    [HttpPost("{id:int}/TogglePin")]
     public IActionResult TogglePin(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -193,7 +193,7 @@ public class SAPLinkController : ControllerBase
     }
 
     // ── POST /SAPLink/{id}/ToggleDashboard ─────────────────────
-    [AllowAnonymous][HttpPost("{id:int}/ToggleDashboard")]
+    [HttpPost("{id:int}/ToggleDashboard")]
     public IActionResult ToggleDashboard(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -206,7 +206,7 @@ public class SAPLinkController : ControllerBase
     }
 
     // ── POST /SAPLink/{id}/HealthCheck ─────────────────────────
-    [AllowAnonymous][HttpPost("{id:int}/HealthCheck")]
+    [HttpPost("{id:int}/HealthCheck")]
     public async Task<IActionResult> HealthCheck(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -257,7 +257,7 @@ public class SAPLinkController : ControllerBase
     }
 
     // ── DELETE /SAPLink/{id} ───────────────────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -268,7 +268,7 @@ public class SAPLinkController : ControllerBase
     }
 
     // ── POST /SAPLink/Seed ─────────────────────────────────────
-    [AllowAnonymous][HttpPost("Seed")]
+    [HttpPost("Seed")]
     public IActionResult Seed()
     {
         if (_repo.GetAll().Any()) return BadRequest("Links already seeded.");

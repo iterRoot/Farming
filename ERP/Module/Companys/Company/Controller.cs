@@ -30,7 +30,6 @@ public class CompanyController : MyController
 	// ═══════════════════════════════════════════════════════════
 
 	// ── GET /Company/Details ───────────────────────────────────
-	[AllowAnonymous]
 	[HttpGet("Details")]
 	public IActionResult GetDetails()
 	{
@@ -40,7 +39,6 @@ public class CompanyController : MyController
 	}
 
 	// ── PUT /Company/Details ───────────────────────────────────
-	[AllowAnonymous]
 	[HttpPut("Details")]
 	public IActionResult SaveDetails([FromBody] CompanyDetailsDto dto)
 	{
@@ -183,7 +181,6 @@ public class CompanyController : MyController
 		c.TermsAndConditionsFile = b.TermsAndConditionsFile;
 	}
 
-	[AllowAnonymous]
 
 	[HttpGet]
 	public IActionResult Gets()

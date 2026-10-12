@@ -2,20 +2,67 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi.Core;
+using ARInvoiceEntity      = FarmingApi.Modules.SaleAR.ARInvoice.ARInvoice;
+using DeliveryEntity       = FarmingApi.Modules.SaleAR.Delivery.Delivery;
+using SaleOrderEntity      = FarmingApi.Modules.SaleAR.SaleOrder.SaleOrder;
+using IncomingPaymentEntity = FarmingApi.Modules.Banking.IncomingPayment.IncomingPayment;
+using OpportunityEntity     = FarmingApi.Modules.CRM.Opportunity.Opportunity;
 
 namespace FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster;
 
 public class BusinessPartnersMasterController : MyController
 {
     private readonly IBusinessPartnersMasterRepository _repository;
+    private readonly MyDbContext _db;
+    private readonly FarmingApi.Modules.Administration.Attachment.AttachmentStorage _attachments;
 
-    public BusinessPartnersMasterController(IBusinessPartnersMasterRepository repository)
+    public BusinessPartnersMasterController(IBusinessPartnersMasterRepository repository, MyDbContext db,
+        FarmingApi.Modules.Administration.Attachment.AttachmentStorage attachments)
     {
-        _repository = repository;
+        _repository  = repository;
+        _db          = db;
+        _attachments = attachments;
     }
 
+    // Outstanding AR: sum of this customer's open (unpaid) AR Invoice totals.
+    // Not persisted to BusinessPartnersMaster.Balance — that stored column is
+    // never written to by the posting flow, so it is computed fresh on read.
+    private decimal OpenArBalance(int customerId) =>
+        _db.Set<ARInvoiceEntity>()
+            .Where(i => i.CustomerId == customerId && i.Status == "O")
+            .Sum(i => (decimal?)i.Total) ?? 0m;
+
+    // Same convention: sum of this customer's open (not yet closed/invoiced) Delivery totals.
+    private decimal OpenDeliveriesBalance(int customerId) =>
+        _db.Set<DeliveryEntity>()
+            .Where(d => d.CustomerId == customerId && d.Status == "O")
+            .Sum(d => (decimal?)d.Total) ?? 0m;
+
+    // Same convention: sum of this customer's open (not yet delivered/closed) Sale Order totals.
+    private decimal OpenOrdersBalance(int customerId) =>
+        _db.Set<SaleOrderEntity>()
+            .Where(o => o.CustomerId == customerId && o.Status == "O")
+            .Sum(o => (decimal?)o.Total) ?? 0m;
+
+    // Cheques for Collection: open Incoming Payments recorded by check for this BP.
+    // IncomingPayment links by CardCode (string), not the BP's int Id, so match on Code.
+    private decimal OpenChequesBalance(string? bpCode) =>
+        string.IsNullOrEmpty(bpCode)
+            ? 0m
+            : _db.Set<IncomingPaymentEntity>()
+                .Where(p => p.CardCode == bpCode && p.PaymentMethod == "Check" && p.Status == "O")
+                .Sum(p => (decimal?)p.DocTotal) ?? 0m;
+
+    // Open pipeline: sum of this BP's open Opportunity potential amounts.
+    // Opportunity links by BPCode (string), not the BP's int Id, same as Cheques.
+    private decimal OpenOpportunitiesBalance(string? bpCode) =>
+        string.IsNullOrEmpty(bpCode)
+            ? 0m
+            : _db.Set<OpportunityEntity>()
+                .Where(o => o.BPCode == bpCode && o.Status == "Open")
+                .Sum(o => (decimal?)o.PotentialAmount) ?? 0m;
+
     // ── GET ALL ───────────────────────────────────────────────────
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult Gets([FromQuery] int? typeStatus = null)
     {
@@ -47,10 +94,10 @@ public class BusinessPartnersMasterController : MyController
         return Ok(result);
     }
 
-    [AllowAnonymous] [HttpGet("Customers")]
+     [HttpGet("Customers")]
     public IActionResult GetCustomers() => Gets(typeStatus: 0);
 
-    [AllowAnonymous] [HttpGet("Vendors")]
+     [HttpGet("Vendors")]
     public IActionResult GetVendors() => Gets(typeStatus: 1);
 
     // ── Shared eager-load helper ──────────────────────────────────
@@ -67,7 +114,30 @@ public class BusinessPartnersMasterController : MyController
     {
         var bp = WithIncludes().FirstOrDefault(e => e.Id == id);
         if (bp == null) return NotFound($"Business partner {id} not found");
-        return Ok(MapToResponse(bp));
+
+        var response = MapToResponse(bp);
+        response.Balance              = OpenArBalance(bp.Id);
+        response.DeliveriesBalance    = OpenDeliveriesBalance(bp.Id);
+        response.OrdersBalance        = OpenOrdersBalance(bp.Id);
+        response.ChequesBalance       = OpenChequesBalance(bp.Code);
+        response.OpportunitiesBalance = OpenOpportunitiesBalance(bp.Code);
+        return Ok(response);
+    }
+
+    // ── GET /BusinessPartnersMaster/{id}/CreditStatus?amount=0 ──
+    // Reports whether this partner can be traded with, and how a document of
+    // the given size would sit against their limits. Read-only: it reports and
+    // never refuses, so a screen can warn before the user commits to a
+    // document. See BusinessPartnerCreditService for why Assert is not wired
+    // into posting.
+    [HttpGet("{id:int}/CreditStatus")]
+    public IActionResult CreditStatus(int id, [FromQuery] decimal amount = 0m, [FromQuery] DateTime? on = null)
+    {
+        var bp = _repository.GetSingle(e => e.Id == id);
+        if (bp == null) return NotFound($"Business partner {id} not found");
+
+        var credit = new BusinessPartnerCreditService();
+        return Ok(credit.Evaluate(bp, amount, on));
     }
 
     [HttpGet("Code/{code}")]
@@ -87,7 +157,7 @@ public class BusinessPartnersMasterController : MyController
         if (string.IsNullOrWhiteSpace(request.Code))     return BadRequest("Code is required");
         if (string.IsNullOrWhiteSpace(request.CardName)) return BadRequest("Card Name is required");
 
-        var err = Validate(request);
+        var err = Validate(request) ?? CheckSalesEmployee(request);
         if (err != null) return BadRequest(err);
 
         var code = request.Code.Trim().ToUpper();
@@ -121,7 +191,7 @@ public class BusinessPartnersMasterController : MyController
         if (bp == null) return NotFound($"Business partner {id} not found");
         if (string.IsNullOrWhiteSpace(request.CardName)) return BadRequest("Card Name is required");
 
-        var err = Validate(request);
+        var err = Validate(request) ?? CheckSalesEmployee(request);
         if (err != null) return BadRequest(err);
 
         ApplyFields(bp, request);
@@ -148,12 +218,25 @@ public class BusinessPartnersMasterController : MyController
         if (bp == null) return NotFound($"Business partner {id} not found");
         if (bp.Balance != 0) return BadRequest("Cannot delete a business partner with outstanding balance");
 
+        _attachments.DeleteAllFor(_db, "BusinessPartner", id);   // its uploaded files go with it
         _repository.Remove(bp);
         _repository.Commit();
         return NoContent();
     }
 
     // ── VALIDATION ────────────────────────────────────────────────
+    // The default sales employee / buyer must be an active person from the master; stored as its code.
+    private string? CheckSalesEmployee(BPEditableFields r)
+    {
+        if (string.IsNullOrWhiteSpace(r.SalesEmployee)) { r.SalesEmployee = null; return null; }
+        var c = r.SalesEmployee.Trim().ToUpperInvariant();
+        var e = _db.Set<FarmingApi.Modules.Sales.SaleEmployeeBuyer.SaleEmployeeBuyer>().FirstOrDefault(x => x.Code == c);
+        if (e == null) return $"Sales employee / buyer '{r.SalesEmployee.Trim()}' does not exist.";
+        if (!e.IsActive) return $"Sales employee / buyer '{c}' is inactive.";
+        r.SalesEmployee = c;
+        return null;
+    }
+
     private static string? Validate(BPEditableFields r)
     {
         if (r.ActiveStatus == (int)BPActiveStatus.Advanced && r.ActiveFrom == null && r.ActiveTo == null)

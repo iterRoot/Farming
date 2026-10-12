@@ -3,8 +3,10 @@ namespace FarmingApi.Modules.SaleAR.Delivery;
 // ══════════════════════════════════════════════════════════════════════════════
 // REQUEST (UI → API)  ✅ renamed from SaleOrder → Delivery
 // ══════════════════════════════════════════════════════════════════════════════
-public class DeliveryListRequest
+public class DeliveryListRequest : FarmingApi.Core.IHasSalesEmployee
 {
+    public string? SalesEmployeeCode { get; set; }
+
     public string    DocNum       { get; set; } = "";
     public int       CustomerId   { get; set; }
     public DateTime? PostingDate  { get; set; }
@@ -22,12 +24,35 @@ public class DeliveryListRequest
 
 public class DeliveryLineRequest
 {
+    public int?    BaseEntry { get; set; }
+    public string? BaseType  { get; set; }
+
+    /// <summary>Batch / serial numbers for this line — required when the item is managed by them.</summary>
+    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
+
     public int     ItemId   { get; set; }
     /// <summary>Optional — falls back to the default warehouse when omitted.</summary>
     public string? WhsCode  { get; set; }
     public decimal Quantity { get; set; }
     public decimal Price    { get; set; }
     public decimal Total    { get; set; }
+    public string? Branch      { get; set; }
+    public decimal Discount    { get; set; }
+    public decimal DiscountSum { get; set; }
+    public decimal Vat         { get; set; }
+    public decimal VatSum      { get; set; }
+    public decimal ItemCost    { get; set; }
+    public string? UomName     { get; set; }
+    public string? UomCode     { get; set; }
+    public string? DocCurrency { get; set; }
+    public decimal GrossProfit { get; set; }
+    public string? Dimension1  { get; set; }
+    public string? Dimension2  { get; set; }
+    public string? Dimension3  { get; set; }
+    public string? Dimension4  { get; set; }
+    public string? Dimension5  { get; set; }
+    public string? FreeText    { get; set; }
+    public string? Remark      { get; set; }
 }
 
 public class DeliveryUpdateRequest : DeliveryListRequest { }
@@ -37,6 +62,8 @@ public class DeliveryUpdateRequest : DeliveryListRequest { }
 // ══════════════════════════════════════════════════════════════════════════════
 public class DeliveryListResponse
 {
+    public string? SalesEmployeeCode { get; set; }
+
     public int       Id           { get; set; }
     public string    DocNum       { get; set; } = "";
     public DateTime? PostingDate  { get; set; }
@@ -63,6 +90,9 @@ public class DeliveryListResponse
 
 public class DeliveryLineResponse
 {
+    public int?    BaseEntry { get; set; }
+    public string? BaseType  { get; set; }
+
     public int     Id       { get; set; }
     public int     ItemId   { get; set; }
     public string  ItemCode { get; set; } = "";
@@ -71,4 +101,21 @@ public class DeliveryLineResponse
     public decimal Quantity { get; set; }
     public decimal Price    { get; set; }
     public decimal Total    { get; set; }
+    public string? Branch      { get; set; }
+    public decimal Discount    { get; set; }
+    public decimal DiscountSum { get; set; }
+    public decimal Vat         { get; set; }
+    public decimal VatSum      { get; set; }
+    public decimal ItemCost    { get; set; }
+    public string? UomName     { get; set; }
+    public string? UomCode     { get; set; }
+    public string? DocCurrency { get; set; }
+    public decimal GrossProfit { get; set; }
+    public string? Dimension1  { get; set; }
+    public string? Dimension2  { get; set; }
+    public string? Dimension3  { get; set; }
+    public string? Dimension4  { get; set; }
+    public string? Dimension5  { get; set; }
+    public string? FreeText    { get; set; }
+    public string? Remark      { get; set; }
 }

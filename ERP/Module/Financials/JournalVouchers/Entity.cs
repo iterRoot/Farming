@@ -49,8 +49,11 @@ public class JournalVoucherLine : AuditableEntity
     public int LineNum { get; set; }
     public string AccountCode { get; set; } = null!;
     public string AccountName { get; set; } = null!;
-    public string CardCode { get; set; }= null!;
-    public string CardName { get; set; }= null!;
+    // A journal line often has no business partner, so these are optional.
+    // They were non-nullable, which made the columns NOT NULL and failed every
+    // save that did not name a partner.
+    public string? CardCode { get; set; }
+    public string? CardName { get; set; }
     public decimal Debit { get; set; }
     public decimal Credit { get; set; }
     public decimal DebitFC { get; set; }

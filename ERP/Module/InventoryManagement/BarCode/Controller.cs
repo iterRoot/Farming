@@ -10,17 +10,18 @@ public class BarCodeController : MyController
 {
     private readonly IMapper             _mapper;
     private readonly IBarCodeRepository  _repository;
+    private readonly MyDbContext         _db;
 
-    public BarCodeController(IBarCodeRepository repository, IMapper mapper)
+    public BarCodeController(IBarCodeRepository repository, IMapper mapper, MyDbContext db)
     {
         _mapper     = mapper;
         _repository = repository;
+        _db         = db;
     }
 
     // ═══════════════════════════════════════════════════════════════
     // GET ALL
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult Gets([FromQuery] string? itemNo = null, [FromQuery] string? uomGroup = null, [FromQuery] string? barCodeType = null)
     {
@@ -38,7 +39,6 @@ public class BarCodeController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET BY ID
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public IActionResult Get(int id)
     {
@@ -53,7 +53,6 @@ public class BarCodeController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET BY ITEM NO
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet("ByItem/{itemNo}")]
     public IActionResult GetByItem(string itemNo)
     {
@@ -68,7 +67,6 @@ public class BarCodeController : MyController
     // ═══════════════════════════════════════════════════════════════
     // FIND BY BARCODE VALUE — scan barcode to find item
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet("Find/{code}")]
     public IActionResult FindByCode(string code)
     {
@@ -78,9 +76,26 @@ public class BarCodeController : MyController
             .FirstOrDefault(x => x.l.Code == code);
 
         if (line == null)
-            return NotFound($"No item found for barcode '{code}'");
+        {
+            // Not in the Bar Code table: fall back to the item's own barcode (Item Master),
+            // which every item has — typed in or generated when the item was created.
+            var item = _db.Set<FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster>()
+                .FirstOrDefault(i => i.Barcode == code);
+            if (item == null) return NotFound($"No item found for barcode '{code}'");
+            return Ok(WithStock(new BarCodeSearchResponse
+            {
+                ItemNo          = item.ItemCode,
+                ItemDescription = item.ItemName,
+                UoMGroup        = item.UomGroup,
+                BarCodeType     = "Item",
+                Code            = item.Barcode,
+                UoM             = item.UomName,
+                FreeText        = "Item Master barcode",
+                IsDefault       = true,
+            }));
+        }
 
-        return Ok(new BarCodeSearchResponse
+        return Ok(WithStock(new BarCodeSearchResponse
         {
             ItemNo          = line.b.ItemNo,
             ItemDescription = line.b.ItemDescription,
@@ -90,8 +105,40 @@ public class BarCodeController : MyController
             UoM             = line.l.UoM,
             FreeText        = line.l.FreeText,
             IsDefault       = line.l.IsDefault,
-        });
+        }));
     }
+
+    // Adds the item's unit, selling price and quantity on hand in every warehouse.
+    private BarCodeSearchResponse WithStock(BarCodeSearchResponse r)
+    {
+        var item = _db.Set<FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster>().FirstOrDefault(i => i.ItemCode == r.ItemNo);
+        if (item == null) return r;
+
+        var uom   = FirstNonBlank(item.UomName, item.SaleUom, item.UomCode);
+        var price = item.SalePrice != 0 ? item.SalePrice : item.UnitPrice;
+        var stock = _db.Set<FarmingApi.Modules.Sale.Inventory.Inventory>()
+            .Where(b => b.ItemsCode == item.ItemCode)
+            .GroupBy(b => b.WhsCode)
+            .Select(g => new { WhsCode = g.Key, Qty = g.Sum(b => b.Balance) })
+            .ToDictionary(x => x.WhsCode, x => x.Qty);
+        var warehouses = _db.Set<FarmingApi.Modules.Sale.Warehouse.Warehouse>()
+            .Select(w => new { w.Code, w.Name }).ToList();
+
+        r.StockUoM  = uom;
+        r.UnitPrice = price;
+        r.Currency  = item.PriceCurrency;
+        r.Warehouses = warehouses
+            .Select(w => new BarCodeStockRow { WhsCode = w.Code, WhsName = w.Name, Qty = stock.GetValueOrDefault(w.Code), UoM = uom, UnitPrice = price })
+            // stock sitting in a warehouse code that is no longer in the warehouse list still shows
+            .Concat(stock.Keys.Where(k => warehouses.All(w => w.Code != k))
+                .Select(k => new BarCodeStockRow { WhsCode = k, Qty = stock[k], UoM = uom, UnitPrice = price }))
+            .OrderBy(x => x.WhsCode)
+            .ToList();
+        r.OnHand = r.Warehouses.Sum(x => x.Qty);
+        return r;
+    }
+
+    private static string? FirstNonBlank(params string?[] values) => values.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v));
 
     // ═══════════════════════════════════════════════════════════════
     // CREATE

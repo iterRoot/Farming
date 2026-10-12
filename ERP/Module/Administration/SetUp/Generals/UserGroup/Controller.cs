@@ -23,7 +23,6 @@ public class UserGroupController : MyController
 		// _service = service;
 	}
 
-	[AllowAnonymous]
 		[HttpGet]
 	public IActionResult Gets()
 	{

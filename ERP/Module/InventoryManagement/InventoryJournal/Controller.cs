@@ -26,7 +26,6 @@ public class InventoryJournalController : ControllerBase
         _mapper = mapper;
     }
 
-    [AllowAnonymous]
     [HttpGet]
     public async Task<IActionResult> GetAll(
         [FromQuery] string? itemCode,
@@ -48,7 +47,6 @@ public class InventoryJournalController : ControllerBase
         return Ok(_mapper.Map<List<InventoryJournalResponse>>(list));
     }
 
-    [AllowAnonymous]
     [HttpGet("ByDocument")]
     public async Task<IActionResult> ByDocument([FromQuery] string baseDocType, [FromQuery] int baseDocEntry)
     {

@@ -37,7 +37,7 @@ public class WarehouseConfig : IEntityTypeConfiguration<Warehouse>
 {
     public void Configure(EntityTypeBuilder<Warehouse> builder)
     {
-        builder.ToTable("Warehouse");
+        builder.ToTable("KWHS");
 
         builder.HasKey(x => x.Id);                      // single PK (was double HasKey)
         builder.HasIndex(x => x.Code).IsUnique();

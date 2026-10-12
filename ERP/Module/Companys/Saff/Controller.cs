@@ -13,72 +13,76 @@ public class StaffController : MyController
     {
         _mapper = mapper;
         _repository = repository;
-
     }
-    [AllowAnonymous]
-    [HttpGet]
 
+    [HttpGet]
     public IActionResult Gets()
     {
-        var iQueryable = _repository.GetAll();
-        var result = _mapper.ProjectTo<StaffListResponse>(iQueryable).ToList();
+        var result = _mapper.ProjectTo<StaffListResponse>(_repository.GetAll().OrderBy(s => s.StaffName)).ToList();
         return Ok(result);
-
     }
 
     [HttpGet("{id:int}")]
     public IActionResult Get(int id)
     {
         var staff = _repository.GetSingle(e => e.Id == id);
-        if (staff == null)
-        {
-            return BadRequest($"Item Not Found {id}");
-
-        } 
-        var result = _mapper.Map<StaffListResponse>(staff);
-        return Ok(result);
-
+        if (staff == null) return NotFound($"Staff {id} not found");
+        return Ok(_mapper.Map<StaffListResponse>(staff));
     }
 
     [HttpPost]
-    public async Task<IActionResult> Insert([FromForm] StaffInsertRequest request)
+    public IActionResult Insert([FromBody] StaffInsertRequest request)
     {
+        var error = Validate(request.StaffName, request.StaffCode, null);
+        if (error != null) return BadRequest(error);
+
         var staff = _mapper.Map<Staff>(request);
+        staff.StaffName = staff.StaffName.Trim();
         staff.CreatedAt = DateTime.UtcNow;
+        staff.InActive = request.InActive ?? false;
         _repository.Add(staff);
         _repository.Commit();
-        return NoContent();
+        return Ok(_mapper.Map<StaffListResponse>(staff));
     }
+
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, [FromForm] StaffUpdateRequest request)
+    public IActionResult Update(int id, [FromBody] StaffUpdateRequest request)
     {
         var staff = _repository.GetSingle(e => e.Id == id);
-        if(staff == null)
-        {
-            return BadRequest($"Item not found {id}");
+        if (staff == null) return NotFound($"Staff {id} not found");
 
-        }
+        var error = Validate(request.StaffName, request.StaffCode, id);
+        if (error != null) return BadRequest(error);
+
         _mapper.Map(request, staff);
+        staff.StaffName = staff.StaffName.Trim();
+        staff.InActive = request.InActive ?? false;
         staff.UpdatedAt = DateTime.UtcNow;
         _repository.Update(staff);
         _repository.Commit();
-        return NoContent();
-
+        return Ok(_mapper.Map<StaffListResponse>(staff));
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var staff = _repository.GetSingle(e => e.Id == id);
-        if (staff == null)
-        {
-            return BadRequest($"Item not Found {id}");
-
-        }
+        if (staff == null) return NotFound($"Staff {id} not found");
         staff.DeletedAt = DateTime.UtcNow;
         _repository.Remove(staff);
         _repository.Commit();
         return NoContent();
     }
-    
+
+    private string? Validate(string? name, string? code, int? ignoreId)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "Name is required.";
+        if (!string.IsNullOrWhiteSpace(code))
+        {
+            var c = code.Trim().ToLower();
+            var clash = _repository.GetAll().Any(x => x.StaffCode != null && x.StaffCode.ToLower() == c && x.Id != ignoreId);
+            if (clash) return $"Staff code \"{code}\" already exists.";
+        }
+        return null;
+    }
 }

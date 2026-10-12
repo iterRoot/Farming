@@ -24,7 +24,6 @@ public class ChartOfAccountsController : MyController
 
     // ── GET TYPES ────────────────────────────────────────────────
     // ✅ Returns all 8 SAP B1 account types for the right-panel tabs
-    [AllowAnonymous]
     [HttpGet("Types")]
     public IActionResult GetAccountTypes()
     {
@@ -43,7 +42,6 @@ public class ChartOfAccountsController : MyController
     }
 
     // ── GET ALL (flat list) ───────────────────────────────────────
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult Gets()
     {

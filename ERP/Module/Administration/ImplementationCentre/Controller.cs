@@ -32,7 +32,6 @@ public class ImplementationTaskController : MyController
         InActive = x.InActive ?? false,
     };
 
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult GetAll()
     {
@@ -42,7 +41,6 @@ public class ImplementationTaskController : MyController
         return Ok(list);
     }
 
-    [AllowAnonymous]
     [HttpGet("Summary")]
     public IActionResult GetSummary()
     {
@@ -60,7 +58,6 @@ public class ImplementationTaskController : MyController
         });
     }
 
-    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public IActionResult GetOne(int id)
     {
@@ -69,7 +66,6 @@ public class ImplementationTaskController : MyController
         return Ok(ToDto(x));
     }
 
-    [AllowAnonymous]
     [HttpPost]
     public IActionResult Create([FromBody] ImplementationTaskSaveRequest req)
     {
@@ -83,7 +79,6 @@ public class ImplementationTaskController : MyController
         return Ok(new { id = e.Id, message = "Task created." });
     }
 
-    [AllowAnonymous]
     [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] ImplementationTaskSaveRequest req)
     {
@@ -99,7 +94,6 @@ public class ImplementationTaskController : MyController
         return Ok(new { id = e.Id, message = "Task updated." });
     }
 
-    [AllowAnonymous]
     [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
@@ -111,7 +105,6 @@ public class ImplementationTaskController : MyController
     }
 
     // Populate the standard SAP-style checklist the first time.
-    [AllowAnonymous]
     [HttpPost("Seed")]
     public IActionResult Seed()
     {

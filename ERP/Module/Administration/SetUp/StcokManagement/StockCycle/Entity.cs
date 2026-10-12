@@ -24,6 +24,46 @@ public class StockCycle : AuditableEntity
     public string?   Description    { get; set; }
     public bool      IsActive       { get; set; } = true;
     public string?   Remarks        { get; set; }
+    public int?      JournalEntryId { get; set; }   // set when completing posted a value difference
+
+    public ICollection<StockCycleLine> Lines { get; set; } = new List<StockCycleLine>();
+}
+
+// One item in one warehouse to count. SystemQty is the book quantity when the
+// cycle started; CountedQty is what the counter found (null = not counted yet).
+public class StockCycleLine
+{
+    public int      Id           { get; set; }
+    public int      StockCycleId { get; set; }
+    public string   ItemCode     { get; set; } = null!;
+    public string   ItemName     { get; set; } = null!;
+    public string?  Uom          { get; set; }
+    public string   WhsCode      { get; set; } = null!;
+    public decimal  SystemQty    { get; set; }
+    public decimal? CountedQty   { get; set; }
+    public decimal? PostedQty    { get; set; }      // difference actually posted at completion (+ found, − missing)
+    public decimal? PostedUnitCost { get; set; }
+
+    public StockCycle StockCycle { get; set; } = null!;
+}
+
+public class StockCycleLineConfig : IEntityTypeConfiguration<StockCycleLine>
+{
+    public void Configure(EntityTypeBuilder<StockCycleLine> b)
+    {
+        b.ToTable("STC1");
+        b.HasKey(x => x.Id);
+        b.Property(x => x.ItemCode).HasMaxLength(100).IsRequired();
+        b.Property(x => x.ItemName).HasMaxLength(200);
+        b.Property(x => x.Uom).HasMaxLength(30);
+        b.Property(x => x.WhsCode).HasMaxLength(50).IsRequired();
+        b.Property(x => x.SystemQty).HasPrecision(18, 4);
+        b.Property(x => x.CountedQty).HasPrecision(18, 4);
+        b.Property(x => x.PostedQty).HasPrecision(18, 4);
+        b.Property(x => x.PostedUnitCost).HasPrecision(18, 4);
+        b.HasIndex(x => new { x.StockCycleId, x.ItemCode, x.WhsCode }).IsUnique();
+        b.HasOne(x => x.StockCycle).WithMany(c => c.Lines).HasForeignKey(x => x.StockCycleId).OnDelete(DeleteBehavior.Cascade);
+    }
 }
 
 public class StockCycleConfig : IEntityTypeConfiguration<StockCycle>

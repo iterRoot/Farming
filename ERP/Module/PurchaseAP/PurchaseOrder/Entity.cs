@@ -12,6 +12,9 @@ namespace FarmingApi.Modules.PurchaseAP.PurchaseOrder;
 // ══════════════════════════════════════════════════════════════════════════════
 public class PurchaseOrder : AuditableEntity
 {
+    [System.ComponentModel.DataAnnotations.MaxLength(50)]
+    public string? BuyerCode { get; set; }   // buyer (KSEB code)
+
     public string    DocNum      { get; set; } = "";
     public DateTime? PostingDate { get; set; }
     public DateTime? DueDate     { get; set; }

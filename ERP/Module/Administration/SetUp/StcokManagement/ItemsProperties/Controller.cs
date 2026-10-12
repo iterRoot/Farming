@@ -22,7 +22,7 @@ public class ItemPropertyController : ControllerBase
         _mapper     = mapper;
     }
 
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll()
     {
         var list = _repository.GetAll()
@@ -32,7 +32,7 @@ public class ItemPropertyController : ControllerBase
         return Ok(_mapper.Map<List<ItemPropertyResponse>>(list));
     }
 
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repository.GetSingle(x => x.Id == id);
@@ -40,7 +40,7 @@ public class ItemPropertyController : ControllerBase
         return Ok(_mapper.Map<ItemPropertyResponse>(e));
     }
 
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] ItemPropertyRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -66,7 +66,7 @@ public class ItemPropertyController : ControllerBase
         return Ok(_mapper.Map<ItemPropertyResponse>(entity));
     }
 
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] ItemPropertyRequest dto)
     {
         var entity = _repository.GetSingle(x => x.Id == id);
@@ -84,7 +84,7 @@ public class ItemPropertyController : ControllerBase
         return Ok(_mapper.Map<ItemPropertyResponse>(entity));
     }
 
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repository.GetSingle(x => x.Id == id);

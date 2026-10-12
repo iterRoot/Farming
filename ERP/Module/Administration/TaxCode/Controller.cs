@@ -31,12 +31,10 @@ public class TaxCodeController : MyController
         NonDeductibleAccount = x.NonDeductibleAccount, CodeDescription = x.CodeDescription,
     };
 
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult GetAll()
         => Ok(_repo.GetAll().OrderBy(x => x.Code).Select(ToDto).ToList());
 
-    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public IActionResult GetOne(int id)
     {
@@ -45,7 +43,6 @@ public class TaxCodeController : MyController
         return Ok(ToDto(x));
     }
 
-    [AllowAnonymous]
     [HttpPost]
     public IActionResult Create([FromBody] TaxCodeSaveRequest req)
     {
@@ -59,7 +56,6 @@ public class TaxCodeController : MyController
         return Ok(new { id = e.Id, message = "Tax code created." });
     }
 
-    [AllowAnonymous]
     [HttpPost("Bulk")]
     public IActionResult CreateBulk([FromBody] List<TaxCodeSaveRequest> requests)
     {
@@ -90,7 +86,6 @@ public class TaxCodeController : MyController
         return Ok(new { created, message = $"{created} tax code(s) created." });
     }
 
-    [AllowAnonymous]
     [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] TaxCodeSaveRequest req)
     {
@@ -106,7 +101,6 @@ public class TaxCodeController : MyController
         return Ok(new { id = e.Id, message = "Tax code updated." });
     }
 
-    [AllowAnonymous]
     [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {

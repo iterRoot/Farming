@@ -22,7 +22,7 @@ public class AddressFormatController : ControllerBase
     }
 
     // ── GET /AddressFormat ─────────────────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll()
     {
         var list = _repo.GetAll()
@@ -35,7 +35,7 @@ public class AddressFormatController : ControllerBase
     }
 
     // ── GET /AddressFormat/{id} ────────────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetAll()
@@ -46,7 +46,7 @@ public class AddressFormatController : ControllerBase
     }
 
     // ── GET /AddressFormat/ByCountry/{code} ───────────────────
-    [AllowAnonymous][HttpGet("ByCountry/{code}")]
+    [HttpGet("ByCountry/{code}")]
     public IActionResult GetByCountry(string code)
     {
         var e = _repo.GetAll()
@@ -62,7 +62,7 @@ public class AddressFormatController : ControllerBase
     }
 
     // ── GET /AddressFormat/Default ────────────────────────────
-    [AllowAnonymous][HttpGet("Default")]
+    [HttpGet("Default")]
     public IActionResult GetDefault()
     {
         var e = _repo.GetAll()
@@ -76,7 +76,7 @@ public class AddressFormatController : ControllerBase
     }
 
     // ── POST /AddressFormat ────────────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] AddressFormatRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -102,7 +102,7 @@ public class AddressFormatController : ControllerBase
     }
 
     // ── PUT /AddressFormat/{id} ────────────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] AddressFormatRequest dto)
     {
         var entity = _repo.GetAll()
@@ -131,7 +131,7 @@ public class AddressFormatController : ControllerBase
     }
 
     // ── POST /AddressFormat/{id}/SetDefault ───────────────────
-    [AllowAnonymous][HttpPost("{id:int}/SetDefault")]
+    [HttpPost("{id:int}/SetDefault")]
     public IActionResult SetDefault(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -146,7 +146,7 @@ public class AddressFormatController : ControllerBase
 
     // ── POST /AddressFormat/{id}/Preview ──────────────────────
     // Renders sample data through this format's template
-    [AllowAnonymous][HttpPost("{id:int}/Preview")]
+    [HttpPost("{id:int}/Preview")]
     public IActionResult Preview(int id, [FromBody] AddressPreviewRequest data)
     {
         var format = _repo.GetAll()
@@ -189,7 +189,7 @@ public class AddressFormatController : ControllerBase
     }
 
     // ── DELETE /AddressFormat/{id} ─────────────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);

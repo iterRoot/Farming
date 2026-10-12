@@ -2,6 +2,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi;
+using FarmingApi.Core;
+using FarmingApi.Modules.Administration.ApprovalRequest;
 using FarmingApi.Modules.Inventory.ItemsMaster;
 using FarmingApi.Modules.Financials.JournalEntry;
 using FarmingApi.Modules.InventoryManagement.InventoryJournal;
@@ -24,6 +26,8 @@ public class ARInvoiceController : ControllerBase
     private readonly IARInvoiceJournalService _journalService;
     private readonly IInventoryPostingService _inventoryPosting;
     private readonly IWebHostEnvironment      _env;
+    private readonly IApprovalGateService     _approvalGate;
+    private readonly IPrintLayoutRenderService _printLayout;
 
     public ARInvoiceController(
         MyDbContext              db,
@@ -31,7 +35,9 @@ public class ARInvoiceController : ControllerBase
         IDocumentNumberService   docNumber,
         IARInvoiceJournalService journalService,
         IInventoryPostingService inventoryPosting,
-        IWebHostEnvironment      env)
+        IWebHostEnvironment      env,
+        IApprovalGateService     approvalGate,
+        IPrintLayoutRenderService printLayout)
     {
         _db             = db;
         _mapper         = mapper;
@@ -39,6 +45,8 @@ public class ARInvoiceController : ControllerBase
         _journalService = journalService;
         _inventoryPosting = inventoryPosting;
         _env            = env;
+        _approvalGate   = approvalGate;
+        _printLayout    = printLayout;
     }
 
     // ── GET /ARInvoice ────────────────────────────────────────────
@@ -131,6 +139,27 @@ public class ARInvoiceController : ControllerBase
             catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
         }
 
+        // A Draft invoice is saved as-is, with no stock/GL movement yet —
+        // those only happen when it's posted (here, if not a draft, or later
+        // via POST /ARInvoice/{id}/Post).
+        bool isDraft = string.Equals(dto.Status, "D", StringComparison.OrdinalIgnoreCase);
+        invoice.Status = isDraft ? "D" : "O";
+
+        if (isDraft)
+        {
+            _db.Set<ARInvoice>().Add(invoice);
+            await _db.SaveChangesAsync();
+
+            var draftCreated = await _db.Set<ARInvoice>()
+                .Include(x => x.Customer)
+                .Include(x => x.Items).ThenInclude(l => l.Item)
+                .Include(x => x.Attachments)
+                .FirstAsync(x => x.Id == invoice.Id);
+
+            return CreatedAtAction(nameof(GetById), new { id = invoice.Id },
+                new { invoice = _mapper.Map<ARInvoiceListResponse>(draftCreated) });
+        }
+
         // ══════════════════════════════════════════════════════════
         // BEGIN TRANSACTION — Invoice + Journal Entry
         // If ANYTHING fails, BOTH are rolled back.
@@ -144,29 +173,7 @@ public class ARInvoiceController : ControllerBase
             await _db.SaveChangesAsync();
             // invoice.Id is now populated
 
-            // ── Step 2: Auto-create Journal Entry ─────────────────
-            // This adds the JE + lines to the DbContext but does NOT
-            // call SaveChanges — we do it once for both.
-            var je = _journalService.CreateJournalEntry(invoice, customer);
-
-            // Update BaseDocEntry now that invoice.Id exists
-            je.BaseDocEntry = invoice.Id;
-
-            // ── Step 2b: Post stock out — only for lines NOT based on a
-            // Delivery. A delivery already issued the goods, so posting here
-            // too would double-count the stock. Standalone invoice lines
-            // (sold without a prior delivery) are the ones that move stock.
-            var stockDate = invoice.PostingDate ?? DateTime.UtcNow;
-            foreach (var line in invoice.Items.Where(l => !IsBasedOnDelivery(l)))
-            {
-                await _inventoryPosting.PostOutAsync(
-                    line.ItemCode!, line.WhsCode!, line.Quantity,
-                    "AR Invoice", "ARInvoice", invoice.Id, invoice.DocNum, stockDate,
-                    customer.Code, customer.CardName);
-            }
-
-            // ── Step 3: Save Journal Entry ────────────────────────
-            await _db.SaveChangesAsync();
+            var (je, _, _) = await PostARInvoiceAsync(invoice, customer);
 
             // ── Step 4: Commit — both invoice + JE are final ──────
             await transaction.CommitAsync();
@@ -209,6 +216,155 @@ public class ARInvoiceController : ControllerBase
                 details = ex.Message,
             });
         }
+    }
+
+    // ── POST /ARInvoice/{id}/Post ─── promotes a Draft invoice to Open,
+    // running the same inventory + Journal Entry posting Create runs for a
+    // non-draft invoice.
+    [HttpPost("{id:int}/Post")]
+    public async Task<IActionResult> Post(int id)
+    {
+        var invoice = await _db.Set<ARInvoice>()
+            .Include(x => x.Customer)
+            .Include(x => x.Items).ThenInclude(l => l.Item)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (invoice == null) return NotFound();
+        if (invoice.Status != "D")
+            return BadRequest($"Only a Draft document can be posted (current status: {invoice.Status}).");
+
+        var gate = await _approvalGate.EvaluateAsync("ARInvoice", invoice.Id, invoice.DocNum, invoice.Total, this.CurrentUserId() ?? 0);
+        if (gate.RequiresApproval)
+        {
+            invoice.Status = "P";
+            await _db.SaveChangesAsync();
+            return Ok(new { message = "Submitted for approval", docNum = invoice.DocNum, approvalRequestId = gate.ApprovalRequestId });
+        }
+
+        await using var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            var (je, _, _) = await PostARInvoiceAsync(invoice, invoice.Customer);
+            invoice.Status = "O";
+            await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return Ok(new { message = "AR Invoice posted", docNum = invoice.DocNum, journalEntryId = je.Id, journalNo = je.JrnlNo });
+        }
+        catch (InvalidOperationException ex)
+        {
+            await transaction.RollbackAsync();
+            return BadRequest(new
+            {
+                error   = "AR Invoice posting failed — transaction rolled back",
+                details = ex.Message,
+                hint    = ex.Message.Contains("KGLD")
+                    ? "Go to Administration → GL Account Determination and configure ARControlAccount, RevenueAccount, TaxOutputAccount."
+                    : null,
+            });
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            return StatusCode(500, new { error = "Unexpected error — transaction rolled back", details = ex.Message });
+        }
+    }
+
+    // ── POST /ARInvoice/{id}/Approve ── approves a Pending document and posts it
+    [HttpPost("{id:int}/Approve")]
+    public async Task<IActionResult> Approve(int id)
+    {
+        var invoice = await _db.Set<ARInvoice>()
+            .Include(x => x.Customer)
+            .Include(x => x.Items).ThenInclude(l => l.Item)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (invoice == null) return NotFound();
+        if (invoice.Status != "P")
+            return BadRequest($"Only a document pending approval can be approved (current status: {invoice.Status}).");
+
+        var userId = this.CurrentUserId();
+        if (userId == null) return Forbid();
+
+        var decision = await _approvalGate.DecideAsync("ARInvoice", invoice.Id, "Approved", userId.Value, null);
+        if (!decision.Success) return BadRequest(decision.Error);
+
+        await using var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            var (je, _, _) = await PostARInvoiceAsync(invoice, invoice.Customer);
+            invoice.Status = "O";
+            await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return Ok(new { message = "AR Invoice approved and posted", docNum = invoice.DocNum, journalEntryId = je.Id, journalNo = je.JrnlNo });
+        }
+        catch (InvalidOperationException ex)
+        {
+            await transaction.RollbackAsync();
+            return BadRequest(new
+            {
+                error   = "AR Invoice posting failed — transaction rolled back",
+                details = ex.Message,
+                hint    = ex.Message.Contains("KGLD")
+                    ? "Go to Administration → GL Account Determination and configure ARControlAccount, RevenueAccount, TaxOutputAccount."
+                    : null,
+            });
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            return StatusCode(500, new { error = "Unexpected error — transaction rolled back", details = ex.Message });
+        }
+    }
+
+    // ── POST /ARInvoice/{id}/Reject ── rejects a Pending document back to Draft
+    [HttpPost("{id:int}/Reject")]
+    public async Task<IActionResult> Reject(int id, [FromBody] ApprovalDecisionRequest? body)
+    {
+        var invoice = await _db.Set<ARInvoice>().FindAsync(id);
+        if (invoice == null) return NotFound();
+        if (invoice.Status != "P")
+            return BadRequest($"Only a document pending approval can be rejected (current status: {invoice.Status}).");
+
+        var userId = this.CurrentUserId();
+        if (userId == null) return Forbid();
+
+        var decision = await _approvalGate.DecideAsync("ARInvoice", invoice.Id, "Rejected", userId.Value, body?.Remarks);
+        if (!decision.Success) return BadRequest(decision.Error);
+
+        invoice.Status = "D";
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "AR Invoice rejected", docNum = invoice.DocNum });
+    }
+
+    /// <summary>
+    /// Creates the AR Invoice's Journal Entry and posts stock out for lines
+    /// not already issued by a prior Delivery. Shared by Create (non-draft)
+    /// and Post (draft → open) so both post identically.
+    /// </summary>
+    private async Task<(JournalEntry je, int? jeId, string? jeNo)> PostARInvoiceAsync(ARInvoice invoice, BPEntity customer)
+    {
+        var je = _journalService.CreateJournalEntry(invoice, customer);
+        je.BaseDocEntry = invoice.Id;
+
+        // Post stock out — only for lines NOT based on a Delivery. A delivery
+        // already issued the goods, so posting here too would double-count
+        // the stock. Standalone invoice lines (sold without a prior delivery)
+        // are the ones that move stock.
+        var stockDate = invoice.PostingDate ?? DateTime.UtcNow;
+        foreach (var line in invoice.Items.Where(l => !IsBasedOnDelivery(l)))
+        {
+            await _inventoryPosting.PostOutAsync(
+                line.ItemCode!, line.WhsCode!, line.Quantity,
+                "AR Invoice", "ARInvoice", invoice.Id, invoice.DocNum, stockDate,
+                customer.Code, customer.CardName, batches: line.Batches);
+        }
+
+        await _db.SaveChangesAsync();
+
+        return (je, je.Id, je.JrnlNo);
     }
 
     // ── PUT /ARInvoice/{id} ───────────────────────────────────────
@@ -331,6 +487,9 @@ public class ARInvoiceController : ControllerBase
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (invoice == null) return NotFound();
+
+        var customHtml = await _printLayout.TryRenderAsync("ARInvoice", invoice, invoice.Items);
+        if (customHtml != null) return Content(customHtml, "text/html");
 
         var company = await _db.Set<CompanyEntity>()
             .OrderBy(x => x.Id)

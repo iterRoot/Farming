@@ -22,7 +22,7 @@ public class StockTransferRequestController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET ALL
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
+    
     [HttpGet]
     public IActionResult Gets(
         [FromQuery] string?   status        = null,
@@ -50,7 +50,7 @@ public class StockTransferRequestController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET BY ID
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
+    
     [HttpGet("{id:int}")]
     public IActionResult Get(int id)
     {

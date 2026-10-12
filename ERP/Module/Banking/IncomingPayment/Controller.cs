@@ -30,7 +30,6 @@ public class IncomingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET ALL
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult Gets()
     {
@@ -157,6 +156,7 @@ public class IncomingPaymentController : MyController
         entity.Memo        = request.Memo        ?? request.Remarks;
         entity.CheckNumber = request.CheckNumber ?? request.ChequeNo;
         entity.CheckDate   = request.CheckDate   ?? request.ChequeDate;
+        entity.CheckStatus = entity.PaymentMethod == "Check" ? "Received" : null;
         entity.BankName    = request.BankName;
         entity.Status = "O";
         entity.TransType = "KPYI";
@@ -367,6 +367,34 @@ public class IncomingPaymentController : MyController
     // ═══════════════════════════════════════════════════════════════
     // VOID PAYMENT (Reverses all invoice allocations)
     // ═══════════════════════════════════════════════════════════════
+    // CHECK STATUS — Received (default) -> Cleared / Bounced.
+    // "Deposited" is set only by posting a real Deposit document, not here.
+    // ═══════════════════════════════════════════════════════════════
+    private static readonly string[] ManualCheckStatuses = { "Received", "Cleared", "Bounced" };
+
+    [HttpPost("{id}/CheckStatus")]
+    public IActionResult SetCheckStatus(int id, [FromBody] CheckStatusRequest request)
+    {
+        var payment = _repository.GetSingle(p => p.Id == id);
+        if (payment == null) return NotFound($"Payment not found: {id}");
+        if (payment.PaymentMethod != "Check")
+            return BadRequest("This payment was not made by check.");
+        if (payment.Deposited)
+            return BadRequest("This check has been swept into a Deposit and can no longer be changed here.");
+        if (payment.CheckStatus == "Bounced")
+            return BadRequest("A bounced check's status is final.");
+        if (!ManualCheckStatuses.Contains(request.Status))
+            return BadRequest($"Status must be one of: {string.Join(", ", ManualCheckStatuses)} " +
+                              "('Deposited' is set automatically by posting a Deposit document).");
+
+        payment.CheckStatus = request.Status;
+        payment.UpdatedAt   = DateTime.UtcNow;
+        _repository.Update(payment);
+        _repository.Commit();
+        return Ok(new { message = $"Check status set to {request.Status}.", id, status = request.Status });
+    }
+
+    // ═══════════════════════════════════════════════════════════════
     [HttpPost("{id}/Void")]
     public IActionResult Void(int id)
     {
@@ -420,6 +448,8 @@ public class IncomingPaymentController : MyController
 
         if (payment.Status == "C")
             return BadRequest("Cannot delete closed payment. Use Void instead.");
+        if (payment.Deposited)
+            return BadRequest("This payment has been swept into a Deposit and can no longer be deleted.");
 
         // Reverse invoice allocations — reopen each affected AR invoice.
         foreach (var paymentInvoice in payment.Invoices)

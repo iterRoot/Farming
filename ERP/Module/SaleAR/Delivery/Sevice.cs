@@ -1,6 +1,7 @@
 using FarmingApi.Modules.Financials.GLAccountDetermination;
 using FarmingApi.Modules.Financials.JournalEntry;
 using FarmingApi.Modules.Inventory.ItemsMaster;
+using FarmingApi.Modules.InventoryManagement.InventoryJournal;
 
 namespace FarmingApi.Modules.SaleAR.Delivery;
 public interface IDeliveryJournalService
@@ -10,8 +11,15 @@ public interface IDeliveryJournalService
 public class DeliveryJournalService : IDeliveryJournalService
 {
     private readonly MyDbContext _db;
+    private readonly IInventoryPostingService _posting;
+    private readonly GLAccountResolver _resolver;
 
-    public DeliveryJournalService(MyDbContext db) => _db = db;
+    public DeliveryJournalService(MyDbContext db, IInventoryPostingService posting, GLAccountResolver resolver)
+    {
+        _db = db;
+        _posting = posting;
+        _resolver = resolver;
+    }
 
     public JournalEntry? CreateJournalEntry(Delivery delivery)
     {
@@ -20,17 +28,34 @@ public class DeliveryJournalService : IDeliveryJournalService
         // item has no cost set, fall back to the line's sales amount so the
         // delivery still posts a JE (flagged in the memo so it's transparent).
         var itemIds = delivery.Items.Select(l => l.ItemId).Distinct().ToList();
-        var costById = _db.Set<ItemsMaster>()
+        var itemById = _db.Set<ItemsMaster>()
             .Where(i => itemIds.Contains(i.Id))
-            .ToDictionary(i => i.Id, i => i.ItemCost > 0 ? i.ItemCost : i.PurchasePrice);
+            .ToDictionary(i => i.Id);
+
+        // Cost of what leaves stock, by the item's valuation method (average / standard /
+        // FIFO layers). Lines of the same item and warehouse are costed together so FIFO
+        // layers aren't counted twice; each line then carries the group's unit cost.
+        var unitCostByLine = new Dictionary<DeliveryLine, decimal>();
+        foreach (var g in delivery.Items.Where(l => !string.IsNullOrWhiteSpace(l.ItemCode) && l.Quantity > 0)
+                     .GroupBy(l => (l.ItemCode!.ToUpperInvariant(), (l.WhsCode ?? "").ToUpperInvariant())))
+        {
+            var first = g.First();
+            var qty   = g.Sum(l => l.Quantity);
+            var total = _posting.PreviewIssueCost(first.ItemCode!, first.WhsCode ?? "", qty);
+            foreach (var l in g) unitCostByLine[l] = qty > 0 ? total / qty : 0m;
+        }
 
         bool usedSalesFallback = false;
+        var lineCost = new Dictionary<DeliveryLine, decimal>();
         decimal totalCost = delivery.Items.Sum(l =>
         {
-            var cost = costById.TryGetValue(l.ItemId, out var c) ? c : 0m;
-            if (cost > 0) return cost * l.Quantity;
-            usedSalesFallback = true;
-            return l.Total;   // sales value of the line
+            var cost = unitCostByLine.TryGetValue(l, out var uc) ? uc : 0m;
+            if (cost <= 0 && itemById.TryGetValue(l.ItemId, out var it)) cost = it.PurchasePrice;
+            decimal v;
+            if (cost > 0) v = cost * l.Quantity;
+            else { usedSalesFallback = true; v = l.Total; }   // sales value of the line
+            lineCost[l] = v;
+            return v;
         });
 
         // Genuinely empty delivery (no cost and no value) — nothing to post.
@@ -57,7 +82,7 @@ public class DeliveryJournalService : IDeliveryJournalService
 
         var je = new JournalEntry
         {
-            JrnlNo          = GenerateJournalNumber(),
+            JrnlNo          = JournalEntryNumberService.Next(_db, postingDate),
             TransDate       = postingDate,
             DueDate         = delivery.DeliveryDate ?? postingDate,
             DocDate         = postingDate,
@@ -108,6 +133,11 @@ public class DeliveryJournalService : IDeliveryJournalService
             InActive    = false,
         });
 
+        // Cost of goods sold and inventory follow each line's item group when overrides are set.
+        var costLines = delivery.Items.Select(l => (l.ItemCode, lineCost.GetValueOrDefault(l))).ToList();
+        GLAccountResolver.SplitLine(je, l => l.AccountName == "Cost of Goods Sold", _resolver.SplitByItemGroup("CostOfGoodsSold", cogsCode, totalCost, costLines));
+        GLAccountResolver.SplitLine(je, l => l.AccountName == "Inventory", _resolver.SplitByItemGroup("InventoryAccount", invCode, totalCost, costLines));
+
         var totalDr = je.Lines.Sum(l => l.Debit);
         var totalCr = je.Lines.Sum(l => l.Credit);
         if (Math.Abs(totalDr - totalCr) > 0.01m)
@@ -121,24 +151,5 @@ public class DeliveryJournalService : IDeliveryJournalService
 
         _db.Set<JournalEntry>().Add(je);
         return je;
-    }
-
-    private string GenerateJournalNumber()
-    {
-        var year   = DateTime.Now.Year;
-        var prefix = $"JE-{year}-";
-
-        var last = _db.Set<JournalEntry>()
-            .Where(j => j.JrnlNo.StartsWith(prefix))
-            .OrderByDescending(j => j.Id)
-            .FirstOrDefault();
-
-        if (last == null) return $"{prefix}00001";
-
-        var parts = last.JrnlNo.Split('-');
-        if (parts.Length >= 3 && int.TryParse(parts[2], out int lastNum))
-            return $"{prefix}{(lastNum + 1):D5}";
-
-        return $"{prefix}00001";
     }
 }

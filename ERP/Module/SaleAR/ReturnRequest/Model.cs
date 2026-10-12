@@ -26,6 +26,26 @@ public class ReturnRequestLineRequest
     public decimal Quantity { get; set; }
     public decimal Price    { get; set; }
     public decimal Total    { get; set; }
+    public string? WhsCode     { get; set; }
+    public string? Branch      { get; set; }
+    public decimal Discount    { get; set; }
+    public decimal DiscountSum { get; set; }
+    public decimal Vat         { get; set; }
+    public decimal VatSum      { get; set; }
+    public decimal ItemCost    { get; set; }
+    public string? UomName     { get; set; }
+    public string? UomCode     { get; set; }
+    public string? DocCurrency { get; set; }
+    public decimal GrossProfit { get; set; }
+    public string? Dimension1  { get; set; }
+    public string? Dimension2  { get; set; }
+    public string? Dimension3  { get; set; }
+    public string? Dimension4  { get; set; }
+    public string? Dimension5  { get; set; }
+    public string? FreeText    { get; set; }
+    public string? Remark      { get; set; }
+    public int?    BaseEntry   { get; set; }
+    public string? BaseType    { get; set; }
 }
 
 public class ReturnRequestUpdateRequest : ReturnRequestListRequest { }
@@ -64,4 +84,24 @@ public class ReturnRequestLineResponse
     public decimal Quantity { get; set; }
     public decimal Price    { get; set; }
     public decimal Total    { get; set; }
+    public string? WhsCode     { get; set; }
+    public string? Branch      { get; set; }
+    public decimal Discount    { get; set; }
+    public decimal DiscountSum { get; set; }
+    public decimal Vat         { get; set; }
+    public decimal VatSum      { get; set; }
+    public decimal ItemCost    { get; set; }
+    public string? UomName     { get; set; }
+    public string? UomCode     { get; set; }
+    public string? DocCurrency { get; set; }
+    public decimal GrossProfit { get; set; }
+    public string? Dimension1  { get; set; }
+    public string? Dimension2  { get; set; }
+    public string? Dimension3  { get; set; }
+    public string? Dimension4  { get; set; }
+    public string? Dimension5  { get; set; }
+    public string? FreeText    { get; set; }
+    public string? Remark      { get; set; }
+    public int?    BaseEntry   { get; set; }
+    public string? BaseType    { get; set; }
 }

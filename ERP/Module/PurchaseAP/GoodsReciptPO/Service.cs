@@ -1,5 +1,7 @@
 using FarmingApi.Modules.Financials.GLAccountDetermination;
 using FarmingApi.Modules.Financials.JournalEntry;
+using FarmingApi.Modules.Inventory.ItemsMaster;
+using FarmingApi.Modules.InventoryManagement.InventoryJournal;
 using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
 namespace FarmingApi.Modules.PurchaseAP.GoodsReceiptPO;
@@ -13,9 +15,12 @@ public class GoodsReceiptPOJournalService : IGoodsReceiptPOJournalService
 {
     private readonly MyDbContext _db;
 
-    public GoodsReceiptPOJournalService(MyDbContext db)
+    private readonly GLAccountResolver _resolver;
+
+    public GoodsReceiptPOJournalService(MyDbContext db, GLAccountResolver resolver)
     {
         _db = db;
+        _resolver = resolver;
     }
 
     public JournalEntry CreateJournalEntry(GoodsReceiptPO receipt, BPEntity vendor)
@@ -44,11 +49,26 @@ public class GoodsReceiptPOJournalService : IGoodsReceiptPOJournalService
             throw new InvalidOperationException(
                 $"Cannot post Goods Receipt PO {receipt.DocNum}: goods value is {goodsValue}");
 
+        // Standard-cost items are carried at their standard: what was paid above (or below)
+        // it is a price difference, not inventory.
+        var codes = receipt.Lines.Select(l => l.ItemCode).Where(c => c != null).Distinct().ToList();
+        var stdItems = _db.Set<ItemsMaster>()
+            .Where(i => codes.Contains(i.ItemCode))
+            .ToDictionary(i => i.ItemCode, i => (i.ValuationMethod, i.ItemCost));
+        var variance = Math.Round(receipt.Lines.Sum(l =>
+            l.ItemCode != null && stdItems.TryGetValue(l.ItemCode, out var it)
+            && Valuation.Of(it.ValuationMethod) == Valuation.Standard && it.ItemCost > 0
+                ? (l.Price - it.ItemCost) * l.Quantity
+                : 0m), 2);
+        if (variance != 0 && string.IsNullOrWhiteSpace(gl.PriceDifference))
+            throw new InvalidOperationException(
+                "Price Difference account is not set in GL Account Determination (KGLD); standard-cost receipts need it.");
+
         var postingDate = receipt.PostingDate ?? receipt.DocDate ?? DateTime.UtcNow;
 
         var je = new JournalEntry
         {
-            JrnlNo          = GenerateJournalNumber(),
+            JrnlNo          = JournalEntryNumberService.Next(_db, postingDate),
             TransDate       = postingDate,
             DueDate         = postingDate,
             DocDate         = receipt.DocDate ?? postingDate,
@@ -80,9 +100,9 @@ public class GoodsReceiptPOJournalService : IGoodsReceiptPOJournalService
             AccountName = "Inventory",
             CardCode    = null,
             CardName    = null,
-            Debit       = goodsValue,
+            Debit       = goodsValue - variance,
             Credit      = 0,
-            DebitLC     = goodsValue,
+            DebitLC     = goodsValue - variance,
             CreditLC    = 0,
             DebitFC     = 0,
             CreditFC    = 0,
@@ -91,6 +111,27 @@ public class GoodsReceiptPOJournalService : IGoodsReceiptPOJournalService
             CreatedAt   = DateTime.UtcNow,
             InActive    = false,
         });
+
+        // Price difference on standard-cost items (Dr when paid above standard, Cr when below)
+        if (variance != 0)
+        {
+            je.Lines.Add(new JournalEntryLine
+            {
+                LineNum     = lineNum++,
+                AccountCode = gl.PriceDifference!,
+                AccountName = "Price Difference",
+                Debit       = variance > 0 ? variance : 0,
+                Credit      = variance < 0 ? -variance : 0,
+                DebitLC     = variance > 0 ? variance : 0,
+                CreditLC    = variance < 0 ? -variance : 0,
+                DebitFC     = 0,
+                CreditFC    = 0,
+                LineMemo    = $"Price difference vs standard — {receipt.DocNum}",
+                TaxAmount   = 0,
+                CreatedAt   = DateTime.UtcNow,
+                InActive    = false,
+            });
+        }
 
         // Cr Inventory Offset — GR/IR clearing (goods received, not yet invoiced)
         je.Lines.Add(new JournalEntryLine
@@ -112,6 +153,10 @@ public class GoodsReceiptPOJournalService : IGoodsReceiptPOJournalService
             InActive    = false,
         });
 
+        // Inventory is debited on each line's item-group account when an override is set.
+        GLAccountResolver.SplitLine(je, l => l.AccountName == "Inventory",
+            _resolver.SplitByItemGroup("InventoryAccount", inventoryCode, goodsValue - variance, receipt.Lines.Select(l => (l.ItemCode, l.Quantity * l.Price))));
+
         var totalDr = je.Lines.Sum(l => l.Debit);
         var totalCr = je.Lines.Sum(l => l.Credit);
         if (Math.Abs(totalDr - totalCr) > 0.01m)
@@ -125,25 +170,5 @@ public class GoodsReceiptPOJournalService : IGoodsReceiptPOJournalService
 
         _db.Set<JournalEntry>().Add(je);
         return je;
-    }
-
-    private string GenerateJournalNumber()
-    {
-        var year   = DateTime.Now.Year;
-        var prefix = $"JE-{year}-";
-
-        var last = _db.Set<JournalEntry>()
-            .Where(j => j.JrnlNo.StartsWith(prefix))
-            .OrderByDescending(j => j.Id)
-            .FirstOrDefault();
-
-        if (last == null)
-            return $"{prefix}00001";
-
-        var parts = last.JrnlNo.Split('-');
-        if (parts.Length >= 3 && int.TryParse(parts[2], out int lastNum))
-            return $"{prefix}{(lastNum + 1):D5}";
-
-        return $"{prefix}00001";
     }
 }

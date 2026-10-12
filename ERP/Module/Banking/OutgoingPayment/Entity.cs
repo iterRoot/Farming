@@ -23,6 +23,7 @@ public class OutgoingPayment : AuditableEntity
     public string PaymentMethod { get; set; } = "Cash";      // Cash, Check, Transfer, Card
     public string? CheckNumber { get; set; }                  // Check number if applicable
     public DateTime? CheckDate { get; set; }
+    public string? CheckStatus { get; set; }                  // Issued/Cleared/Bounced/Voided — Check only
     public string? BankAccount { get; set; }                  // Bank account code
     public string? BankName { get; set; }
     public string? Reference { get; set; }
@@ -80,6 +81,7 @@ public class OutgoingPaymentConfig : IEntityTypeConfiguration<OutgoingPayment>
         builder.Property(m => m.Currency).HasMaxLength(3).HasDefaultValue("USD");
         builder.Property(m => m.PaymentMethod).HasMaxLength(20).HasDefaultValue("Cash");
         builder.Property(m => m.CheckNumber).HasMaxLength(50);
+        builder.Property(m => m.CheckStatus).HasMaxLength(20);
         builder.Property(m => m.BankAccount).HasMaxLength(50);
         builder.Property(m => m.BankName).HasMaxLength(100);
         builder.Property(m => m.Reference).HasMaxLength(100);

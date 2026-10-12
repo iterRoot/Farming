@@ -21,9 +21,28 @@ public class SaleBlanketAgreementListRequest
 public class SaleBlanketAgreementLineRequest
 {
     public int     ItemId   { get; set; }
+    /// <summary>Optional — the warehouse this line's stock will be issued from.</summary>
+    public string? WhsCode  { get; set; }
     public decimal Quantity { get; set; }
     public decimal Price    { get; set; }
     public decimal Total    { get; set; }
+    public string? Branch      { get; set; }
+    public decimal Discount    { get; set; }
+    public decimal DiscountSum { get; set; }
+    public decimal Vat         { get; set; }
+    public decimal VatSum      { get; set; }
+    public decimal ItemCost    { get; set; }
+    public string? UomName     { get; set; }
+    public string? UomCode     { get; set; }
+    public string? DocCurrency { get; set; }
+    public decimal GrossProfit { get; set; }
+    public string? Dimension1  { get; set; }
+    public string? Dimension2  { get; set; }
+    public string? Dimension3  { get; set; }
+    public string? Dimension4  { get; set; }
+    public string? Dimension5  { get; set; }
+    public string? FreeText    { get; set; }
+    public string? Remark      { get; set; }
 }
 
 public class SaleBlanketAgreementUpdateRequest : SaleBlanketAgreementListRequest { }
@@ -56,9 +75,35 @@ public class SaleBlanketAgreementLineResponse
     public int     ItemId   { get; set; }
     public string  ItemCode { get; set; } = "";
     public string? ItemName { get; set; }
+    public string? WhsCode  { get; set; }
     public decimal Quantity { get; set; }
     public decimal Price    { get; set; }
     public decimal Total    { get; set; }
+    public string? Branch      { get; set; }
+    public decimal Discount    { get; set; }
+    public decimal DiscountSum { get; set; }
+    public decimal Vat         { get; set; }
+    public decimal VatSum      { get; set; }
+    public decimal ItemCost    { get; set; }
+    public string? UomName     { get; set; }
+    public string? UomCode     { get; set; }
+    public string? DocCurrency { get; set; }
+    public decimal GrossProfit { get; set; }
+    public string? Dimension1  { get; set; }
+    public string? Dimension2  { get; set; }
+    public string? Dimension3  { get; set; }
+    public string? Dimension4  { get; set; }
+    public string? Dimension5  { get; set; }
+    public string? FreeText    { get; set; }
+    public string? Remark      { get; set; }
+
+    // Draw-down tracking — set once this line has actually been invoiced.
+    public int?    ARInvoiceId    { get; set; }
+    public string? ARInvoiceDocNum { get; set; }
+
+    // Source document this line was copied from (e.g. a Sale Quotation).
+    public int?    BaseEntry { get; set; }
+    public string? BaseType  { get; set; }
 }
 
 // ══════════════════════════════════════════════════════════════════════════════

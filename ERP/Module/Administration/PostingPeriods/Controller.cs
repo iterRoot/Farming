@@ -23,7 +23,6 @@ public class PostingPeriodController : MyController
         _settings   = settings;
     }
 
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult Get()
     {
@@ -47,7 +46,6 @@ public class PostingPeriodController : MyController
         });
     }
 
-    [AllowAnonymous]
     [HttpPut]
     public IActionResult Save([FromBody] PostingPeriodsSaveRequest request)
     {
@@ -107,7 +105,6 @@ public class PostingPeriodController : MyController
         return Ok(new { message = $"{rows.Count} posting period(s) saved successfully" });
     }
 
-    [AllowAnonymous]
     [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {

@@ -38,6 +38,10 @@ public class GoodsReceipt : AuditableEntity
 // ═══════════════════════════════════════════════════════════════
 public class GoodsReceiptLine
 {
+    // Batch / serial numbers entered for this line — used when the document posts stock; not stored on the line.
+    [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
+
     public int  Id             { get; set; }
     public int  GoodsReceiptId { get; set; }
     public int  LineNum        { get; set; }
@@ -59,7 +63,7 @@ public class GoodsReceiptConfig : IEntityTypeConfiguration<GoodsReceipt>
 {
     public void Configure(EntityTypeBuilder<GoodsReceipt> builder)
     {
-        builder.ToTable("GoodsReceipt");
+        builder.ToTable("KGRT");
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.DocNo).HasMaxLength(50);
@@ -87,7 +91,7 @@ public class GoodsReceiptLineConfig : IEntityTypeConfiguration<GoodsReceiptLine>
 {
     public void Configure(EntityTypeBuilder<GoodsReceiptLine> builder)
     {
-        builder.ToTable("GoodsReceiptLine");
+        builder.ToTable("GRT1");
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.ItemCode).HasMaxLength(50).IsRequired();

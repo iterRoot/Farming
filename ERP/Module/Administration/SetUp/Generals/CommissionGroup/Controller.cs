@@ -22,7 +22,7 @@ public class CommissionGroupController : ControllerBase
     }
 
     // ── GET /CommissionGroup ───────────────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll()
     {
         var list = _repo.GetAll()
@@ -33,7 +33,7 @@ public class CommissionGroupController : ControllerBase
     }
 
     // ── GET /CommissionGroup/{id} ──────────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetAll()
@@ -44,7 +44,7 @@ public class CommissionGroupController : ControllerBase
     }
 
     // ── POST /CommissionGroup ──────────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] CommissionGroupRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -69,7 +69,7 @@ public class CommissionGroupController : ControllerBase
     }
 
     // ── PUT /CommissionGroup/{id} ──────────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] CommissionGroupRequest dto)
     {
         var entity = _repo.GetAll()
@@ -97,7 +97,7 @@ public class CommissionGroupController : ControllerBase
     }
 
     // ── DELETE /CommissionGroup/{id} ───────────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -109,7 +109,7 @@ public class CommissionGroupController : ControllerBase
 
     // ── GET /CommissionGroup/{id}/Calculate?amount=5000 ────────
     // Helper: calculate commission for a given sale amount
-    [AllowAnonymous][HttpGet("{id:int}/Calculate")]
+    [HttpGet("{id:int}/Calculate")]
     public IActionResult Calculate(int id, [FromQuery] decimal amount)
     {
         var group = _repo.GetAll()
@@ -119,30 +119,7 @@ public class CommissionGroupController : ControllerBase
         if (group.MinSaleAmount.HasValue && amount < group.MinSaleAmount)
             return Ok(new { amount, commission = 0m, reason = "Below minimum sale amount" });
 
-        decimal commission = 0;
-        switch (group.CommissionType)
-        {
-            case "Percentage":
-                commission = Math.Round(amount * group.CommissionRate / 100, 2);
-                break;
-            case "Fixed":
-                commission = group.CommissionRate;
-                break;
-            case "Tiered":
-                foreach (var tier in group.Tiers)
-                {
-                    if (amount >= tier.FromAmount &&
-                        (tier.ToAmount == 0 || amount <= tier.ToAmount))
-                    {
-                        commission = Math.Round(amount * tier.Rate / 100, 2);
-                        break;
-                    }
-                }
-                break;
-        }
-
-        if (group.MaxCommission.HasValue)
-            commission = Math.Min(commission, group.MaxCommission.Value);
+        var commission = CommissionCalc.Compute(group, amount);
 
         return Ok(new {
             amount,

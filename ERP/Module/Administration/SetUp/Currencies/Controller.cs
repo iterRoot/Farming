@@ -27,12 +27,10 @@ public class CurrenciesController : MyController
         _mapper = mapper;
     }
 
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult GetAll()
         => Ok(_mapper.Map<List<CurrencyResponse>>(_repo.GetAll().OrderBy(x => x.Code).ToList()));
 
-    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public IActionResult GetOne(int id)
     {
@@ -41,7 +39,6 @@ public class CurrenciesController : MyController
         return Ok(_mapper.Map<CurrencyResponse>(entity));
     }
 
-    [AllowAnonymous]
     [HttpPost]
     public IActionResult Create([FromBody] CurrencyRequest request)
     {
@@ -56,7 +53,6 @@ public class CurrenciesController : MyController
     }
 
     // Grid "Update" button posts every filled row here in one shot.
-    [AllowAnonymous]
     [HttpPost("Bulk")]
     public IActionResult CreateBulk([FromBody] List<CurrencyRequest> requests)
     {
@@ -88,7 +84,6 @@ public class CurrenciesController : MyController
         return Ok(new { created, message = $"{created} currency(ies) created." });
     }
 
-    [AllowAnonymous]
     [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] CurrencyRequest request)
     {
@@ -107,7 +102,6 @@ public class CurrenciesController : MyController
 
     // Accepts either the numeric Id or the currency Code — the list page
     // deletes by code, so both keys need to resolve to the same row.
-    [AllowAnonymous]
     [HttpDelete("{key}")]
     public IActionResult Delete(string key)
     {

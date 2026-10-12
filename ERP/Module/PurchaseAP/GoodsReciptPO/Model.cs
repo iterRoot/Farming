@@ -3,8 +3,9 @@ namespace FarmingApi.Modules.PurchaseAP.GoodsReceiptPO;
 // ══════════════════════════════════════════════════════════════════════════════
 // REQUEST
 // ══════════════════════════════════════════════════════════════════════════════
-public class GoodsReceiptPORequest
+public class GoodsReceiptPORequest : FarmingApi.Core.IHasBuyer
 {
+    public string? BuyerCode { get; set; }
     public string    DocNum      { get; set; } = "";
     public int       VendorId    { get; set; }
     public DateTime? PostingDate { get; set; }
@@ -20,6 +21,9 @@ public class GoodsReceiptPORequest
 
 public class GoodsReceiptPOLineRequest
 {
+    /// <summary>Batch / serial numbers for this line — required when the item is managed by them.</summary>
+    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
+
     public int     ItemId    { get; set; }
     public decimal Quantity  { get; set; }
     public decimal Price     { get; set; }
@@ -35,6 +39,7 @@ public class GoodsReceiptPOUpdateRequest : GoodsReceiptPORequest { }
 // ══════════════════════════════════════════════════════════════════════════════
 public class GoodsReceiptPOResponse
 {
+    public string? BuyerCode { get; set; }
     public int       Id         { get; set; }
     public string    DocNum     { get; set; } = "";
     public DateTime? PostingDate { get; set; }

@@ -10,17 +10,18 @@ public class JournalEntryController : MyController
 {
     private readonly IMapper _mapper;
     private readonly IJournalEntryRepository  _repository;
+    private readonly MyDbContext              _db;
 
-    public JournalEntryController(IJournalEntryRepository repository, IMapper mapper)
+    public JournalEntryController(IJournalEntryRepository repository, IMapper mapper, MyDbContext db)
     {
         _mapper     = mapper;
         _repository = repository;
+        _db         = db;
     }
 
     // ═══════════════════════════════════════════════════════════════
     // GET ALL
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet]
     public IActionResult Gets()
     {
@@ -32,7 +33,6 @@ public class JournalEntryController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET BY ID
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public IActionResult Get(int id)
     {
@@ -77,7 +77,7 @@ public class JournalEntryController : MyController
 
         // Map header
         var entity = _mapper.Map<JournalEntry>(request);
-        entity.JrnlNo         = GenerateJournalNumber();
+        entity.JrnlNo         = JournalEntryNumberService.Next(_repository.GetAll(), entity.TransDate);
         entity.TotalDebit     = totalDebit;
         entity.TotalCredit    = totalCredit;
         entity.TotalLC        = totalDebit;
@@ -111,6 +111,10 @@ public class JournalEntryController : MyController
 
             entity.Lines.Add(line);
         }
+
+        // Project / cost-centre tags must be real; a distribution rule is split into its centres.
+        var dimError = FarmingApi.Modules.Financials.CostAccounting.Dimensions.ApplyToEntry(_db, entity);
+        if (dimError != null) return BadRequest(dimError);
 
         _repository.Add(entity);
         _repository.Commit();
@@ -192,6 +196,9 @@ public class JournalEntryController : MyController
             entry.Lines.Add(line);
         }
 
+        var dimError = FarmingApi.Modules.Financials.CostAccounting.Dimensions.ApplyToEntry(_db, entry);
+        if (dimError != null) return BadRequest(dimError);
+
         _repository.Update(entry);
         _repository.Commit();
 
@@ -272,7 +279,7 @@ public class JournalEntryController : MyController
 
         var rev = new JournalEntry
         {
-            JrnlNo          = GenerateJournalNumber(),
+            JrnlNo          = JournalEntryNumberService.Next(_repository.GetAll(), when),
             TransDate       = when,
             DueDate         = when,
             DocDate         = when,
@@ -358,7 +365,6 @@ public class JournalEntryController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET BY DATE RANGE
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet("DateRange")]
     public IActionResult GetByDateRange(
         [FromQuery] DateTime fromDate,
@@ -376,7 +382,6 @@ public class JournalEntryController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET BY ACCOUNT CODE
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
     [HttpGet("ByAccount/{accountCode}")]
     public IActionResult GetByAccount(string accountCode)
     {
@@ -406,7 +411,7 @@ public class JournalEntryController : MyController
 
         var entity = new JournalEntry
         {
-            JrnlNo         = GenerateJournalNumber(),
+            JrnlNo         = JournalEntryNumberService.Next(_repository.GetAll(), request.TransDate),
             TransDate      = request.TransDate,
             DueDate        = request.TransDate,
             DocDate        = request.TransDate,
@@ -460,22 +465,4 @@ public class JournalEntryController : MyController
     // ═══════════════════════════════════════════════════════════════
     // HELPER — Generate Journal Number: JE-2026-00001
     // ═══════════════════════════════════════════════════════════════
-    private string GenerateJournalNumber()
-    {
-        var year    = DateTime.Now.Year;
-        var prefix  = $"JE-{year}-";
-        var last    = _repository.GetAll()
-            .Where(j => j.JrnlNo.StartsWith(prefix))
-            .OrderByDescending(j => j.Id)
-            .FirstOrDefault();
-
-        if (last == null)
-            return $"{prefix}00001";
-
-        var parts = last.JrnlNo.Split('-');
-        if (parts.Length >= 3 && int.TryParse(parts[2], out int lastNumber))
-            return $"{prefix}{(lastNumber + 1):D5}";
-
-        return $"{prefix}00001";
-    }
 }

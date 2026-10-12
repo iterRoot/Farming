@@ -127,7 +127,7 @@ public class ExchangeRateDifferencesController : ControllerBase
         }).ToList();
 
     // ── GET /ExchangeRateDifferences ───────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll([FromQuery] string? currency, [FromQuery] string? status)
     {
         var q = _repo.GetAll().Include(x => x.Lines).AsQueryable();
@@ -145,7 +145,7 @@ public class ExchangeRateDifferencesController : ControllerBase
     }
 
     // ── GET /ExchangeRateDifferences/{id} ──────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var run = _repo.GetAll().Include(x => x.Lines).FirstOrDefault(x => x.Id == id);
@@ -157,7 +157,7 @@ public class ExchangeRateDifferencesController : ControllerBase
     }
 
     // ── POST /ExchangeRateDifferences ──────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] ExchangeRateDifferenceRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -177,7 +177,7 @@ public class ExchangeRateDifferencesController : ControllerBase
     }
 
     // ── PUT /ExchangeRateDifferences/{id} ──────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] ExchangeRateDifferenceRequest dto)
     {
         var run = _repo.GetAll().Include(x => x.Lines).FirstOrDefault(x => x.Id == id);
@@ -201,7 +201,7 @@ public class ExchangeRateDifferencesController : ControllerBase
     }
 
     // ── POST /ExchangeRateDifferences/{id}/Post ────────────────
-    [AllowAnonymous][HttpPost("{id:int}/Post")]
+    [HttpPost("{id:int}/Post")]
     public IActionResult Post(int id)
     {
         var run = _repo.GetAll().Include(x => x.Lines).FirstOrDefault(x => x.Id == id);
@@ -218,7 +218,7 @@ public class ExchangeRateDifferencesController : ControllerBase
     }
 
     // ── POST /ExchangeRateDifferences/{id}/Cancel ──────────────
-    [AllowAnonymous][HttpPost("{id:int}/Cancel")]
+    [HttpPost("{id:int}/Cancel")]
     public IActionResult Cancel(int id)
     {
         var run = _repo.GetAll().Include(x => x.Lines).FirstOrDefault(x => x.Id == id);
@@ -236,7 +236,7 @@ public class ExchangeRateDifferencesController : ControllerBase
     }
 
     // ── DELETE /ExchangeRateDifferences/{id} ───────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var run = _repo.GetAll().Include(x => x.Lines).FirstOrDefault(x => x.Id == id);

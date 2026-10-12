@@ -26,7 +26,7 @@ public class StockTransferController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET ALL
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
+    
     [HttpGet]
     public IActionResult Gets(
         [FromQuery] string?   fromWarehouse = null,
@@ -52,7 +52,7 @@ public class StockTransferController : MyController
     // ═══════════════════════════════════════════════════════════════
     // GET BY ID
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
+    
     [HttpGet("{id:int}")]
     public IActionResult Get(int id)
     {
@@ -183,7 +183,7 @@ public class StockTransferController : MyController
     // Returns a pre-filled StockTransfer payload (not saved yet)
     // so the frontend can show the form pre-populated
     // ═══════════════════════════════════════════════════════════════
-    [AllowAnonymous]
+    
     [HttpPost("CopyFrom")]
     public IActionResult CopyFrom([FromBody] CopyFromRequest request)
     {

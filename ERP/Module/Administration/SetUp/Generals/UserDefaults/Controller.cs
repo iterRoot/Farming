@@ -18,7 +18,7 @@ public class UserDefaultController : ControllerBase
     }
 
     // ── GET /UserDefault ───────────────────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll()
     {
         var list = _repo.GetAll().OrderBy(x => x.UserCode).ToList();
@@ -26,7 +26,7 @@ public class UserDefaultController : ControllerBase
     }
 
     // ── GET /UserDefault/{id} ─────────────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetSingle(x => x.Id == id);
@@ -35,7 +35,7 @@ public class UserDefaultController : ControllerBase
     }
 
     // ── GET /UserDefault/ByCode/{code} ────────────────────────
-    [AllowAnonymous][HttpGet("ByCode/{code}")]
+    [HttpGet("ByCode/{code}")]
     public IActionResult GetByCode(string code)
     {
         var e = _repo.GetSingle(x => x.UserCode == code.Trim().ToUpper());
@@ -44,7 +44,7 @@ public class UserDefaultController : ControllerBase
     }
 
     // ── POST /UserDefault ─────────────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] UserDefaultRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -63,7 +63,7 @@ public class UserDefaultController : ControllerBase
     }
 
     // ── PUT /UserDefault/{id} ─────────────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] UserDefaultRequest dto)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -83,7 +83,7 @@ public class UserDefaultController : ControllerBase
 
     // ── PUT /UserDefault/Upsert ───────────────────────────────
     // Create or update by UserCode — useful for single-user self-update
-    [AllowAnonymous][HttpPut("Upsert")]
+    [HttpPut("Upsert")]
     public IActionResult Upsert([FromBody] UserDefaultRequest dto)
     {
         var code     = dto.UserCode.Trim().ToUpper();
@@ -110,7 +110,7 @@ public class UserDefaultController : ControllerBase
 
     // ── POST /UserDefault/{id}/CopyTo/{targetCode} ────────────
     // Clone one user's defaults to another user
-    [AllowAnonymous][HttpPost("{id:int}/CopyTo/{targetCode}")]
+    [HttpPost("{id:int}/CopyTo/{targetCode}")]
     public IActionResult CopyTo(int id, string targetCode)
     {
         var source = _repo.GetSingle(x => x.Id == id);
@@ -134,7 +134,7 @@ public class UserDefaultController : ControllerBase
     }
 
     // ── DELETE /UserDefault/{id} ──────────────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);

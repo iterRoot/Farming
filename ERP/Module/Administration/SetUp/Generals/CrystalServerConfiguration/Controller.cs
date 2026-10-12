@@ -22,7 +22,7 @@ public class CrystalServerConfigController : ControllerBase
 
     // ── GET /CrystalServerConfig ───────────────────────────────
     // Returns all configs (usually just one record)
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll()
     {
         var list = _repo.GetAll().OrderBy(x => x.Id).ToList();
@@ -31,7 +31,7 @@ public class CrystalServerConfigController : ControllerBase
 
     // ── GET /CrystalServerConfig/Current ──────────────────────
     // Returns the first (active) config — the one the system uses
-    [AllowAnonymous][HttpGet("Current")]
+    [HttpGet("Current")]
     public IActionResult GetCurrent()
     {
         var e = _repo.GetAll().FirstOrDefault(x => x.IsEnabled)
@@ -41,7 +41,7 @@ public class CrystalServerConfigController : ControllerBase
     }
 
     // ── GET /CrystalServerConfig/{id} ─────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetSingle(x => x.Id == id);
@@ -50,7 +50,7 @@ public class CrystalServerConfigController : ControllerBase
     }
 
     // ── POST /CrystalServerConfig ─────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] CrystalServerConfigRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -64,7 +64,7 @@ public class CrystalServerConfigController : ControllerBase
     }
 
     // ── PUT /CrystalServerConfig/{id} ─────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] CrystalServerConfigRequest dto)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -79,7 +79,7 @@ public class CrystalServerConfigController : ControllerBase
 
     // ── PUT /CrystalServerConfig/Upsert ───────────────────────
     // Create if none exists; update existing — useful for single-config pattern
-    [AllowAnonymous][HttpPut("Upsert")]
+    [HttpPut("Upsert")]
     public IActionResult Upsert([FromBody] CrystalServerConfigRequest dto)
     {
         var existing = _repo.GetAll().FirstOrDefault();
@@ -100,7 +100,7 @@ public class CrystalServerConfigController : ControllerBase
     }
 
     // ── DELETE /CrystalServerConfig/{id} ──────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -112,7 +112,7 @@ public class CrystalServerConfigController : ControllerBase
 
     // ── POST /CrystalServerConfig/{id}/Test ───────────────────
     // Ping the Crystal Server host:port to verify connectivity
-    [AllowAnonymous][HttpPost("{id:int}/Test")]
+    [HttpPost("{id:int}/Test")]
     public IActionResult TestConnection(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -163,7 +163,7 @@ public class CrystalServerConfigController : ControllerBase
 
     // ── POST /CrystalServerConfig/{id}/TestSmtp ───────────────
     // Minimal SMTP reachability test (just TCP to SMTP host:port)
-    [AllowAnonymous][HttpPost("{id:int}/TestSmtp")]
+    [HttpPost("{id:int}/TestSmtp")]
     public IActionResult TestSmtp(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);

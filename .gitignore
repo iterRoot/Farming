@@ -30,3 +30,12 @@ appsettings.*.local.json
 *.env
 .env
 Module/Sale/SaleInvoice/SaleInvoiceLine/Entity.cs
+
+# Uploaded files (BP attachments, etc.)
+Storage/
+
+# local Postman collections (contain dev credentials)
+Postman/
+
+# Local run logs
+*.log

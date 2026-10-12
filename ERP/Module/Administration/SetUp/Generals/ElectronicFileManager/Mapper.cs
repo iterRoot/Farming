@@ -24,6 +24,7 @@ public class ElectronicFileMapper : Profile
             .ForMember(d => d.Id,             opt => opt.Ignore())
             .ForMember(d => d.FileCode,       opt => opt.Ignore())
             .ForMember(d => d.FileName,       opt => opt.Ignore())
+            .ForMember(d => d.FileExtension,  opt => opt.Ignore())
             .ForMember(d => d.FileHash,       opt => opt.Ignore())
             .ForMember(d => d.DownloadCount,  opt => opt.Ignore())
             .ForMember(d => d.LastDownloadAt, opt => opt.Ignore())

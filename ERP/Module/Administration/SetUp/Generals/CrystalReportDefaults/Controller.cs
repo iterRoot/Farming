@@ -19,7 +19,7 @@ public class CrystalReportDefaultController : ControllerBase
     }
 
     // ── GET /CrystalReportDefault ──────────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll(
         [FromQuery] string? category     = null,
         [FromQuery] string? documentType = null,
@@ -37,7 +37,7 @@ public class CrystalReportDefaultController : ControllerBase
     }
 
     // ── GET /CrystalReportDefault/{id} ────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetSingle(x => x.Id == id);
@@ -47,7 +47,7 @@ public class CrystalReportDefaultController : ControllerBase
 
     // ── GET /CrystalReportDefault/ForDocument/{docType}?lang=en
     // Returns merged set: All-scope defaults overridden by doc-specific ones
-    [AllowAnonymous][HttpGet("ForDocument/{docType}")]
+    [HttpGet("ForDocument/{docType}")]
     public IActionResult ForDocument(string docType, [FromQuery] string lang = "en")
     {
         var globals  = _repo.GetAll()
@@ -71,7 +71,7 @@ public class CrystalReportDefaultController : ControllerBase
     }
 
     // ── GET /CrystalReportDefault/ByKey/{key} ─────────────────
-    [AllowAnonymous][HttpGet("ByKey/{key}")]
+    [HttpGet("ByKey/{key}")]
     public IActionResult GetByKey(
         string key,
         [FromQuery] string docType = "All",
@@ -87,7 +87,7 @@ public class CrystalReportDefaultController : ControllerBase
     }
 
     // ── GET /CrystalReportDefault/Categories ──────────────────
-    [AllowAnonymous][HttpGet("Categories")]
+    [HttpGet("Categories")]
     public IActionResult GetCategories()
     {
         var cats = _repo.GetAll().Select(x => x.Category)
@@ -96,7 +96,7 @@ public class CrystalReportDefaultController : ControllerBase
     }
 
     // ── POST /CrystalReportDefault ─────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] CrystalReportDefaultRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -117,7 +117,7 @@ public class CrystalReportDefaultController : ControllerBase
     }
 
     // ── PUT /CrystalReportDefault/{id} ────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] CrystalReportDefaultRequest dto)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -138,7 +138,7 @@ public class CrystalReportDefaultController : ControllerBase
     }
 
     // ── PUT /CrystalReportDefault/BulkSave ────────────────────
-    [AllowAnonymous][HttpPut("BulkSave")]
+    [HttpPut("BulkSave")]
     public IActionResult BulkSave([FromBody] List<ElementValueItem> items)
     {
         int updated = 0;
@@ -156,7 +156,7 @@ public class CrystalReportDefaultController : ControllerBase
     }
 
     // ── POST /CrystalReportDefault/{id}/Reset ─────────────────
-    [AllowAnonymous][HttpPost("{id:int}/Reset")]
+    [HttpPost("{id:int}/Reset")]
     public IActionResult Reset(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -176,7 +176,7 @@ public class CrystalReportDefaultController : ControllerBase
     }
 
     // ── POST /CrystalReportDefault/ResetAll ───────────────────
-    [AllowAnonymous][HttpPost("ResetAll")]
+    [HttpPost("ResetAll")]
     public IActionResult ResetAll([FromQuery] string? category = null)
     {
         var all = _repo.GetAll()
@@ -193,7 +193,7 @@ public class CrystalReportDefaultController : ControllerBase
     }
 
     // ── DELETE /CrystalReportDefault/{id} ─────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -206,7 +206,7 @@ public class CrystalReportDefaultController : ControllerBase
     }
 
     // ── POST /CrystalReportDefault/Seed ───────────────────────
-    [AllowAnonymous][HttpPost("Seed")]
+    [HttpPost("Seed")]
     public IActionResult Seed()
     {
         if (_repo.GetAll().Any())

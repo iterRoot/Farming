@@ -2,6 +2,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FarmingApi;
+using FarmingApi.Core;
+using FarmingApi.Modules.Administration.ApprovalRequest;
 using FarmingApi.Modules.Inventory.ItemsMaster;
 using QuestPDF.Fluent;
 using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
@@ -15,10 +17,12 @@ public class PurchaseBlanketAgreementController : ControllerBase
 {
     private readonly MyDbContext _db;
     private readonly IMapper     _mapper;
+    private readonly IApprovalGateService _approvalGate;
+    private readonly IPrintLayoutRenderService _printLayout;
 
-    public PurchaseBlanketAgreementController(MyDbContext db, IMapper mapper)
+    public PurchaseBlanketAgreementController(MyDbContext db, IMapper mapper, IApprovalGateService approvalGate, IPrintLayoutRenderService printLayout)
     {
-        _db = db; _mapper = mapper;
+        _db = db; _mapper = mapper; _approvalGate = approvalGate; _printLayout = printLayout;
     }
 
     // ── GET /PurchaseBlanketAgreement ─────────────────────────────────────
@@ -78,6 +82,77 @@ public class PurchaseBlanketAgreementController : ControllerBase
             _mapper.Map<PurchaseBlanketAgreementResponse>(created));
     }
 
+    // ── POST /PurchaseBlanketAgreement/{id}/Post ─── promotes a Draft
+    // agreement to Open. No GL/inventory side effect — posting is the status
+    // transition.
+    [HttpPost("{id:int}/Post")]
+    public async Task<IActionResult> Post(int id)
+    {
+        var pba = await _db.Set<PurchaseBlanketAgreement>().FindAsync(id);
+        if (pba == null) return NotFound();
+        if (pba.Status != "D")
+            return BadRequest($"Only a Draft document can be posted (current status: {pba.Status}).");
+
+        var gate = await _approvalGate.EvaluateAsync("PurchaseBlanketAgreement", pba.Id, pba.DocNum, pba.Total, this.CurrentUserId() ?? 0);
+        if (gate.RequiresApproval)
+        {
+            pba.Status    = "P";
+            pba.UpdatedAt = DateTime.UtcNow;
+            await _db.SaveChangesAsync();
+            return Ok(new { message = "Submitted for approval", docNum = pba.DocNum, approvalRequestId = gate.ApprovalRequestId });
+        }
+
+        pba.Status    = "O";
+        pba.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Purchase Blanket Agreement posted", docNum = pba.DocNum });
+    }
+
+    // ── POST /PurchaseBlanketAgreement/{id}/Approve ── approves a Pending document and posts it
+    [HttpPost("{id:int}/Approve")]
+    public async Task<IActionResult> Approve(int id)
+    {
+        var pba = await _db.Set<PurchaseBlanketAgreement>().FindAsync(id);
+        if (pba == null) return NotFound();
+        if (pba.Status != "P")
+            return BadRequest($"Only a document pending approval can be approved (current status: {pba.Status}).");
+
+        var userId = this.CurrentUserId();
+        if (userId == null) return Forbid();
+
+        var decision = await _approvalGate.DecideAsync("PurchaseBlanketAgreement", pba.Id, "Approved", userId.Value, null);
+        if (!decision.Success) return BadRequest(decision.Error);
+
+        pba.Status    = "O";
+        pba.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Purchase Blanket Agreement approved and posted", docNum = pba.DocNum });
+    }
+
+    // ── POST /PurchaseBlanketAgreement/{id}/Reject ── rejects a Pending document back to Draft
+    [HttpPost("{id:int}/Reject")]
+    public async Task<IActionResult> Reject(int id, [FromBody] ApprovalDecisionRequest? body)
+    {
+        var pba = await _db.Set<PurchaseBlanketAgreement>().FindAsync(id);
+        if (pba == null) return NotFound();
+        if (pba.Status != "P")
+            return BadRequest($"Only a document pending approval can be rejected (current status: {pba.Status}).");
+
+        var userId = this.CurrentUserId();
+        if (userId == null) return Forbid();
+
+        var decision = await _approvalGate.DecideAsync("PurchaseBlanketAgreement", pba.Id, "Rejected", userId.Value, body?.Remarks);
+        if (!decision.Success) return BadRequest(decision.Error);
+
+        pba.Status    = "D";
+        pba.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Purchase Blanket Agreement rejected", docNum = pba.DocNum });
+    }
+
     // ── PUT /PurchaseBlanketAgreement/{id} ────────────────────────────────
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] PurchaseBlanketAgreementUpdateRequest dto)
@@ -116,6 +191,9 @@ public class PurchaseBlanketAgreementController : ControllerBase
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (pba == null) return NotFound();
+
+        var customHtml = await _printLayout.TryRenderAsync("PurchaseBlanketAgreement", pba, pba.Items);
+        if (customHtml != null) return Content(customHtml, "text/html");
 
         var company = await _db.Set<CompanyEntity>().OrderBy(x => x.Id).FirstOrDefaultAsync();
         var pdfBytes = new PurchaseBlanketAgreementPdfDocument(pba, company).GeneratePdf();

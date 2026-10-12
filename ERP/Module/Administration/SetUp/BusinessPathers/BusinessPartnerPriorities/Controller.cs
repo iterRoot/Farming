@@ -18,7 +18,7 @@ public class BPPropertyController : ControllerBase
     }
 
     // ── GET /BPProperty ───────────────────────────────────────
-    [AllowAnonymous][HttpGet]
+    [HttpGet]
     public IActionResult GetAll([FromQuery] string? appliesTo = null)
     {
         var query = _repo.GetAll()
@@ -32,7 +32,7 @@ public class BPPropertyController : ControllerBase
     }
 
     // ── GET /BPProperty/{id} ──────────────────────────────────
-    [AllowAnonymous][HttpGet("{id:int}")]
+    [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
         var e = _repo.GetSingle(x => x.Id == id);
@@ -41,7 +41,7 @@ public class BPPropertyController : ControllerBase
     }
 
     // ── POST /BPProperty ──────────────────────────────────────
-    [AllowAnonymous][HttpPost]
+    [HttpPost]
     public IActionResult Create([FromBody] BPPropertyRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -68,7 +68,7 @@ public class BPPropertyController : ControllerBase
     }
 
     // ── PUT /BPProperty/{id} ──────────────────────────────────
-    [AllowAnonymous][HttpPut("{id:int}")]
+    [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] BPPropertyRequest dto)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
@@ -87,7 +87,7 @@ public class BPPropertyController : ControllerBase
     }
 
     // ── DELETE /BPProperty/{id} ───────────────────────────────
-    [AllowAnonymous][HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
         var entity = _repo.GetSingle(x => x.Id == id);
