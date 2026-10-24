@@ -1,0 +1,61 @@
+# Render Blueprint — free tier. Deploy with: New + > Blueprint > pick this file
+# (Render defaults to render.yaml, so enter "render.free.yaml" as the Blueprint path).
+#
+# Free-tier limits to know about:
+#   - The web service sleeps after ~15 min idle; the first request then takes ~30-60 s.
+#   - Its disk is ephemeral: files under Storage/attachments are lost on every restart/redeploy.
+#   - A free Postgres database expires 30 days after creation (14-day grace to upgrade).
+#
+# No healthCheckPath on purpose: every endpoint (including "/") requires a JWT, so any
+# path would return 401 and Render would mark the deploy as failed.
+
+databases:
+  - name: farming-db
+    plan: free
+    databaseName: Farming
+    user: farming
+
+services:
+  - type: web
+    name: farming-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:10000
+      - key: PORT
+        value: "10000"
+      # Render terminates TLS at its proxy; trust X-Forwarded-Proto so UseHttpsRedirection doesn't loop.
+      - key: ASPNETCORE_FORWARDEDHEADERS_ENABLED
+        value: "true"
+      # Signing key for JWTs (must be >= 32 bytes). Generated once and kept across deploys.
+      - key: Jwt__Key
+        generateValue: true
+      # Applies EF migrations on boot (see Program.cs) — a fresh database has no tables.
+      - key: RunMigrationsOnStartup
+        value: "true"
+      # Assembled into the DB_CONNECTION connection string by the Dockerfile CMD.
+      - key: DB_HOST
+        fromDatabase:
+          name: farming-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: farming-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: farming-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: farming-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: farming-db
+          property: password

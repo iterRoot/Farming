@@ -139,6 +139,13 @@ builder.Services.AddAuthorization(options =>
 });
 var app = builder.Build();
 
+// Opt-in (RunMigrationsOnStartup=true): hosted deploys start from an empty database.
+if (builder.Configuration.GetValue<bool>("RunMigrationsOnStartup"))
+{
+    using var migrationScope = app.Services.CreateScope();
+    migrationScope.ServiceProvider.GetRequiredService<MyDbContext>().Database.Migrate();
+}
+
 // Guarantee a "Manager" login always exists — idempotent, safe to run
 // on every startup (fresh database, restore, or accidental deletion).
 FarmingApi.Core.DefaultUserSeeder.Seed(app.Services);
