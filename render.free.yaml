@@ -1,19 +1,15 @@
-# Render Blueprint — free tier. Deploy with: New + > Blueprint > pick this file
+# Render Blueprint — free tier, database on Neon. Deploy with: New + > Blueprint > pick this file
 # (Render defaults to render.yaml, so enter "render.free.yaml" as the Blueprint path).
+#
+# After the first sync, open the service > Environment and set DB_CONNECTION (see below).
 #
 # Free-tier limits to know about:
 #   - The web service sleeps after ~15 min idle; the first request then takes ~30-60 s.
 #   - Its disk is ephemeral: files under Storage/attachments are lost on every restart/redeploy.
-#   - A free Postgres database expires 30 days after creation (14-day grace to upgrade).
+#   - Neon's free compute pauses when idle; the first query after a pause is a bit slower.
 #
 # No healthCheckPath on purpose: every endpoint (including "/") requires a JWT, so any
 # path would return 401 and Render would mark the deploy as failed.
-
-databases:
-  - name: farming-db
-    plan: free
-    databaseName: farming
-    user: farming
 
 services:
   - type: web
@@ -38,24 +34,10 @@ services:
       # Applies EF migrations on boot (see Program.cs) — a fresh database has no tables.
       - key: RunMigrationsOnStartup
         value: "true"
-      # Assembled into the DB_CONNECTION connection string by the Dockerfile CMD.
-      - key: DB_HOST
-        fromDatabase:
-          name: farming-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: farming-db
-          property: port
-      - key: DB_NAME
-        fromDatabase:
-          name: farming-db
-          property: database
-      - key: DB_USER
-        fromDatabase:
-          name: farming-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: farming-db
-          property: password
+      # Neon connection string, set by hand in the Render dashboard (sync: false keeps it out of git).
+      # Npgsql needs the key=value form, NOT Neon's postgresql:// URL:
+      #   Host=<endpoint>.<region>.aws.neon.tech;Database=<db>;Username=<user>;Password=<password>;SSL Mode=Require
+      # Use the DIRECT host (no "-pooler" in the name): EF migrations take a session advisory lock,
+      # which Neon's pooled endpoint doesn't support.
+      - key: DB_CONNECTION
+        sync: false
