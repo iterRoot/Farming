@@ -12,7 +12,7 @@
 databases:
   - name: farming-db
     plan: free
-    databaseName: Farming
+    databaseName: farming
     user: farming
 
 services:
