@@ -19,6 +19,7 @@ public class PurchaseRequest : AuditableEntity
     public string    DocNum       { get; set; } = "";
     public int?      VendorId     { get; set; }   // optional — may not be chosen yet
     public BPEntity?  Vendor       { get; set; }
+    public string?   BuyerCode    { get; set; }   // buyer (KSEB code)
     public string?   RequestedBy  { get; set; }
     public string?   Department   { get; set; }
     public DateTime? PostingDate  { get; set; }
@@ -67,6 +68,7 @@ public class PurchaseRequestConfig : IEntityTypeConfiguration<PurchaseRequest>
         // means a bug in reservation — fail loudly rather than silently
         // storing two documents under one number.
         builder.HasIndex(x => x.DocNum).IsUnique();
+        builder.Property(x => x.BuyerCode).HasMaxLength(50);
         builder.Property(x => x.RequestedBy).HasMaxLength(200);
         builder.Property(x => x.Department).HasMaxLength(200);
         builder.Property(x => x.Status).HasMaxLength(10);

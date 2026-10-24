@@ -21,6 +21,7 @@ public class Return : AuditableEntity          // ✅ not "Return" — reserved 
     public decimal   TaxAmount   { get; set; }
     public decimal   Total       { get; set; }
     public string?   Remarks     { get; set; }
+    public string?   SalesEmployeeCode { get; set; }   // sales employee (KSEB code)
 
     public int      CustomerId { get; set; }
     public BPEntity Customer   { get; set; } = null!;
@@ -81,6 +82,7 @@ public class ReturnConfig : IEntityTypeConfiguration<Return>
     public void Configure(EntityTypeBuilder<Return> builder)
     {
         builder.ToTable("KARE");   // ✅ AR Return header (was "deliveries" — wrong!)
+        builder.Property(x => x.SalesEmployeeCode).HasMaxLength(50);
         builder.HasKey(x => x.Id);
 
         builder.Property(m => m.DocNum).HasMaxLength(100).IsRequired();

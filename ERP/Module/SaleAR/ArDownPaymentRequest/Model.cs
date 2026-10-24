@@ -18,6 +18,7 @@ public class ArDownPaymentRequestRequest
     public decimal   DownPaymentPct { get; set; }
     public decimal   DownPaymentAmt { get; set; }
     public string?   Remarks        { get; set; }
+    public string?   SalesEmployeeCode { get; set; }
 
     public List<ArDownPaymentRequestLineRequest> Items { get; set; } = new();
 }
@@ -68,6 +69,7 @@ public class ArDownPaymentRequestResponse
     public decimal   DownPaymentPct { get; set; }
     public decimal   DownPaymentAmt { get; set; }
     public string?   Remarks        { get; set; }
+    public string?   SalesEmployeeCode { get; set; }
     public DateTime  CreatedAt      { get; set; }
 
     // The down payment invoice that settled this request, if any.

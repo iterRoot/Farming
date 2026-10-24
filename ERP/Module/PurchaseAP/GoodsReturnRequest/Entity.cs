@@ -17,6 +17,7 @@ public class GoodsReturnRequest : AuditableEntity
     public string    Status      { get; set; } = "O";
     public decimal   Total       { get; set; }
     public string?   Remarks     { get; set; }
+    public string?   BuyerCode   { get; set; }   // buyer (KSEB code)
 
     public int      VendorId { get; set; }
     public BPEntity Vendor   { get; set; } = null!;
@@ -61,6 +62,7 @@ public class GoodsReturnRequestConfig : IEntityTypeConfiguration<GoodsReturnRequ
         builder.Property(x => x.DocNum).HasMaxLength(100).IsRequired();
         builder.Property(x => x.Status).HasMaxLength(10);
         builder.Property(x => x.Remarks).HasMaxLength(500);
+        builder.Property(x => x.BuyerCode).HasMaxLength(50);
         builder.Property(x => x.Total).HasPrecision(18, 2);
 
         builder.HasOne(x => x.Vendor)

@@ -16,6 +16,7 @@ public class ReturnListRequest
     public decimal   TaxAmount    { get; set; }
     public decimal   Total        { get; set; }
     public string?   Remarks      { get; set; }
+    public string?   SalesEmployeeCode { get; set; }
 
     public List<ReturnLineRequest> Items { get; set; } = new();
 }
@@ -71,6 +72,7 @@ public class ReturnListResponse
     public decimal   TaxAmount    { get; set; }
     public decimal   Total        { get; set; }
     public string?   Remarks      { get; set; }
+    public string?   SalesEmployeeCode { get; set; }
     public DateTime  CreatedAt    { get; set; }
 
     public int     CustomerId   { get; set; }

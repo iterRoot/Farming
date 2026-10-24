@@ -13,6 +13,7 @@ public class ARDownPaymentListRequest  // ✅ renamed
     public decimal   TaxAmount   { get; set; }
     public decimal   Total       { get; set; }
     public string?   Remarks     { get; set; }
+    public string?   SalesEmployeeCode { get; set; }
     public int?      BaseEntry   { get; set; }   // request being invoiced (set on create only)
     public string?   BaseType    { get; set; }
 
@@ -60,6 +61,7 @@ public class ARDownPaymentListResponse  // ✅ renamed
     public decimal   TaxAmount   { get; set; }
     public decimal   Total       { get; set; }
     public string?   Remarks     { get; set; }
+    public string?   SalesEmployeeCode { get; set; }
     public DateTime  CreatedAt   { get; set; }
     public int?      BaseEntry   { get; set; }
     public string?   BaseType    { get; set; }

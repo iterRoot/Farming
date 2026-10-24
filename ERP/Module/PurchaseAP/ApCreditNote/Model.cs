@@ -1,7 +1,8 @@
 namespace FarmingApi.Modules.PurchaseAP.APCreditNote;
 
-public class APCreditNoteRequest
+public class APCreditNoteRequest : FarmingApi.Core.IHasBuyer
 {
+    public string?   BuyerCode   { get; set; }
     public string    DocNum      { get; set; } = "";
     public int       VendorId    { get; set; }
     public DateTime? PostingDate { get; set; }
@@ -42,6 +43,7 @@ public class APCreditNoteResponse
     public decimal   TaxAmount   { get; set; }
     public decimal   Total       { get; set; }
     public string?   Remarks     { get; set; }
+    public string?   BuyerCode   { get; set; }
     public DateTime  CreatedAt   { get; set; }
 
     public int    VendorId   { get; set; }

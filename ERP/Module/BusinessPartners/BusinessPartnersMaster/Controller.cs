@@ -43,9 +43,6 @@ public class BusinessPartnersMasterController : MyController
         _db.Set<SaleOrderEntity>()
             .Where(o => o.CustomerId == customerId && o.Status == "O")
             .Sum(o => (decimal?)o.Total) ?? 0m;
-
-    // Cheques for Collection: open Incoming Payments recorded by check for this BP.
-    // IncomingPayment links by CardCode (string), not the BP's int Id, so match on Code.
     private decimal OpenChequesBalance(string? bpCode) =>
         string.IsNullOrEmpty(bpCode)
             ? 0m

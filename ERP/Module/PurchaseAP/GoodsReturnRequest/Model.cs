@@ -1,7 +1,8 @@
 namespace FarmingApi.Modules.PurchaseAP.GoodsReturnRequest;
 
-public class GoodsReturnRequestRequest
+public class GoodsReturnRequestRequest : FarmingApi.Core.IHasBuyer
 {
+    public string?   BuyerCode   { get; set; }
     public string    DocNum      { get; set; } = "";
     public int       VendorId    { get; set; }
     public DateTime? PostingDate { get; set; }
@@ -32,6 +33,7 @@ public class GoodsReturnRequestResponse
     public string    Status      { get; set; } = "O";
     public decimal   Total       { get; set; }
     public string?   Remarks     { get; set; }
+    public string?   BuyerCode   { get; set; }
     public DateTime  CreatedAt   { get; set; }
 
     public int    VendorId   { get; set; }

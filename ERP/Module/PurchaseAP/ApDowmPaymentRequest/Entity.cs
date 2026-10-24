@@ -18,6 +18,7 @@ public class APDownPaymentRequest : AuditableEntity
     public string    Type        { get; set; } = "Item"; // Item | Service
     public decimal   Total       { get; set; }
     public string?   Remarks     { get; set; }
+    public string?   BuyerCode   { get; set; }   // buyer (KSEB code)
 
     // ── FK → BusinessPartner (Vendor) ─────────────────────────────────────
     public int      VendorId { get; set; }
@@ -44,6 +45,7 @@ public class APDownPaymentRequestConfig : IEntityTypeConfiguration<APDownPayment
         builder.Property(x => x.Status).HasMaxLength(10);
         builder.Property(x => x.Type).HasMaxLength(50);
         builder.Property(x => x.Remarks).HasMaxLength(500);
+        builder.Property(x => x.BuyerCode).HasMaxLength(50);
         builder.Property(x => x.Total).HasPrecision(18, 2);
 
         builder.HasOne(x => x.Vendor)

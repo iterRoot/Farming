@@ -3,10 +3,11 @@ namespace FarmingApi.Modules.PurchaseAP.PurchaseRequest;
 // ══════════════════════════════════════════════════════════════════════════════
 // REQUEST (UI → API)
 // ══════════════════════════════════════════════════════════════════════════════
-public class PurchaseRequestRequest
+public class PurchaseRequestRequest : FarmingApi.Core.IHasBuyer
 {
     public string    DocNum       { get; set; } = "";
     public int?      VendorId     { get; set; }
+    public string?   BuyerCode    { get; set; }
     public string?   RequestedBy  { get; set; }
     public string?   Department   { get; set; }
     public DateTime? PostingDate  { get; set; }
@@ -51,6 +52,7 @@ public class PurchaseRequestResponse
     public int?    VendorId   { get; set; }
     public string? VendorCode { get; set; }
     public string? VendorName { get; set; }
+    public string? BuyerCode  { get; set; }
 
     public List<PurchaseRequestLineResponse> Items { get; set; } = new();
 }

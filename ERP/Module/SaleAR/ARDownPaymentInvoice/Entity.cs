@@ -18,6 +18,7 @@ public class ARDownPaymentInvoice : AuditableEntity
     public decimal   TaxAmount   { get; set; }
     public decimal   Total       { get; set; }
     public string?   Remarks     { get; set; }
+    public string?   SalesEmployeeCode { get; set; }   // sales employee (KSEB code)
 
     // The A/R Down Payment Request this invoice settles (plain id, not an FK —
     // the request's own delete action refuses while an invoice points at it).
@@ -68,6 +69,7 @@ public class ARDownPaymentInvoiceConfig : IEntityTypeConfiguration<ARDownPayment
     public void Configure(EntityTypeBuilder<ARDownPaymentInvoice> builder)
     {
         builder.ToTable("KADI");  // ✅ own table!
+        builder.Property(x => x.SalesEmployeeCode).HasMaxLength(50);
         builder.HasKey(x => x.Id);
 
         builder.Property(m => m.DocNum).HasMaxLength(100).IsRequired();

@@ -1,7 +1,8 @@
 namespace FarmingApi.Modules.PurchaseAP.GoodsReturn;
 
-public class GoodsReturnRequest
+public class GoodsReturnRequest : FarmingApi.Core.IHasBuyer
 {
+    public string?   BuyerCode   { get; set; }
     public string    DocNum      { get; set; } = "";
     public int       VendorId    { get; set; }
     public DateTime? PostingDate { get; set; }
@@ -37,6 +38,7 @@ public class GoodsReturnResponse
     public string    Status      { get; set; } = "O";
     public decimal   Total       { get; set; }
     public string?   Remarks     { get; set; }
+    public string?   BuyerCode   { get; set; }
     public DateTime  CreatedAt   { get; set; }
 
     // Auto-created Journal Entry (reverse of Goods Receipt PO).

@@ -23,6 +23,7 @@ public class ArDownPaymentRequest : AuditableEntity
     public decimal   DownPaymentPct { get; set; }
     public decimal   DownPaymentAmt { get; set; }
     public string?   Remarks        { get; set; }
+    public string?   SalesEmployeeCode { get; set; }   // sales employee (KSEB code)
 
     // ── FK → BusinessPartner ──────────────────────────────────────────────
     public int      CustomerId { get; set; }
@@ -76,6 +77,7 @@ public class ArDownPaymentRequestConfig : IEntityTypeConfiguration<ArDownPayment
     public void Configure(EntityTypeBuilder<ArDownPaymentRequest> builder)
     {
         builder.ToTable("KADR");   // ✅ own table
+        builder.Property(x => x.SalesEmployeeCode).HasMaxLength(50);
         builder.HasKey(x => x.Id);
 
         builder.Property(m => m.DocNum).HasMaxLength(100).IsRequired();

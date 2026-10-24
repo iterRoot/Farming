@@ -16,6 +16,7 @@ public class ARReserveInvoiceRequest
     public decimal   TaxAmount   { get; set; }
     public decimal   Total       { get; set; }
     public string?   Remarks     { get; set; }
+    public string?   SalesEmployeeCode { get; set; }
 
     public List<ARReserveInvoiceLineRequest> Items { get; set; } = new();
 }
@@ -64,6 +65,7 @@ public class ARReserveInvoiceResponse
     public decimal   TaxAmount   { get; set; }
     public decimal   Total       { get; set; }
     public string?   Remarks     { get; set; }
+    public string?   SalesEmployeeCode { get; set; }
     public DateTime  CreatedAt   { get; set; }
 
     // Auto-created Journal Entry (DR AR / CR Revenue / CR Output VAT).

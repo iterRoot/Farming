@@ -22,6 +22,7 @@ public class APReserveInvoice : AuditableEntity
     public decimal   TaxAmount   { get; set; }
     public decimal   Total       { get; set; }
     public string?   Remarks     { get; set; }
+    public string?   BuyerCode   { get; set; }   // buyer (KSEB code)
 
     public int      VendorId { get; set; }
     public BPEntity Vendor   { get; set; } = null!;
@@ -67,6 +68,7 @@ public class APReserveInvoiceConfig : IEntityTypeConfiguration<APReserveInvoice>
         builder.Property(x => x.Status).HasMaxLength(10);
         builder.Property(x => x.Type).HasMaxLength(50);
         builder.Property(x => x.Remarks).HasMaxLength(500);
+        builder.Property(x => x.BuyerCode).HasMaxLength(50);
         builder.Property(x => x.Discount).HasPrecision(18, 2);
         builder.Property(x => x.Tax).HasPrecision(18, 2);
         builder.Property(x => x.TaxAmount).HasPrecision(18, 2);
