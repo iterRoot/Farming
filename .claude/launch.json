@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "kamnttra-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "/Volumes/codefile/KAMNTTRA", "run", "dev"],
+      "port": 5173,
+      "url": "http://localhost:5173"
+    }
+  ]
+}

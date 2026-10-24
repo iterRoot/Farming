@@ -1,13 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿ 
+ <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>47eb1986-21b9-4e63-8b38-3c5e7dc804bc</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="15.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
@@ -21,6 +24,22 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.3" />
             <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
     <PackageReference Include="NSwag.AspNetCore" Version="14.1.0" />
+    <PackageReference Include="QuestPDF" Version="2026.7.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ERP\Module\PurchaseAP\PurchaseReports\BlanketAgreementFulfillmentReport\" />
+    <Folder Include="ERP\Module\PurchaseAP\PurchaseReports\DocumentDraftsReport\" />
+    <Folder Include="ERP\Module\PurchaseAP\PurchaseReports\OpenItemsList\" />
+    <Folder Include="ERP\Module\PurchaseAP\PurchaseReports\PurchaseAnalysis\" />
+    <Folder Include="ERP\Module\PurchaseAP\PurchaseReports\PurchaseQuotationComparisonReport\" />
+    <Folder Include="ERP\Module\PurchaseAP\PurchaseReports\PurchaseRequestReport\" />
+    <Folder Include="ERP\Module\SaleAR\SaleReports\BackOrder\" />
+    <Folder Include="ERP\Module\SaleAR\SaleReports\BlanketAgreementFulfillmentReport\" />
+    <Folder Include="ERP\Module\SaleAR\SaleReports\DocumentDraftsReport\" />
+    <Folder Include="ERP\Module\SaleAR\SaleReports\OpenItemsList\" />
+    <Folder Include="ERP\Module\SaleAR\SaleReports\SaleAnalysis\" />
   </ItemGroup>
 
 </Project>

@@ -1,56 +1,75 @@
-// using System.Net.Http.Headers;
-// using FarmingApi.Core;
 
-// namespace EventHubChatting.Core;
+using FarmingApi.Modules.Administration.DocumentNumberRange;
+using FarmingApi.Modules.Financials.GLAccountDetermination;
+using FarmingApi.Modules.Financials.JournalEntry;
+using FarmingApi.Modules.SaleAR.ARInvoice;
+using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+namespace FarmingApi.Services;
 
-// public class ServiceHttpClient
-// {
-// 	private readonly HttpClient _httpClient;
+// ═══════════════════════════════════════════════════════════════════
+// Place this file at:  /ERP/Services/DocumentNumberService.cs
+// Register in Program.cs:
+//   builder.Services.AddScoped<IDocumentNumberService, DocumentNumberService>();
+// ═══════════════════════════════════════════════════════════════════
 
-// 	public ServiceHttpClient(string path)
-// 	{
-// 		_httpClient = new HttpClient();
-// 		var environment = _getEnv();
-// 		_httpClient.BaseAddress = new Uri($"https://{path}-{environment}.eventhub.one");
-// 		// _addToken();
-// 	}
+public interface IDocumentNumberService
+{
+    string Next(string documentType, string? seriesName = null);
+    string Peek(string documentType, string? seriesName = null);
+}
 
-// 	private static string _getEnv()
-// 	{
-// 		var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-// 		return env switch
-// 		{
-// 			"Production" => "prod",
-// 			"Uat" => "uat",
-// 			_ => "dev"
-// 		};
-// 	}
+public class DocumentNumberService : IDocumentNumberService
+{
+    private readonly MyDbContext _db;
 
-// 	// private void _addToken()
-// 	// {
-// 	// 	var id = Environment.GetEnvironmentVariable("SERVICE_ID") ?? "93bfb7c4-dfde-487a-a5fb-0d01f77a64c5";
-// 	// 	// var token = AuthenticationExtension.GenerateToken(Guid.Parse(id), "Service");
-// 	// 	_httpClient.DefaultRequestHeaders.Authorization =
-// 	// 		new AuthenticationHeaderValue("Bearer", token);
-// 	// }
+    public DocumentNumberService(MyDbContext db) => _db = db;
 
-// 	public async Task<HttpResponseMessage> GetAsync(string path)
-// 	{
-// 		return await _httpClient.GetAsync(path);
-// 	}
+    public string Next(string documentType, string? seriesName = null)
+    {
+        var range = GetRange(documentType, seriesName);
 
-// 	public async Task<HttpResponseMessage> PostAsync<T>(string path, T body)
-// 	{
-// 		return await _httpClient.PostAsJsonAsync(path, body);
-// 	}
+        if (range == null)
+            throw new InvalidOperationException(
+                $"No number range configured for '{documentType}'. " +
+                "Go to Administration → Document Numbering to create one.");
 
-// 	public async Task<HttpResponseMessage> PutAsync<T>(string path, T body)
-// 	{
-// 		return await _httpClient.PutAsJsonAsync(path, body);
-// 	}
+        if (range.IsLocked)
+            throw new InvalidOperationException(
+                $"Series '{range.SeriesName}' for '{documentType}' is locked.");
 
-// 	public async Task<HttpResponseMessage> DeleteAsync(string path)
-// 	{
-// 		return await _httpClient.DeleteAsync(path);
-// 	}
-// }
+        if (range.LastNum.HasValue && range.NextNum > range.LastNum.Value)
+            throw new InvalidOperationException(
+                $"Number range for '{documentType}' is exhausted (max: {range.LastNum}).");
+
+        int num = range.NextNum;
+        range.NextNum++;
+        range.UpdatedAt = DateTime.UtcNow;
+        _db.SaveChanges();
+        return Format(range, num);
+    }
+
+    public string Peek(string documentType, string? seriesName = null)
+    {
+        var range = GetRange(documentType, seriesName);
+        if (range == null) return $"{documentType}-NOT-CONFIGURED";
+        return Format(range, range.NextNum);
+    }
+
+    private DocumentNumberRange? GetRange(string documentType, string? seriesName)
+    {
+        var q = _db.Set<DocumentNumberRange>()
+                   .Where(d => d.DocumentType == documentType && !d.IsLocked);
+        return !string.IsNullOrEmpty(seriesName)
+            ? q.FirstOrDefault(d => d.SeriesName == seriesName)
+            : q.FirstOrDefault(d => d.IsDefault) ?? q.FirstOrDefault();
+    }
+
+    public static string Format(DocumentNumberRange range, int num)
+    {
+        var parts = new List<string> { range.Prefix };
+        if (range.IncludeYear) parts.Add(DateTime.Now.Year.ToString());
+        parts.Add(num.ToString().PadLeft(range.PadLength, '0'));
+        return string.Join("-", parts);
+    }
+
+}

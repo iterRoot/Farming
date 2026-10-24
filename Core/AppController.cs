@@ -7,15 +7,6 @@ namespace FarmingApi.Core;
 [Route("[controller]")]
 public class MyController : ControllerBase
 {
-    // [NonAction]
-    // protected Auth? GetClaim()
-    // {
-    //     if (User.Identity is ClaimsIdentity claimsIdentity && claimsIdentity.Claims.Any())
-    //         return new Auth(claimsIdentity.Claims);
-
-    //     return null;
-    // }
-
     [NonAction]
     protected IActionResult Success(dynamic? data = null, PaginationResponse? pagination = null)
     {

@@ -1,0 +1,93 @@
+
+// ═══════════════════════════════════════════════════════════════
+// Controller.cs
+// ═══════════════════════════════════════════════════════════════
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace FarmingApi.Modules.Inventory.Locations;
+
+[ApiController]
+[Route("[controller]")]
+public class LocationController : ControllerBase
+{
+    private readonly ILocationRepository _repository;
+    private readonly IMapper             _mapper;
+
+    public LocationController(ILocationRepository repository, IMapper mapper)
+    {
+        _repository = repository;
+        _mapper     = mapper;
+    }
+
+    [HttpGet]
+    public IActionResult GetAll([FromQuery] string? warehouse = null)
+    {
+        var query = _repository.GetAll()
+            .Where(x => warehouse == null || x.WarehouseCode == warehouse)
+            .OrderBy(x => x.WarehouseCode)
+            .ThenBy(x => x.Aisle)
+            .ThenBy(x => x.Row)
+            .ThenBy(x => x.Shelf)
+            .ThenBy(x => x.Bin)
+            .ToList();
+        return Ok(_mapper.Map<List<LocationResponse>>(query));
+    }
+
+    [HttpGet("{id:int}")]
+    public IActionResult GetById(int id)
+    {
+        var e = _repository.GetSingle(x => x.Id == id);
+        if (e == null) return NotFound();
+        return Ok(_mapper.Map<LocationResponse>(e));
+    }
+
+    [HttpPost]
+    public IActionResult Create([FromBody] LocationRequest dto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        var code = dto.Code.Trim().ToUpper();
+        if (_repository.GetAll().Any(x => x.Code == code))
+            return BadRequest($"Location code '{code}' already exists");
+
+        var entity            = _mapper.Map<Location>(dto);
+        entity.Code           = code;
+        entity.WarehouseCode  = dto.WarehouseCode?.Trim().ToUpper();
+        entity.CreatedAt      = DateTime.UtcNow;
+        entity.InActive       = false;
+        _repository.Add(entity);
+        _repository.Commit();
+        return Ok(_mapper.Map<LocationResponse>(entity));
+    }
+
+    [HttpPut("{id:int}")]
+    public IActionResult Update(int id, [FromBody] LocationRequest dto)
+    {
+        var entity = _repository.GetSingle(x => x.Id == id);
+        if (entity == null) return NotFound();
+
+        var code = dto.Code.Trim().ToUpper();
+        if (_repository.GetAll().Any(x => x.Code == code && x.Id != id))
+            return BadRequest($"Location code '{code}' already exists");
+
+        _mapper.Map(dto, entity);
+        entity.Code          = code;
+        entity.WarehouseCode = dto.WarehouseCode?.Trim().ToUpper();
+        entity.UpdatedAt     = DateTime.UtcNow;
+        _repository.Update(entity);
+        _repository.Commit();
+        return Ok(_mapper.Map<LocationResponse>(entity));
+    }
+
+    [HttpDelete("{id:int}")]
+    public IActionResult Delete(int id)
+    {
+        var entity = _repository.GetSingle(x => x.Id == id);
+        if (entity == null) return NotFound();
+        _repository.Remove(entity);
+        _repository.Commit();
+        return NoContent();
+    }
+}
