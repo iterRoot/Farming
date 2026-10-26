@@ -30,6 +30,11 @@ builder.Services.AddControllers(options =>
     options.Filters.Add<FarmingApi.Core.DocLinkFilter>();
     options.Filters.Add<FarmingApi.Modules.Administration.UserDefinedFields.UdfCleanupFilter>();
 });
+// Deployed front-end origins (comma-separated), e.g. Cors__AllowedOrigins=https://kamnttra.vercel.app
+var allowedOrigins = (builder.Configuration["Cors:AllowedOrigins"] ?? "")
+    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+    .Select(o => o.TrimEnd('/'))
+    .ToHashSet(StringComparer.OrdinalIgnoreCase);
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReact",
@@ -43,7 +48,7 @@ builder.Services.AddCors(options =>
                 .SetIsOriginAllowed(origin =>
                 {
                     if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri)) return false;
-                    return uri.Host is "localhost" or "127.0.0.1";
+                    return uri.Host is "localhost" or "127.0.0.1" || allowedOrigins.Contains(origin.TrimEnd('/'));
                 })
                 .AllowAnyHeader()
                 .AllowAnyMethod();
