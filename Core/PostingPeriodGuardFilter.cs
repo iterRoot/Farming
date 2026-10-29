@@ -74,6 +74,10 @@ public static class PostingPeriodDocMap
         ("/ConversionDifferences", "Financial"),
         ("/ExchangeRateDifferences", "Financial"),
         ("/DepreciationRun", "Financial"),
+        ("/BankStatement", "Financial"), // only the row Post action carries a PostingDate
+        ("/InternalTransfer", "Financial"),
+        ("/CreditCardSettlement", "Financial"),
+        ("/PeriodEndClosing", "Financial"),
     };
 
     // Most request DTOs carry the date as "PostingDate"; a few name it

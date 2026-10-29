@@ -121,7 +121,10 @@ public static class SubjectMap
         ["bank.deposit"]              = new[] { "/Deposit" },
         ["bank.paymentRun"]           = new[] { "/PaymentRun" },
         ["bank.reconciliation"]       = new[] { "/BankReconciliation" },
-        ["bank.reconciliation"]       = new[] { "/BankReconciliation" },
+        ["bank.statement"]            = new[] { "/BankStatement" },
+        ["bank.internalTransfer"]     = new[] { "/InternalTransfer" },
+        ["bank.creditCard"]           = new[] { "/CreditCard", "/CreditCardSettlement" },
+        ["fin.periodEndClosing"]      = new[] { "/PeriodEndClosing" },
 
         ["inv.itemMaster"]            = new[] { "/ItemsMaster" },
         ["inv.warehouse"]             = new[] { "/Warehouse" },
@@ -212,6 +215,16 @@ public class SubjectAuthorizationFilter : IAsyncAuthorizationFilter
             || (p.StartsWith("/usertable/") && p.EndsWith("/rows"));
     }
 
+    // Every signed-in user may read the password rules and change their OWN password
+    // (the current password is still required). Changing someone else's password is
+    // not exempt — it falls through to the normal admin.users check.
+    private static bool IsSelfService(string path, string method, int userId)
+    {
+        var p = path.ToLowerInvariant().TrimEnd('/');
+        if (method is "GET" or "HEAD") return p == "/passwordpolicy";
+        return method == "POST" && p == $"/user/{userId}/changepassword";
+    }
+
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {
         var httpContext = context.HttpContext;
@@ -237,6 +250,7 @@ public class SubjectAuthorizationFilter : IAsyncAuthorizationFilter
         // sales employees, copy-from balances, batch pickers, dropdown rows) aren't gated by the
         // administration subjects they happen to be served from — the document's own subject governs saving it.
         if (IsFormHelper(httpContext.Request.Path.Value ?? "", httpContext.Request.Method)) return;
+        if (IsSelfService(httpContext.Request.Path.Value ?? "", httpContext.Request.Method, userId)) return;
 
         var subject = SubjectMap.Resolve(httpContext.Request.Path);
 

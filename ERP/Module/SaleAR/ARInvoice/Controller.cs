@@ -13,6 +13,7 @@ using QuestPDF.Fluent;
 using CompanyEntity = FarmingApi.Modules.Company.Company;
 using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 using BPAddress = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BPAddress;
+using AttachmentStorage = FarmingApi.Modules.Administration.Attachment.AttachmentStorage;
 
 namespace FarmingApi.Modules.SaleAR.ARInvoice;
 
@@ -28,6 +29,7 @@ public class ARInvoiceController : ControllerBase
     private readonly IWebHostEnvironment      _env;
     private readonly IApprovalGateService     _approvalGate;
     private readonly IPrintLayoutRenderService _printLayout;
+    private readonly AttachmentStorage        _storage;
 
     public ARInvoiceController(
         MyDbContext              db,
@@ -37,7 +39,8 @@ public class ARInvoiceController : ControllerBase
         IInventoryPostingService inventoryPosting,
         IWebHostEnvironment      env,
         IApprovalGateService     approvalGate,
-        IPrintLayoutRenderService printLayout)
+        IPrintLayoutRenderService printLayout,
+        AttachmentStorage        storage)
     {
         _db             = db;
         _mapper         = mapper;
@@ -47,6 +50,7 @@ public class ARInvoiceController : ControllerBase
         _env            = env;
         _approvalGate   = approvalGate;
         _printLayout    = printLayout;
+        _storage        = storage;
     }
 
     // ── GET /ARInvoice ────────────────────────────────────────────
@@ -524,6 +528,11 @@ public class ARInvoiceController : ControllerBase
         if (invoice.Status == "C")
             return BadRequest("Cannot delete a Closed AR Invoice");
 
+        // The attachment rows cascade; their stored files don't, so remove those too.
+        var filePaths = await _db.Set<ARInvoiceAttachment>()
+            .Where(a => a.ARInvoiceId == id).Select(a => a.FilePath).ToListAsync();
+        foreach (var path in filePaths) _storage.Delete(path);
+
         _db.Set<ARInvoice>().Remove(invoice);
         await _db.SaveChangesAsync();
         return NoContent();
@@ -534,8 +543,8 @@ public class ARInvoiceController : ControllerBase
     // ══════════════════════════════════════════════════════════════
 
     // ── POST /ARInvoice/{id}/Attachments ──────────────────────────
-    // Uploads one or more files and stores them under
-    // <ContentRoot>/Uploads/ARInvoice/{id}/.
+    // Uploads one or more files and keeps their bytes in the database (KSFL) —
+    // the host's disk doesn't survive a restart. FilePath holds the storage key.
     [HttpPost("{id:int}/Attachments")]
     [RequestSizeLimit(50 * 1024 * 1024)] // 50 MB
     public async Task<IActionResult> UploadAttachments(int id, [FromForm] List<IFormFile> files)
@@ -548,9 +557,6 @@ public class ARInvoiceController : ControllerBase
         if (files == null || files.Count == 0)
             return BadRequest("No files were uploaded");
 
-        var folder = Path.Combine(_env.ContentRootPath, "Uploads", "ARInvoice", id.ToString());
-        Directory.CreateDirectory(folder);
-
         var saved = new List<ARInvoiceAttachment>();
 
         foreach (var file in files)
@@ -559,11 +565,11 @@ public class ARInvoiceController : ControllerBase
 
             // Store under a unique name to avoid collisions; keep the original name in DB.
             var safeName    = Path.GetFileName(file.FileName);
-            var storedName  = $"{Guid.NewGuid():N}{Path.GetExtension(safeName)}";
-            var storedPath  = Path.Combine(folder, storedName);
+            var storedPath  = $"ARInvoice/{id}/{Guid.NewGuid():N}{Path.GetExtension(safeName)}";
 
-            await using (var stream = new FileStream(storedPath, FileMode.Create))
-                await file.CopyToAsync(stream);
+            // Queued on _db; the SaveChangesAsync below writes the file and its rows together.
+            await using (var stream = file.OpenReadStream())
+                await _storage.SaveAsync(storedPath, stream);
 
             var attachment = new ARInvoiceAttachment
             {
@@ -596,10 +602,10 @@ public class ARInvoiceController : ControllerBase
             .FirstOrDefaultAsync(a => a.Id == attachmentId && a.ARInvoiceId == id);
         if (attachment == null) return NotFound();
 
-        if (!System.IO.File.Exists(attachment.FilePath))
-            return NotFound("The stored file is missing on disk");
+        var bytes = await _storage.ReadAsync(attachment.FilePath);
+        if (bytes == null)
+            return NotFound("The stored file is missing from storage");
 
-        var bytes = await System.IO.File.ReadAllBytesAsync(attachment.FilePath);
         return File(bytes, attachment.ContentType ?? "application/octet-stream", attachment.FileName);
     }
 
@@ -616,9 +622,7 @@ public class ARInvoiceController : ControllerBase
             .FirstOrDefaultAsync(a => a.Id == attachmentId && a.ARInvoiceId == id);
         if (attachment == null) return NotFound();
 
-        if (System.IO.File.Exists(attachment.FilePath))
-            System.IO.File.Delete(attachment.FilePath);
-
+        _storage.Delete(attachment.FilePath);
         _db.Set<ARInvoiceAttachment>().Remove(attachment);
         await _db.SaveChangesAsync();
         return NoContent();

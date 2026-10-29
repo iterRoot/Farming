@@ -192,6 +192,11 @@ public abstract class BPEditableFields
     // Tax
     public string? TaxId    { get; set; }
     public string? VatGroup { get; set; }
+    public string?   TaxStatus            { get; set; }   // Y=Liable, N=Exempt (default Y)
+    public string?   TaxExemptionNo       { get; set; }
+    public DateTime? TaxExemptionExpiry   { get; set; }
+    public bool      SubjectToWithholding { get; set; }
+    public string?   WithholdingTaxCode   { get; set; }
 
     // Sub-tables
     public List<BPAddressDto>       Addresses      { get; set; } = new();

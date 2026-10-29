@@ -11,7 +11,7 @@ namespace FarmingApi.Modules.Administration.Attachment;
 //                      targetPath, attachmentDate)
 // PUT    /Attachment/{id}                  → edit date / free text / path
 // GET    /Attachment/{id}/File             → the bytes
-// DELETE /Attachment/{id}                  → row and file
+// DELETE /Attachment/{id}                  → row and file (both in the database)
 // 10 MB max; executable and browser-runnable types are refused.
 // ═══════════════════════════════════════════════════════════════════
 [ApiController]
@@ -54,6 +54,7 @@ public class AttachmentController : ControllerBase
         await using (var s = req.File.OpenReadStream())
             hash = Convert.ToHexString(await SHA256.HashDataAsync(s));
 
+        // Queued on the same DbContext as the row below, so one Commit() saves both or neither.
         var storedName = Guid.NewGuid().ToString("N") + ext.ToLowerInvariant();
         await using (var s = req.File.OpenReadStream())
             await _storage.SaveAsync(storedName, s);
@@ -66,8 +67,8 @@ public class AttachmentController : ControllerBase
             FreeText = Trim(req.FreeText, 500), TargetPath = Trim(req.TargetPath, 300),
             CreatedAt = DateTime.UtcNow, InActive = false,
         };
-        try { _repository.Add(entity); _repository.Commit(); }
-        catch { _storage.Delete(storedName); throw; }   // never leave a file with no row
+        _repository.Add(entity);
+        _repository.Commit();
         return Ok(ToResponse(entity));
     }
 
@@ -85,14 +86,14 @@ public class AttachmentController : ControllerBase
     }
 
     [HttpGet("{id:int}/File")]
-    public IActionResult File(int id)
+    public async Task<IActionResult> File(int id)
     {
         var e = _repository.GetSingle(a => a.Id == id);
         if (e == null) return NotFound();
-        var path = _storage.PathFor(e.StoredName);
-        if (!System.IO.File.Exists(path)) return NotFound("The file is missing from storage.");
+        var bytes = await _storage.ReadAsync(e.StoredName);
+        if (bytes == null) return NotFound("The file is missing from storage.");
         Response.Headers["X-Content-Type-Options"] = "nosniff";
-        return PhysicalFile(path, e.MimeType, e.FileName);   // attachment disposition with the original name
+        return base.File(bytes, e.MimeType, e.FileName);   // attachment disposition with the original name
     }
 
     [HttpDelete("{id:int}")]
@@ -101,8 +102,8 @@ public class AttachmentController : ControllerBase
         var e = _repository.GetSingle(a => a.Id == id);
         if (e == null) return NotFound();
         _repository.Remove(e);
-        _repository.Commit();
         _storage.Delete(e.StoredName);
+        _repository.Commit();
         return NoContent();
     }
 

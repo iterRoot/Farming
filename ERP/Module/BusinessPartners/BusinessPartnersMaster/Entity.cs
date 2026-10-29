@@ -128,9 +128,14 @@ public class BusinessPartnersMaster : AuditableEntity
     public decimal OpportunitiesBalance { get; set; }
     public decimal ChequesBalance       { get; set; }
 
-    // Legacy tax fields
-    public string? TaxId    { get; set; }
-    public string? VatGroup { get; set; }
+    // Accounting tab — Tax sub-tab
+    public string? TaxId    { get; set; }   // Federal / company tax ID (TIN)
+    public string? VatGroup { get; set; }   // Default tax code (TaxCodeEntry.Code)
+    public string    TaxStatus            { get; set; } = "Y";  // Y=Liable, N=Exempt
+    public string?   TaxExemptionNo       { get; set; }         // Exemption certificate number
+    public DateTime? TaxExemptionExpiry   { get; set; }
+    public bool      SubjectToWithholding { get; set; }
+    public string?   WithholdingTaxCode   { get; set; }         // Default WHT code (WithholdingTaxCode.Code)
 
     // System
     public int? UserSign  { get; set; }
@@ -359,6 +364,10 @@ public class BusinessPartnersMasterConfig : IEntityTypeConfiguration<BusinessPar
         // Tax
         builder.Property(m => m.TaxId).HasMaxLength(50);
         builder.Property(m => m.VatGroup).HasMaxLength(20);
+        builder.Property(m => m.TaxStatus).HasMaxLength(1).HasDefaultValue("Y");
+        builder.Property(m => m.TaxExemptionNo).HasMaxLength(50);
+        builder.Property(m => m.WithholdingTaxCode).HasMaxLength(20);
+        builder.Property(m => m.SubjectToWithholding).HasDefaultValue(false);
         builder.Property(m => m.VersionNum).HasDefaultValue(1);
 
         // Indexes

@@ -398,8 +398,26 @@ public class UserController : MyController
         if (user == null)
             return NotFound($"User not found: {id}");
 
-        if (!VerifyPassword(request.OldPassword, user.PasswordHash))
-            return BadRequest("Current password is incorrect");
+        if (user.IsLocked)
+            return StatusCode(403, "Account is locked. Contact your administrator.");
+
+        // A wrong current password counts toward the same lockout as a failed login, so this
+        // endpoint (open to every user for their own account) can't be used to guess it.
+        if (!VerifyPassword(request.OldPassword ?? "", user.PasswordHash))
+        {
+            var maxAttempts = GetPolicy().MaxFailedAttempts;
+            user.LoginAttempts += 1;
+            if (user.LoginAttempts >= maxAttempts) user.IsLocked = true;
+            _repository.Update(user);
+            _repository.Commit();
+
+            return BadRequest(user.IsLocked
+                ? $"Account locked after {maxAttempts} failed attempts. Contact your administrator."
+                : $"Current password is incorrect ({maxAttempts - user.LoginAttempts} attempt(s) left)");
+        }
+
+        if (string.IsNullOrWhiteSpace(request.NewPassword))
+            return BadRequest("New password is required");
 
         if (request.NewPassword != request.ConfirmPassword)
             return BadRequest("New passwords do not match");
@@ -411,6 +429,7 @@ public class UserController : MyController
         user.PasswordHash = HashPassword(request.NewPassword);
         user.PasswordChangedAt = DateTime.UtcNow;
         user.UpdatedAt = DateTime.UtcNow;
+        user.LoginAttempts = 0;
 
         _repository.Update(user);
         _repository.Commit();

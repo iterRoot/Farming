@@ -154,7 +154,7 @@ public class BusinessPartnersMasterController : MyController
         if (string.IsNullOrWhiteSpace(request.Code))     return BadRequest("Code is required");
         if (string.IsNullOrWhiteSpace(request.CardName)) return BadRequest("Card Name is required");
 
-        var err = Validate(request) ?? CheckSalesEmployee(request);
+        var err = Validate(request) ?? CheckSalesEmployee(request) ?? CheckTaxCodes(request);
         if (err != null) return BadRequest(err);
 
         var code = request.Code.Trim().ToUpper();
@@ -188,7 +188,7 @@ public class BusinessPartnersMasterController : MyController
         if (bp == null) return NotFound($"Business partner {id} not found");
         if (string.IsNullOrWhiteSpace(request.CardName)) return BadRequest("Card Name is required");
 
-        var err = Validate(request) ?? CheckSalesEmployee(request);
+        var err = Validate(request) ?? CheckSalesEmployee(request) ?? CheckTaxCodes(request);
         if (err != null) return BadRequest(err);
 
         ApplyFields(bp, request);
@@ -231,6 +231,28 @@ public class BusinessPartnersMasterController : MyController
         if (e == null) return $"Sales employee / buyer '{r.SalesEmployee.Trim()}' does not exist.";
         if (!e.IsActive) return $"Sales employee / buyer '{c}' is inactive.";
         r.SalesEmployee = c;
+        return null;
+    }
+
+    // Tax Group and withholding code must name a code that exists in Tax / Withholding Tax setup.
+    private string? CheckTaxCodes(BPEditableFields r)
+    {
+        if (!string.IsNullOrWhiteSpace(r.VatGroup))
+        {
+            var code = r.VatGroup.Trim();
+            var tax = _db.Set<FarmingApi.Modules.Administration.TaxCode.TaxCodeEntry>().FirstOrDefault(x => x.Code == code);
+            if (tax == null) return $"Tax group '{code}' does not exist in Tax Codes setup.";
+            if (tax.InActive == true) return $"Tax group '{code}' is inactive.";
+        }
+        if (r.SubjectToWithholding && !string.IsNullOrWhiteSpace(r.WithholdingTaxCode))
+        {
+            var code = r.WithholdingTaxCode.Trim();
+            var wht = _db.Set<FarmingApi.Modules.Administration.WithholdingTax.WithholdingTaxCode>().FirstOrDefault(x => x.Code == code);
+            if (wht == null) return $"Withholding tax code '{code}' does not exist in Withholding Tax setup.";
+            if (wht.InActive == true) return $"Withholding tax code '{code}' is inactive.";
+        }
+        if (r.TaxStatus == "N" && r.TaxExemptionExpiry is DateTime exp && exp.Year < 2000)
+            return "Enter a valid exemption expiry date.";
         return null;
     }
 
@@ -353,7 +375,13 @@ public class BusinessPartnersMasterController : MyController
         bp.Affiliate                  = r.Affiliate;
 
         bp.TaxId    = r.TaxId?.Trim();
-        bp.VatGroup = r.VatGroup?.Trim();
+        bp.VatGroup = string.IsNullOrWhiteSpace(r.VatGroup) ? null : r.VatGroup.Trim();
+        bp.TaxStatus            = r.TaxStatus == "N" ? "N" : "Y";
+        // Exemption details only mean something for an exempt partner.
+        bp.TaxExemptionNo       = bp.TaxStatus == "N" ? r.TaxExemptionNo?.Trim() : null;
+        bp.TaxExemptionExpiry   = bp.TaxStatus == "N" ? r.TaxExemptionExpiry : null;
+        bp.SubjectToWithholding = r.SubjectToWithholding;
+        bp.WithholdingTaxCode   = r.SubjectToWithholding && !string.IsNullOrWhiteSpace(r.WithholdingTaxCode) ? r.WithholdingTaxCode.Trim() : null;
     }
 
     // ── APPLY SUB-TABLES ─────────────────────────────────────────
@@ -515,6 +543,8 @@ public class BusinessPartnersMasterController : MyController
         Affiliate = bp.Affiliate,
 
         TaxId = bp.TaxId, VatGroup = bp.VatGroup,
+        TaxStatus = bp.TaxStatus, TaxExemptionNo = bp.TaxExemptionNo, TaxExemptionExpiry = bp.TaxExemptionExpiry,
+        SubjectToWithholding = bp.SubjectToWithholding, WithholdingTaxCode = bp.WithholdingTaxCode,
 
         Balance = bp.Balance, DeliveriesBalance = bp.DeliveriesBalance,
         OrdersBalance = bp.OrdersBalance, OpportunitiesBalance = bp.OpportunitiesBalance,
