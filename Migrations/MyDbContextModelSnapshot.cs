@@ -18,7 +18,7 @@ namespace Farming.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "10.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -3861,6 +3861,358 @@ namespace Farming.Migrations
                     b.HasIndex("SavedSearchId");
 
                     b.ToTable("SRC1", (string)null);
+                });
+
+            modelBuilder.Entity("FarmingApi.Modules.Administration.SetUp.ProcessChecklistTemplate.ChecklistRun", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ChecklistTemplateId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ContextRef")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("GuidId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool?>("InActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<bool>("RequireSignOff")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("RunNo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("SignOffRole")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("SignedOffAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SignedOffBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("StartedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("TemplateCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChecklistTemplateId");
+
+                    b.HasIndex("RunNo")
+                        .IsUnique();
+
+                    b.ToTable("KCLR", (string)null);
+                });
+
+            modelBuilder.Entity("FarmingApi.Modules.Administration.SetUp.ProcessChecklistTemplate.ChecklistRunStep", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ChecklistRunId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CompletedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int?>("DependsOnStepNo")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("GroupName")
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<bool>("IsRequired")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LinkedRoute")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<int>("StepNo")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("StepStatus")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("StepType")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChecklistRunId");
+
+                    b.ToTable("CLR1", (string)null);
+                });
+
+            modelBuilder.Entity("FarmingApi.Modules.Administration.SetUp.ProcessChecklistTemplate.ChecklistTemplate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AssignedRole")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("AssignedTo")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<Guid>("GuidId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("IconName")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<bool?>("InActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LinkedDocType")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Module")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("Remarks")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("RequireSignOff")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("SignOffRole")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SubCategory")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Tags")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<string>("TriggerEvent")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("TriggerType")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Version")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("KCLT", (string)null);
+                });
+
+            modelBuilder.Entity("FarmingApi.Modules.Administration.SetUp.ProcessChecklistTemplate.ChecklistTemplateStep", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AcceptanceCriteria")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("AssignedRole")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("AssignedTo")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int>("ChecklistTemplateId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("DependsOnStepNo")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<int>("EstimatedMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("GroupName")
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<string>("Instructions")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<bool>("IsRequired")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LinkedRoute")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<bool>("RequiresAttachment")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("RequiresNote")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("StepNo")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("StepType")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChecklistTemplateId");
+
+                    b.ToTable("CLT1", (string)null);
                 });
 
             modelBuilder.Entity("FarmingApi.Modules.Administration.SetUp.User.User", b =>
@@ -13810,7 +14162,7 @@ namespace Farming.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.Property<decimal>("ItemCost")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,6)");
 
                     b.Property<string>("ItemGroup")
                         .IsRequired()
@@ -16867,6 +17219,10 @@ namespace Farming.Migrations
                     b.Property<string>("ReferencedDocumentLabel")
                         .HasMaxLength(120)
                         .HasColumnType("character varying(120)");
+
+                    b.Property<string>("ReferencedDocumentType")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
 
                     b.Property<string>("Remarks")
                         .HasMaxLength(500)
@@ -22744,6 +23100,24 @@ namespace Farming.Migrations
                     b.Navigation("SavedSearch");
                 });
 
+            modelBuilder.Entity("FarmingApi.Modules.Administration.SetUp.ProcessChecklistTemplate.ChecklistRunStep", b =>
+                {
+                    b.HasOne("FarmingApi.Modules.Administration.SetUp.ProcessChecklistTemplate.ChecklistRun", null)
+                        .WithMany("StepResults")
+                        .HasForeignKey("ChecklistRunId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FarmingApi.Modules.Administration.SetUp.ProcessChecklistTemplate.ChecklistTemplateStep", b =>
+                {
+                    b.HasOne("FarmingApi.Modules.Administration.SetUp.ProcessChecklistTemplate.ChecklistTemplate", null)
+                        .WithMany("Steps")
+                        .HasForeignKey("ChecklistTemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FarmingApi.Modules.Administration.SetUp.User.User", b =>
                 {
                     b.HasOne("FarmingApi.Modules.Administration.SetUp.UserGroup.UserGroup", "UserGroup")
@@ -23287,27 +23661,24 @@ namespace Farming.Migrations
                 {
                     b.OwnsMany("FarmingApi.Modules.InventoryManagement.PickAndPack.PickPackFilter", "Filters", b1 =>
                         {
-                            b1.Property<int>("PickPackCriteriaId")
-                                .HasColumnType("integer");
+                            b1.Property<int>("PickPackCriteriaId");
 
                             b1.Property<int>("__synthesizedOrdinal")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("integer");
+                                .ValueGeneratedOnAdd();
 
-                            b1.Property<string>("Field")
-                                .HasColumnType("text");
+                            b1.Property<string>("Field");
 
-                            b1.Property<string>("From")
-                                .HasColumnType("text");
+                            b1.Property<string>("From");
 
-                            b1.Property<string>("To")
-                                .HasColumnType("text");
+                            b1.Property<string>("To");
 
                             b1.HasKey("PickPackCriteriaId", "__synthesizedOrdinal");
 
                             b1.ToTable("OPKL");
 
-                            b1.ToJson("Filters");
+                            b1
+                                .ToJson("Filters")
+                                .HasColumnType("jsonb");
 
                             b1.WithOwner()
                                 .HasForeignKey("PickPackCriteriaId");
@@ -24264,6 +24635,16 @@ namespace Farming.Migrations
             modelBuilder.Entity("FarmingApi.Modules.Administration.SetUp.Generals.SavedSearch.SavedSearch", b =>
                 {
                     b.Navigation("Filters");
+                });
+
+            modelBuilder.Entity("FarmingApi.Modules.Administration.SetUp.ProcessChecklistTemplate.ChecklistRun", b =>
+                {
+                    b.Navigation("StepResults");
+                });
+
+            modelBuilder.Entity("FarmingApi.Modules.Administration.SetUp.ProcessChecklistTemplate.ChecklistTemplate", b =>
+                {
+                    b.Navigation("Steps");
                 });
 
             modelBuilder.Entity("FarmingApi.Modules.Administration.UserGroups.UserGroup", b =>

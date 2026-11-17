@@ -51,6 +51,7 @@ public class StockRevaluationDetailResponse
     public string?   Ref2                    { get; set; }
     public bool      InflationBased          { get; set; }
     public int?      ReferencedDocumentId    { get; set; }
+    public string?   ReferencedDocumentType  { get; set; }
     public string?   ReferencedDocumentLabel { get; set; }
     public string    Status                  { get; set; } = null!;
     public string?   Remarks                 { get; set; }
@@ -92,6 +93,7 @@ public class StockRevaluationCreateRequest
     public string?   Ref2                 { get; set; }
     public bool      InflationBased       { get; set; }
     public int?      ReferencedDocumentId { get; set; }
+    public string?   ReferencedDocumentType { get; set; }
     public string?   Remarks              { get; set; }
     public string?   JournalRemark        { get; set; }
     public List<StockRevaluationLineRequest>       Lines            { get; set; } = new();

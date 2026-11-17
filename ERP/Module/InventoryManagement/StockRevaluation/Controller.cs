@@ -124,6 +124,17 @@ public class StockRevaluationController : MyController
             return BadRequest("Serial/batch revaluation isn't supported: serial and batch numbers aren't tracked.");
         if (request.Lines.Count == 0) return BadRequest("Add at least one line");
 
+        // A referenced document is a (type, id) pair that must exist; its label comes from the document itself.
+        (string Type, string Label)? reference = null;
+        if (request.ReferencedDocumentId != null || !string.IsNullOrWhiteSpace(request.ReferencedDocumentType))
+        {
+            if (request.ReferencedDocumentId == null || string.IsNullOrWhiteSpace(request.ReferencedDocumentType))
+                return BadRequest("A referenced document needs both its type and its number.");
+            reference = ReferenceDocuments.Describe(_db, request.ReferencedDocumentType, request.ReferencedDocumentId.Value);
+            if (reference == null)
+                return BadRequest("The referenced document wasn't found, or is a draft or cancelled.");
+        }
+
         var postingDate = request.PostingDate.Value;
 
         // ── Resolve every line against live data before touching anything ──
@@ -184,7 +195,9 @@ public class StockRevaluationController : MyController
                 RevaluationType      = revaluationType,
                 Ref2                 = request.Ref2,
                 InflationBased       = request.InflationBased,
-                ReferencedDocumentId = request.ReferencedDocumentId,
+                ReferencedDocumentId    = reference == null ? null : request.ReferencedDocumentId,
+                ReferencedDocumentType  = reference?.Type,
+                ReferencedDocumentLabel = reference?.Label,
                 Status               = "Posted",
                 Remarks              = request.Remarks,
                 JournalRemark        = request.JournalRemark,

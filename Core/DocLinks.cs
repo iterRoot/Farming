@@ -159,10 +159,12 @@ public class DocLinkEngine
 
     /// <summary>Closes a fully drawn source; with <paramref name="reopen"/> also re-opens a closed one that has quantity left.</summary>
     // Only "still to be delivered / received / invoiced" documents are closed and re-opened by draw-down;
-    // invoices and credit notes keep their own open/paid status.
+    // invoices and credit notes keep their own open/paid status. A reserve invoice is the exception among
+    // invoices: it's billed up front and stays open only until its goods are delivered, and nothing else
+    // ever sets its status, so delivery closes it.
     private static readonly HashSet<string> AutoStatus = new(StringComparer.OrdinalIgnoreCase)
     {
-        "SaleQuotion", "SaleOrder", "Delivery", "Return", "ReturnRequest", "SaleBlanketAgreement",
+        "SaleQuotion", "SaleOrder", "Delivery", "Return", "ReturnRequest", "SaleBlanketAgreement", "ARReserveInvoice",
         "PurchaseQuotation", "PurchaseOrder", "GoodsReceiptPO", "GoodsReturnRequest", "PurchaseBlanketAgreement", "PurchaseRequest",
     };
 

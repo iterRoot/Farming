@@ -145,8 +145,13 @@ public class ItemsMasterConfig : IEntityTypeConfiguration<ItemsMaster>
         builder.Property(x => x.SaleDiscount).HasColumnType("decimal(18,2)");
 
         // ── SAP scalar additions ──────────────────────────────────
-        foreach (var money in new[] { "UnitPrice", "ItemCost", "ProductionStdCost" })
+        foreach (var money in new[] { "UnitPrice", "ProductionStdCost" })
             builder.Property<decimal>(money).HasColumnType("decimal(18,2)");
+
+        // The moving-average cost is recalculated on every receipt, so it keeps 6 decimals (like the FIFO
+        // cost layers). At 2 decimals each save cut it, issues were valued at the cut cost, and the stock
+        // ledger drifted from the G/L by a few cents per transaction.
+        builder.Property<decimal>("ItemCost").HasColumnType("decimal(18,6)");
 
         foreach (var qty in new[]
         {

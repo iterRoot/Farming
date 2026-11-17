@@ -9,6 +9,7 @@ using FarmingApi.Modules.Financials.GLAccountDetermination;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using QuestPDF.Infrastructure;
 
 // using FarmingApi.Modules.Items;
@@ -28,6 +29,7 @@ builder.Services.AddControllers(options =>
     options.Filters.Add<FarmingApi.Core.PostingPeriodGuardFilter>();
     options.Filters.Add<FarmingApi.Core.EmployeeTagFilter>();
     options.Filters.Add<FarmingApi.Core.DocLinkFilter>();
+    options.Filters.Add<FarmingApi.Core.DocumentRuleFilter>();   // DocumentRuleException → 400 with its message
     options.Filters.Add<FarmingApi.Modules.Administration.UserDefinedFields.UdfCleanupFilter>();
 });
 // Deployed front-end origins (comma-separated), e.g. Cors__AllowedOrigins=https://kamnttra.vercel.app
@@ -62,25 +64,20 @@ builder.Services.AddOpenApi(options =>
     // Swagger UI shows an "Authorize" button and sends the token with each call.
     options.AddDocumentTransformer((document, _, _) =>
     {
-        document.Components ??= new Microsoft.OpenApi.Models.OpenApiComponents();
-        document.Components.SecuritySchemes["Bearer"] = new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+        document.Components ??= new OpenApiComponents();
+        document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
+        document.Components.SecuritySchemes["Bearer"] = new OpenApiSecurityScheme
         {
-            Type         = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+            Type         = SecuritySchemeType.Http,
             Scheme       = "bearer",
             BearerFormat = "JWT",
-            In           = Microsoft.OpenApi.Models.ParameterLocation.Header,
+            In           = ParameterLocation.Header,
             Description  = "Paste the token from POST /User/Login (without the word Bearer).",
         };
-        document.SecurityRequirements.Add(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+        document.Security ??= new List<OpenApiSecurityRequirement>();
+        document.Security.Add(new OpenApiSecurityRequirement
         {
-            [new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-            {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
-                {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id   = "Bearer",
-                },
-            }] = Array.Empty<string>(),
+            [new OpenApiSecuritySchemeReference("Bearer", document)] = new List<string>(),
         });
         return Task.CompletedTask;
     });

@@ -395,6 +395,33 @@ public class IncomingPaymentController : MyController
     }
 
     // ═══════════════════════════════════════════════════════════════
+    // CLOSE — marks a finished payment as Closed. Nothing is posted or
+    // reversed: the payment, its invoice allocations and its journal entry
+    // stay exactly as they are. Closed payments can no longer be edited or
+    // deleted (Update and Delete refuse them); Void is still available.
+    // ═══════════════════════════════════════════════════════════════
+    [HttpPost("{id:int}/Close")]
+    public IActionResult Close(int id)
+    {
+        var payment = _repository.GetSingle(e => e.Id == id);
+        if (payment == null)
+            return NotFound($"Payment not found: {id}");
+
+        if (payment.Status == "C")
+            return BadRequest("Payment is already closed");
+        if (payment.Status == "V")
+            return BadRequest("A voided payment can't be closed");
+
+        payment.Status = "C";
+        payment.UpdatedAt = DateTime.UtcNow;
+
+        _repository.Update(payment);
+        _repository.Commit();
+
+        return Ok(new { message = "Payment closed", id = payment.Id, status = payment.Status });
+    }
+
+    // ═══════════════════════════════════════════════════════════════
     [HttpPost("{id}/Void")]
     public IActionResult Void(int id)
     {

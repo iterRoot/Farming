@@ -60,6 +60,7 @@ public static class SubjectMap
         ["admin.electronicFileManager"] = new[] { "/ElectronicFile" },
         ["admin.userDefaults"]        = new[] { "/UserDefault" },
         ["admin.implementationCentre"] = new[] { "/ImplementationTask" },
+        ["admin.checklists"]          = new[] { "/ChecklistTemplate" },
         ["admin.addressFormats"]      = new[] { "/AddressFormat" },
         ["admin.bpPriorities"]        = new[] { "/BPProperty" },
         ["admin.electronicDocuments"] = new[] { "/ElectronicDocument" },
@@ -137,7 +138,7 @@ public static class SubjectMap
         ["inv.billOfMaterial"]        = new[] { "/BillOfMaterial" },
         ["inv.productionOrder"]       = new[] { "/ProductionOrder" },
         ["inv.mrp"]                   = new[] { "/MRP" },
-        ["inv.stockRevaluation"]      = new[] { "/StockRevaluation" },
+        ["inv.stockRevaluation"]      = new[] { "/StockRevaluation", "/Documents" },   // /Documents/Search finds the documents a revaluation can reference
         ["inv.barCode"]               = new[] { "/BarCode" },
         ["inv.inventoryJournal"]      = new[] { "/InventoryJournal", "/StockBatch" },
         ["inv.records"]               = new[] { "/Inventory" },

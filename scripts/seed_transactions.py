@@ -8,10 +8,15 @@ them twice creates a second set of documents.
   python3 scripts/seed_transactions.py master sales    # chosen stages
 Stages: master, purchasing, stock, sales, finance, misc
 """
-import datetime, json, sys, urllib.request, urllib.error
+import datetime, json, os, sys, urllib.request, urllib.error
 
 BASE = "http://localhost:5181"
-USER, PASSWORD = "Manager", "Admin@2026"   # DefaultUserSeeder's dev account
+USER = "Manager"
+# The Manager password is no longer in the source (see DefaultUserSeeder): pass the one you set,
+# e.g.  SEED_PASSWORD='...' python scripts/seed_transactions.py
+PASSWORD = os.environ.get("SEED_PASSWORD")
+if not PASSWORD:
+    raise SystemExit("Set SEED_PASSWORD to the Manager password before running this script.")
 _tok = None
 results = []
 

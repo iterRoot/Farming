@@ -19,12 +19,14 @@ namespace FarmingApi
         // — see Core/GLBalanceSync.cs.
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
+            DocumentLedgerGuard.Apply(this);      // voids a deleted document's journal entry first — Core/DocumentLedgerGuard.cs
             GLBalanceSync.ApplyPendingDeltas(this);
             return base.SaveChanges(acceptAllChangesOnSuccess);
         }
 
         public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
+            DocumentLedgerGuard.Apply(this);
             GLBalanceSync.ApplyPendingDeltas(this);
             return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }

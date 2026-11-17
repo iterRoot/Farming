@@ -20,7 +20,8 @@ public class StockRevaluation : AuditableEntity
     public string?   Ref2            { get; set; }
     public bool      InflationBased  { get; set; }
     public int?      ReferencedDocumentId { get; set; }
-    public string?   ReferencedDocumentLabel { get; set; }
+    public string?   ReferencedDocumentType { get; set; }    // entity name, e.g. GoodsReceiptPO — an id alone doesn't identify a document
+    public string?   ReferencedDocumentLabel { get; set; }   // built by the API from the document, never from the client
     public string    Status          { get; set; } = "Posted";  // Posted | Cancelled
     public string?   Remarks         { get; set; }
     public string?   JournalRemark   { get; set; }
@@ -71,6 +72,7 @@ public class StockRevaluationConfig : IEntityTypeConfiguration<StockRevaluation>
         b.Property(m => m.Series).HasMaxLength(40);
         b.Property(m => m.RevaluationType).HasMaxLength(40);
         b.Property(m => m.Ref2).HasMaxLength(60);
+        b.Property(m => m.ReferencedDocumentType).HasMaxLength(40);
         b.Property(m => m.ReferencedDocumentLabel).HasMaxLength(120);
         b.Property(m => m.Status).HasMaxLength(15).HasDefaultValue("Posted");
         b.Property(m => m.Remarks).HasMaxLength(500);
