@@ -72,7 +72,7 @@ public class JournalVoucherController : MyController
             .FirstOrDefault(e => e.Id == id);
 
         if (voucher == null)
-            return BadRequest($"Journal Voucher not found {id}");
+            return NotFound($"Journal Voucher not found: {id}");
 
         var result = _mapper.Map<JournalVoucherListResponse>(voucher);
         return Ok(result);

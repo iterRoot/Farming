@@ -72,13 +72,15 @@ public class ActivityController : ControllerBase
     public IActionResult Create([FromBody] ActivityRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
+        if (string.IsNullOrWhiteSpace(dto.Subject))
+            return BadRequest("Subject is required");
         if (dto.EndDateTime < dto.StartDateTime)
             return BadRequest("End time cannot be before start time");
 
         var entity = _mapper.Map<Activity>(dto);
         entity.ActivityNo      = GenerateActivityNo();
         entity.DurationMinutes = (int)(dto.EndDateTime - dto.StartDateTime).TotalMinutes;
-        entity.AssignedBy      = "current-user"; // replace with auth context when available
+        entity.AssignedBy      = User.Identity?.Name ?? "unknown";   // the signed-in user's ID (JWT name claim)
         entity.CreatedAt       = DateTime.UtcNow;
         entity.InActive         = false;
 

@@ -172,6 +172,7 @@ public class DashboardManagerController : ControllerBase
     [HttpPut("{id:int}/Reorder")]
     public IActionResult Reorder(int id, [FromBody] WidgetReorderRequest dto)
     {
+        if (!_db.Set<DashboardConfig>().Any(c => c.Id == id)) return NotFound($"Dashboard {id} not found");
         var widgets = _db.Set<DashboardWidget>()
             .Where(w => w.DashboardConfigId == id)
             .ToList();

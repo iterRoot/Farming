@@ -19,6 +19,7 @@ namespace FarmingApi
         // — see Core/GLBalanceSync.cs.
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
+            DocumentTotalsGuard.Apply(this);      // refuses invoices whose total doesn't match their lines — Core/DocumentTotalsGuard.cs
             DocumentLedgerGuard.Apply(this);      // voids a deleted document's journal entry first — Core/DocumentLedgerGuard.cs
             GLBalanceSync.ApplyPendingDeltas(this);
             return base.SaveChanges(acceptAllChangesOnSuccess);
@@ -26,6 +27,7 @@ namespace FarmingApi
 
         public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
+            DocumentTotalsGuard.Apply(this);
             DocumentLedgerGuard.Apply(this);
             GLBalanceSync.ApplyPendingDeltas(this);
             return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);

@@ -17,6 +17,10 @@ public class User : AuditableEntity
     public DateTime? LastLogin { get; set; }
     public int LoginAttempts { get; set; } = 0;
     public bool IsLocked { get; set; } = false;
+    /// <summary>When a lockout from failed attempts ends on its own. Null with IsLocked = true means locked until an administrator unlocks it (rows locked before this field existed).</summary>
+    public DateTime? LockedUntil { get; set; }
+    /// <summary>Tokens issued before this moment are refused. Moved forward on sign-out, password change, lock and deactivation.</summary>
+    public DateTime? SessionsValidFrom { get; set; }
     /// <summary>Set by POST /User/{id}/ChangePassword. Null means never changed through that endpoint (a user created or migrated before this field existed) — treated as unknown age, not overdue.</summary>
     public DateTime? PasswordChangedAt { get; set; }
 

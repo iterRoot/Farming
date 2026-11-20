@@ -50,6 +50,7 @@ public class UserGroupController : MyController
     public IActionResult Create([FromBody] UserGroupListRequest request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
+        if (string.IsNullOrWhiteSpace(request.GroupName)) return BadRequest("Group name is required");
 
         var entity = _mapper.Map<UserGroup>(request);
         entity.CreatedAt = DateTime.UtcNow;
@@ -71,6 +72,7 @@ public class UserGroupController : MyController
 
 		if (UserGroup == null)
 			return NotFound($"Item not found: {id}");
+		if (string.IsNullOrWhiteSpace(request.GroupName)) return BadRequest("Group name is required");
 
 		_mapper.Map(request, UserGroup);
 

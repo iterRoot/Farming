@@ -63,6 +63,10 @@ public class GoodsReceiptController : MyController
     public async Task<IActionResult> Create([FromBody] GoodsReceiptInsertListRequest request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
+        if (request.Lines == null || request.Lines.Count == 0)
+            return BadRequest("Add at least one line before saving.");
+        if (request.Lines.Any(l => l.ItemId <= 0 || l.Quantity <= 0))
+            return BadRequest("Every line needs an item and a quantity above zero.");
 
         // ✅ Vendor lookup → fill CustomerCode / CustomerName
         if (request.VendorId.HasValue && request.VendorId > 0)

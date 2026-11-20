@@ -969,12 +969,7 @@ public class DataTransferService : IDataTransferService
         _              => "",
     };
 
-    /// <summary>Same scheme as UserController — SHA-256 of the UTF-8 bytes, Base64.</summary>
-    private static string HashPassword(string password)
-    {
-        using var sha = SHA256.Create();
-        return Convert.ToBase64String(sha.ComputeHash(Encoding.UTF8.GetBytes(password)));
-    }
+    private static string HashPassword(string password) => FarmingApi.Core.PasswordHashing.Hash(password);
 
     private static bool StrongPassword(string p) =>
         !string.IsNullOrWhiteSpace(p) && p.Length >= 8

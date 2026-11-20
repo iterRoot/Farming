@@ -78,7 +78,7 @@ public static class SubjectMap
         },
 
         ["fin.chartOfAccounts"]       = new[] { "/ChartOfAccounts", "/EditChartOfAccounts" },
-        ["fin.journalEntry"]          = new[] { "/JournalEntry" },
+        ["fin.journalEntry"]          = new[] { "/JournalEntry", "/OpeningBalance" },
         ["fin.journalVouchers"]       = new[] { "/JournalVoucher" },
         ["fin.recurringPosting"]      = new[] { "/RecurringPosting" },
         ["fin.glDetermination"]       = new[] { "/GLAccountDetermination", "/GLAccountOverride" },
@@ -193,14 +193,14 @@ public static class SubjectMap
 // Runs after authentication (FallbackPolicy already rejected anonymous
 // requests) and checks the caller's UserAuthorization row for the subject
 // the request maps to. GET/HEAD needs Read-or-Full; everything else needs
-// Full. No row at all → fail OPEN (unconfigured users, including the
-// seeded Manager, keep full access until an admin configures them — a
-// deliberate rollout choice, not an oversight).
+// Full. No row at all → NO access (fail closed), except for the seeded
+// Manager. New users get an explicit no-access record when they are created.
 // ═══════════════════════════════════════════════════════════════════════════
 public class SubjectAuthorizationFilter : IAsyncAuthorizationFilter
 {
     private readonly MyDbContext _db;
-    public SubjectAuthorizationFilter(MyDbContext db) => _db = db;
+    private readonly SecurityAudit _audit;
+    public SubjectAuthorizationFilter(MyDbContext db, SecurityAudit audit) { _db = db; _audit = audit; }
 
     private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNameCaseInsensitive = true };
 
@@ -223,7 +223,7 @@ public class SubjectAuthorizationFilter : IAsyncAuthorizationFilter
     {
         var p = path.ToLowerInvariant().TrimEnd('/');
         if (method is "GET" or "HEAD") return p == "/passwordpolicy";
-        return method == "POST" && p == $"/user/{userId}/changepassword";
+        return method == "POST" && (p == $"/user/{userId}/changepassword" || p == "/user/logout");
     }
 
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
@@ -237,6 +237,7 @@ public class SubjectAuthorizationFilter : IAsyncAuthorizationFilter
         var idClaim = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (!int.TryParse(idClaim, out var userId))
         {
+            _audit.AccessDenied("(no user id in token)", httpContext.Request.Method, httpContext.Request.Path.Value ?? "");
             context.Result = new ObjectResult(new { message = "Could not identify the current user." }) { StatusCode = 403 };
             return;
         }
@@ -244,8 +245,13 @@ public class SubjectAuthorizationFilter : IAsyncAuthorizationFilter
         var auth = await _db.Set<UserAuthEntity>().AsNoTracking()
             .FirstOrDefaultAsync(a => a.UserId == userId);
 
-        if (auth == null) return;               // fail-open: not configured yet
-        if (auth.FullAuthorization) return;      // shortcut flag — everything granted
+        // No Authorisations record = NO access. (It used to mean full access, so any user created on the Users
+        // screen was an administrator until someone remembered to configure them.) Only the seeded Manager keeps
+        // access without a record, so a fresh database can be set up. A user with no record can still use the
+        // self-service routes below, so they can change their own password.
+        if (auth == null && string.Equals(httpContext.User.FindFirst(ClaimTypes.Name)?.Value, DefaultUserSeeder.ManagerUserId, StringComparison.OrdinalIgnoreCase))
+            return;
+        if (auth is { FullAuthorization: true }) return;      // shortcut flag — everything granted
 
         // Lookups every form needs while a user is filling in a document (field definitions and values,
         // sales employees, copy-from balances, batch pickers, dropdown rows) aren't gated by the
@@ -259,7 +265,7 @@ public class SubjectAuthorizationFilter : IAsyncAuthorizationFilter
         var requiredLevel = (method == "GET" || method == "HEAD") ? "Read" : "Full";
 
         string level = "None";
-        if (subject != null && !string.IsNullOrWhiteSpace(auth.Permissions))
+        if (subject != null && auth != null && !string.IsNullOrWhiteSpace(auth.Permissions))
         {
             var perms = JsonSerializer.Deserialize<Dictionary<string, string>>(auth.Permissions, JsonOpts) ?? new();
             perms.TryGetValue(subject, out var found);
@@ -274,6 +280,7 @@ public class SubjectAuthorizationFilter : IAsyncAuthorizationFilter
 
         if (!allowed)
         {
+            _audit.AccessDenied(subject, method, httpContext.Request.Path.Value ?? "");
             context.Result = new ObjectResult(new
             {
                 message = subject != null

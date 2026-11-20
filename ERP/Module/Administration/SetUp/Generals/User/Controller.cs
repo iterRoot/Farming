@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +19,13 @@ public class UserController : MyController
     private readonly MyDbContext _db;
     private readonly ITotpService _totp;
     private readonly IJwtTokenService _jwt;
+    private readonly SecurityAudit _audit;
+    private readonly IConfiguration _config;
 
-    public UserController(IUserRepository repository, IMapper mapper, MyDbContext db, ITotpService totp, IJwtTokenService jwt)
+    public UserController(IUserRepository repository, IMapper mapper, MyDbContext db, ITotpService totp, IJwtTokenService jwt, SecurityAudit audit, IConfiguration config)
     {
+        _audit = audit;
+        _config = config;
         _mapper = mapper;
         _repository = repository;
         _db = db;
@@ -28,19 +33,58 @@ public class UserController : MyController
         _jwt = jwt;
     }
 
-    private string HashPassword(string password)
+    private string HashPassword(string password) => PasswordHashing.Hash(password);
+
+    // Recovery codes are long random values, so plain SHA-256 is enough for them (see PasswordHashing).
+    private string HashCode(string value) => PasswordHashing.Hash256(value);
+
+    private bool VerifyPassword(string password, string hash) => PasswordHashing.Verify(password, hash, out _);
+
+    // How long a lockout from failed attempts lasts before the account opens again by itself.
+    // An administrator can always unlock sooner (POST /User/{id}/Unlock).
+    private int LockoutMinutes => _config.GetValue<int?>("Security:LockoutMinutes") ?? 15;
+
+    // Takes one attempt BEFORE the password is checked, with a single UPDATE that returns the new count. Parallel guesses
+    // each get a different number, and any beyond the limit are refused without being evaluated — counting only
+    // after a wrong answer let a burst of simultaneous guesses all run first.
+    private int ReserveAttempt(User user)
     {
-        using (var sha256 = SHA256.Create())
-        {
-            var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-            return Convert.ToBase64String(hashedBytes);
-        }
+        var set = _db.Set<User>().Where(u => u.Id == user.Id);
+        set.ExecuteUpdate(s => s.SetProperty(u => u.LoginAttempts, u => u.LoginAttempts + 1));
+        return set.Select(u => u.LoginAttempts).First();
     }
 
-    private bool VerifyPassword(string password, string hash)
+    private void ReleaseAttempt(User user) =>
+        _db.Set<User>().Where(u => u.Id == user.Id && u.LoginAttempts > 0)
+            .ExecuteUpdate(s => s.SetProperty(u => u.LoginAttempts, u => u.LoginAttempts - 1));
+
+    private void LockNow(User user)
     {
-        var hashOfInput = HashPassword(password);
-        return hashOfInput == hash;
+        var now = DateTime.UtcNow; var until = now.AddMinutes(LockoutMinutes);
+        _db.Set<User>().Where(u => u.Id == user.Id)
+            .ExecuteUpdate(s => s.SetProperty(u => u.IsLocked, true).SetProperty(u => u.LockedUntil, until).SetProperty(u => u.SessionsValidFrom, now));
+        user.IsLocked = true;
+    }
+
+    // Counts one failed attempt with a single UPDATE (read-modify-write let parallel guesses slip past
+    // the limit), locks the account when the limit is reached and ends the user's sessions.
+    private (int Attempts, bool Locked) RegisterFailure(User user, int maxAttempts)
+    {
+        var set = _db.Set<User>().Where(u => u.Id == user.Id);
+        set.ExecuteUpdate(s => s.SetProperty(u => u.LoginAttempts, u => u.LoginAttempts + 1));
+        var attempts = set.Select(u => u.LoginAttempts).First();
+        var locked = attempts >= maxAttempts;
+        if (locked)
+        {
+            var now = DateTime.UtcNow;
+            var until = now.AddMinutes(LockoutMinutes);
+            set.ExecuteUpdate(s => s.SetProperty(u => u.IsLocked, true)
+                                    .SetProperty(u => u.LockedUntil, until)
+                                    .SetProperty(u => u.SessionsValidFrom, now));
+        }
+        user.LoginAttempts = attempts;
+        user.IsLocked = locked || user.IsLocked;
+        return (attempts, locked);
     }
 
     // Reads the saved Password Administration policy, falling back to the
@@ -77,6 +121,7 @@ public class UserController : MyController
     // default 5). The one endpoint that must stay public — it's how a
     // client gets a token in the first place.
     [AllowAnonymous]
+    [Microsoft.AspNetCore.RateLimiting.EnableRateLimiting("login")]
     [HttpPost("Login")]
     public IActionResult Login([FromBody] UserLoginRequest request)
     {
@@ -92,25 +137,57 @@ public class UserController : MyController
         // Same message whether the user is missing or the password is
         // wrong — don't reveal which accounts exist.
         if (user == null)
+        {
+            _audit.LoginFailed(key, "unknown-user");
             return Unauthorized("Invalid user ID or password");
+        }
+
+        if (user.IsLocked && user.LockedUntil is DateTime lockEnds && lockEnds.ToUniversalTime() <= DateTime.UtcNow)
+        {
+            // A timed lockout has run out: open the account again.
+            user.IsLocked = false; user.LockedUntil = null; user.LoginAttempts = 0;
+            _repository.Update(user);
+            _repository.Commit();
+        }
 
         if (user.IsLocked)
-            return StatusCode(403, "Account is locked. Contact your administrator.");
+        {
+            _audit.LoginFailed(user.UserId, "account-locked");
+            return StatusCode(403, user.LockedUntil == null
+                ? "Account is locked. Contact your administrator."
+                : "Account is temporarily locked after too many failed attempts. Try again later or contact your administrator.");
+        }
 
         if (user.ActiveStatus != 'A')
+        {
+            _audit.LoginFailed(user.UserId, "account-inactive");
             return StatusCode(403, "Account is inactive. Contact your administrator.");
+        }
 
         var maxAttempts = GetPolicy().MaxFailedAttempts;
 
-        if (!VerifyPassword(request.Password, user.PasswordHash))
+        var attemptNo = ReserveAttempt(user);
+        if (attemptNo > maxAttempts)
         {
-            user.LoginAttempts += 1;
-            if (user.LoginAttempts >= maxAttempts) user.IsLocked = true;
-            _repository.Update(user);
-            _repository.Commit();
+            // Other guesses in flight already used up the allowance: don't evaluate this one.
+            LockNow(user);
+            _audit.LoginFailed(user.UserId, "too-many-attempts");
+            _audit.AccountLocked(user.UserId, "sign-in");
+            return StatusCode(403, "Account is temporarily locked after too many failed attempts. Try again later or contact your administrator.");
+        }
+
+        if (!PasswordHashing.Verify(request.Password, user.PasswordHash, out var upgradeHash))
+        {
+            var attempts = attemptNo;
+            var locked = attempts >= maxAttempts;
+            if (locked) LockNow(user);
+            user.LoginAttempts = attempts;
+
+            _audit.LoginFailed(user.UserId, "wrong-password", Math.Max(0, maxAttempts - attempts));
+            if (locked) _audit.AccountLocked(user.UserId, "sign-in");
 
             return Unauthorized(user.IsLocked
-                ? $"Account locked after {maxAttempts} failed attempts. Contact your administrator."
+                ? $"Account locked after {maxAttempts} failed attempts. Try again in {LockoutMinutes} minutes or contact your administrator."
                 : $"Invalid user ID or password ({maxAttempts - user.LoginAttempts} attempt(s) left)");
         }
 
@@ -119,11 +196,15 @@ public class UserController : MyController
         {
             // Password was right but no code supplied → ask for it.
             if (string.IsNullOrWhiteSpace(request.TwoFactorCode))
+            {
+                ReleaseAttempt(user);   // the password was right; asking for the code isn't a failed guess
+                _audit.TwoFactorChallenge(user.UserId);
                 return StatusCode(428, new
                 {
                     twoFactorRequired = true,
                     message = "Enter the 6-digit code from your authenticator app",
                 });
+            }
 
             var code = request.TwoFactorCode.Trim();
             var okTotp = _totp.VerifyCode(user.TwoFactorSecret!, code);
@@ -134,7 +215,7 @@ public class UserController : MyController
             {
                 var hashes = (user.TwoFactorRecoveryCodes ?? "")
                     .Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
-                var hit = HashPassword(code.ToLowerInvariant());
+                var hit = HashCode(code.ToLowerInvariant());
                 if (hashes.Remove(hit))
                 {
                     okRecovery = true;
@@ -144,25 +225,31 @@ public class UserController : MyController
 
             if (!okTotp && !okRecovery)
             {
-                user.LoginAttempts += 1;
-                if (user.LoginAttempts >= maxAttempts) user.IsLocked = true;
-                _repository.Update(user);
-                _repository.Commit();
+                var attempts2 = attemptNo;
+                var locked2 = attempts2 >= maxAttempts;
+                if (locked2) LockNow(user);
+                user.LoginAttempts = attempts2;
+
+                _audit.LoginFailed(user.UserId, "wrong-2fa-code", Math.Max(0, maxAttempts - attempts2));
+                if (locked2) _audit.AccountLocked(user.UserId, "2fa code");
 
                 return Unauthorized(user.IsLocked
-                    ? $"Account locked after {maxAttempts} failed attempts. Contact your administrator."
+                    ? $"Account locked after {maxAttempts} failed attempts. Try again in {LockoutMinutes} minutes or contact your administrator."
                     : $"Invalid authenticator code ({maxAttempts - user.LoginAttempts} attempt(s) left)");
             }
         }
 
         // Success — reset the counter and stamp the login time
         user.LoginAttempts = 0;
+        user.LockedUntil   = null;
         user.LastLogin     = DateTime.UtcNow;
+        if (upgradeHash) user.PasswordHash = HashPassword(request.Password);   // old SHA-256 → salted PBKDF2, no reset needed
         _repository.Update(user);
         _repository.Commit();
 
         var group = _db.Set<UserGroupEntity>().FirstOrDefault(g => g.Id == user.UserGroupId);
         var (token, expiresAt) = _jwt.IssueToken(user, group?.GroupName);
+        _audit.LoginSucceeded(user.UserId, usedRecoveryCode: user.TwoFactorEnabled && !string.IsNullOrWhiteSpace(request.TwoFactorCode) && request.TwoFactorCode.Contains('-'));
 
         return Ok(new UserLoginResponse
         {
@@ -198,6 +285,7 @@ public class UserController : MyController
         user.TwoFactorSecret = secret;   // provisional until verified
         _repository.Update(user);
         _repository.Commit();
+        _audit.Changed("2fa.setup", user.UserId);
 
         return Ok(new TwoFactorSetupResponse
         {
@@ -219,14 +307,18 @@ public class UserController : MyController
             return BadRequest("Two-factor is already enabled.");
 
         if (!_totp.VerifyCode(user.TwoFactorSecret, request.Code ?? ""))
+        {
+            _audit.ChangeRefused("2fa.enable", user.UserId, "wrong code");
             return BadRequest("That code is not valid. Check your device's clock and try again.");
+        }
 
         var codes = _totp.GenerateRecoveryCodes();
         user.TwoFactorEnabled       = true;
-        user.TwoFactorRecoveryCodes = string.Join(",", codes.Select(c => HashPassword(c)));
+        user.TwoFactorRecoveryCodes = string.Join(",", codes.Select(c => HashCode(c)));
         user.UpdatedAt              = DateTime.UtcNow;
         _repository.Update(user);
         _repository.Commit();
+        _audit.Changed("2fa.enable", user.UserId);
 
         return Ok(new TwoFactorEnableResponse { Enabled = true, RecoveryCodes = codes });
     }
@@ -239,7 +331,10 @@ public class UserController : MyController
         if (user == null) return NotFound($"User not found: {id}");
 
         if (!VerifyPassword(request.Password ?? "", user.PasswordHash))
+        {
+            _audit.ChangeRefused("2fa.disable", user.UserId, "wrong password");
             return Unauthorized("Password is incorrect");
+        }
 
         user.TwoFactorEnabled       = false;
         user.TwoFactorSecret        = null;
@@ -247,6 +342,7 @@ public class UserController : MyController
         user.UpdatedAt              = DateTime.UtcNow;
         _repository.Update(user);
         _repository.Commit();
+        _audit.Changed("2fa.disable", user.UserId);
 
         return Ok(new { enabled = false, message = "Two-factor authentication disabled" });
     }
@@ -302,6 +398,9 @@ public class UserController : MyController
         if (!ValidatePasswordStrength(request.Password, policy))
             return BadRequest(PolicyDescription(policy));
 
+        if (!_db.Set<UserGroupEntity>().Any(g => g.Id == request.UserGroupId))
+            return BadRequest("The selected user group doesn't exist");
+
         var existingUser = _repository.GetSingle(u => u.UserId == request.UserId);
         if (existingUser != null)
             return BadRequest("User ID already exists");
@@ -318,6 +417,15 @@ public class UserController : MyController
 
         _repository.Add(entity);
         _repository.Commit();
+
+        // Start with no access. Without a record the permission filter denies everything, but an explicit
+        // record shows up (as "None") on the Authorisations screen for an administrator to configure.
+        _db.Set<FarmingApi.Modules.Administration.Authorisations.UserAuthorization>().Add(new()
+        {
+            UserId = entity.Id, FullAuthorization = false, Permissions = "{}", CreatedAt = DateTime.UtcNow, InActive = false,
+        });
+        _db.SaveChanges();
+        _audit.Changed("user.create", entity.UserId, $"group {entity.UserGroupId}; no access until Authorisations are set");
 
         return Ok(new
         {
@@ -345,6 +453,10 @@ public class UserController : MyController
                 return BadRequest("Email already exists");
         }
 
+        if (!_db.Set<UserGroupEntity>().Any(g => g.Id == request.UserGroupId))
+            return BadRequest("The selected user group doesn't exist");
+
+        var before = (user.UserGroupId, user.ActiveStatus, user.Email);
         _mapper.Map(request, user);
 
         if (!string.IsNullOrWhiteSpace(request.Password))
@@ -357,9 +469,18 @@ public class UserController : MyController
         }
 
         user.UpdatedAt = DateTime.UtcNow;
+        if (!string.IsNullOrWhiteSpace(request.Password) || user.ActiveStatus != 'A')
+            user.SessionsValidFrom = DateTime.UtcNow;   // a reset password or a deactivation ends any open session
 
         _repository.Update(user);
         _repository.Commit();
+
+        var changes = new List<string>();
+        if (before.UserGroupId != user.UserGroupId) changes.Add($"group {before.UserGroupId}->{user.UserGroupId}");
+        if (before.ActiveStatus != user.ActiveStatus) changes.Add($"status {before.ActiveStatus}->{user.ActiveStatus}");
+        if (before.Email != user.Email) changes.Add("email changed");
+        if (!string.IsNullOrWhiteSpace(request.Password)) changes.Add("password set by administrator");
+        _audit.Changed("user.update", user.UserId, changes.Count > 0 ? string.Join(", ", changes) : "profile");
 
         return NoContent();
     }
@@ -388,6 +509,43 @@ public class UserController : MyController
         user.DeletedAt = DateTime.UtcNow;
         _repository.Remove(user);
         _repository.Commit();
+        _audit.Changed("user.delete", user.UserId);
+        return NoContent();
+    }
+
+    // ── POST /User/{id}/Unlock ─────────────────────────────────
+    // An administrator opens a locked account (lockouts from failed attempts also end by themselves).
+    [HttpPost("{id:int}/Unlock")]
+    public IActionResult Unlock(int id)
+    {
+        var user = _repository.GetSingle(e => e.Id == id);
+        if (user == null) return NotFound($"User not found: {id}");
+
+        user.IsLocked = false;
+        user.LockedUntil = null;
+        user.LoginAttempts = 0;
+        user.UpdatedAt = DateTime.UtcNow;
+        _repository.Update(user);
+        _repository.Commit();
+        _audit.Changed("user.unlock", user.UserId);
+
+        return Ok(new { message = $"{user.UserId} unlocked", id });
+    }
+
+    // ── POST /User/Logout ──────────────────────────────────────
+    // Ends every token issued to the caller so far; a copied token stops working too.
+    [HttpPost("Logout")]
+    public IActionResult Logout()
+    {
+        var idClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (!int.TryParse(idClaim, out var id)) return Unauthorized();
+        var user = _repository.GetSingle(e => e.Id == id);
+        if (user == null) return Unauthorized();
+
+        user.SessionsValidFrom = DateTime.UtcNow;
+        _repository.Update(user);
+        _repository.Commit();
+        _audit.Changed("logout", user.UserId);
         return NoContent();
     }
 
@@ -398,6 +556,8 @@ public class UserController : MyController
         if (user == null)
             return NotFound($"User not found: {id}");
 
+        if (user.IsLocked && user.LockedUntil is DateTime lockEnds2 && lockEnds2.ToUniversalTime() <= DateTime.UtcNow)
+        { user.IsLocked = false; user.LockedUntil = null; user.LoginAttempts = 0; }
         if (user.IsLocked)
             return StatusCode(403, "Account is locked. Contact your administrator.");
 
@@ -406,10 +566,10 @@ public class UserController : MyController
         if (!VerifyPassword(request.OldPassword ?? "", user.PasswordHash))
         {
             var maxAttempts = GetPolicy().MaxFailedAttempts;
-            user.LoginAttempts += 1;
-            if (user.LoginAttempts >= maxAttempts) user.IsLocked = true;
-            _repository.Update(user);
-            _repository.Commit();
+            var (attempts3, locked3) = RegisterFailure(user, maxAttempts);
+
+            _audit.ChangeRefused("password.change", user.UserId, "wrong current password");
+            if (locked3) _audit.AccountLocked(user.UserId, "change password");
 
             return BadRequest(user.IsLocked
                 ? $"Account locked after {maxAttempts} failed attempts. Contact your administrator."
@@ -430,9 +590,11 @@ public class UserController : MyController
         user.PasswordChangedAt = DateTime.UtcNow;
         user.UpdatedAt = DateTime.UtcNow;
         user.LoginAttempts = 0;
+        user.SessionsValidFrom = DateTime.UtcNow;   // every token issued before the change stops working
 
         _repository.Update(user);
         _repository.Commit();
+        _audit.Changed("password.change", user.UserId);
 
         return NoContent();
     }

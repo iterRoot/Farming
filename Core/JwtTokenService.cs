@@ -46,6 +46,7 @@ public class JwtTokenService : IJwtTokenService
         {
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new("iatms", DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString()),   // checked against User.SessionsValidFrom
             new("userId", user.UserId),
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.UserId),

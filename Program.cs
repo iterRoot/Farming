@@ -16,6 +16,7 @@ using QuestPDF.Infrastructure;
 QuestPDF.Settings.License = LicenseType.Community;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.ConfigureKestrel(o => o.AddServerHeader = false);   // don't announce the server software
 builder.Services.AddControllers(options =>
 {
     // Enforces the None/Read/Full permission map the Authorisations screen
@@ -90,6 +91,8 @@ builder.Services.AddScoped<IARInvoiceJournalService, ARInvoiceJournalService>();
 builder.Services.AddScoped<IJournalEntryRepository, JournalEntryRepository>();
 builder.Services.AddScoped<IGLAccountDeterminationRepository, GLAccountDeterminationRepository>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<FarmingApi.Core.SecurityAudit>();   // security event log + alerts (Core/SecurityAudit.cs)
 builder.Services.AddScoped<FarmingApi.Modules.Administration.Attachment.AttachmentStorage>();
 builder.Services.AddScoped<FarmingApi.Modules.Financials.GLAccountDetermination.GLAccountResolver>();
 builder.Services.AddHttpClient().ConfigureHttpClientDefaults(b => b.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { UseProxy = builder.Configuration.GetValue("ExchangeRates:UseProxy", true) }));
@@ -117,6 +120,41 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey          = JwtTokenService.GetSigningKey(builder.Configuration),
             ClockSkew                 = TimeSpan.FromMinutes(1),
         };
+        // A token that was sent but failed validation (expired, forged, wrong key) is a security event.
+        // The reason is the exception type only — never the token itself.
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = ctx =>
+            {
+                ctx.HttpContext.RequestServices.GetRequiredService<FarmingApi.Core.SecurityAudit>()
+                    .TokenRejected($"{ctx.Exception.GetType().Name} on {ctx.Request.Method} {ctx.Request.Path}");
+                return Task.CompletedTask;
+            },
+            // A valid signature isn't enough: the user must still exist, be active and unlocked, and the token
+            // must have been issued after their last sign-out / password change / lock / deactivation.
+            OnTokenValidated = async ctx =>
+            {
+                var db = ctx.HttpContext.RequestServices.GetRequiredService<FarmingApi.MyDbContext>();
+                var id = int.TryParse(ctx.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var i) ? i : 0;
+                var u = await db.Set<FarmingApi.Modules.Administration.SetUp.User.User>().AsNoTracking()
+                    .Where(x => x.Id == id)
+                    .Select(x => new { x.ActiveStatus, x.IsLocked, x.LockedUntil, x.SessionsValidFrom })
+                    .FirstOrDefaultAsync();
+                var issuedMs = long.TryParse(ctx.Principal?.FindFirst("iatms")?.Value, out var ms) ? ms : 0;   // tokens from before this check have no iatms
+                string? why = null;
+                if (u == null) why = "user no longer exists";
+                else if (u.ActiveStatus != 'A') why = "user is inactive";
+                else if (u.IsLocked && (u.LockedUntil == null || u.LockedUntil.Value.ToUniversalTime() > DateTime.UtcNow)) why = "user is locked";
+                else if (u.SessionsValidFrom is DateTime from && issuedMs < new DateTimeOffset(from.ToUniversalTime()).ToUnixTimeMilliseconds())   // the DB layer hands back Local-kind values
+                    why = "signed out, password changed or reset since this token was issued";
+                if (why != null)
+                {
+                    ctx.HttpContext.RequestServices.GetRequiredService<FarmingApi.Core.SecurityAudit>()
+                        .TokenRejected($"{why} ({ctx.Request.Method} {ctx.Request.Path})");
+                    ctx.Fail(why);
+                }
+            },
+        };
     });
 
 // Monthly payroll run. Creates DRAFT payslips only; never touches a Paid one.
@@ -138,6 +176,30 @@ builder.Services.AddAuthorization(options =>
     options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
         .Build();
+});
+// Rate limits. Sign-in is the sensitive one (password guessing): a few attempts per minute per client IP.
+// Everything else gets a generous ceiling that only stops floods. Behind Render the client IP comes from
+// the forwarded headers (ASPNETCORE_FORWARDEDHEADERS_ENABLED=true).
+builder.Services.AddRateLimiter(o =>
+{
+    o.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    o.OnRejected = (ctx, _) =>
+    {
+        ctx.HttpContext.RequestServices.GetRequiredService<FarmingApi.Core.SecurityAudit>()
+            .RateLimited($"{ctx.HttpContext.Request.Method} {ctx.HttpContext.Request.Path}");
+        if (ctx.Lease.TryGetMetadata(System.Threading.RateLimiting.MetadataName.RetryAfter, out var retry))
+            ctx.HttpContext.Response.Headers.RetryAfter = ((int)retry.TotalSeconds).ToString();
+        return ValueTask.CompletedTask;
+    };
+    o.AddPolicy("login", http => System.Threading.RateLimiting.RateLimitPartition.GetFixedWindowLimiter(
+        http.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+        _ => new System.Threading.RateLimiting.FixedWindowRateLimiterOptions
+        { PermitLimit = builder.Configuration.GetValue<int?>("Security:LoginPerMinute") ?? 10, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
+    o.GlobalLimiter = System.Threading.RateLimiting.PartitionedRateLimiter.Create<HttpContext, string>(http =>
+        System.Threading.RateLimiting.RateLimitPartition.GetFixedWindowLimiter(
+            http.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new System.Threading.RateLimiting.FixedWindowRateLimiterOptions
+            { PermitLimit = builder.Configuration.GetValue<int?>("Security:RequestsPerMinute") ?? 1500, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
 });
 var app = builder.Build();
 
@@ -169,8 +231,33 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+if (!app.Environment.IsDevelopment()) app.UseHsts();   // only sent on HTTPS responses; Render's proxy supplies the scheme
+
+// Headers for every API response. The API never serves a page, so framing, sniffing and caching are all off.
+app.Use(async (ctx, next) =>
+{
+    ctx.Response.OnStarting(() =>
+    {
+        var h = ctx.Response.Headers;
+        h["X-Content-Type-Options"] = "nosniff";
+        h["X-Frame-Options"]        = "DENY";
+        h["Referrer-Policy"]        = "no-referrer";
+        h["Permissions-Policy"]     = "camera=(), microphone=(), geolocation=(), payment=()";
+        h["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'";
+        h["Cross-Origin-Resource-Policy"] = "same-site";
+        // Business data must not sit in a shared or back-button cache after sign-out. Skip Swagger in Development.
+        if (!ctx.Request.Path.StartsWithSegments("/swagger") && !h.ContainsKey("Cache-Control"))
+        {
+            h["Cache-Control"] = "no-store";
+            h["Pragma"]        = "no-cache";
+        }
+        return Task.CompletedTask;
+    });
+    await next();
+});
 app.UseHttpsRedirection();
 app.UseCors("AllowReact");   // 👈 MUST be BEFORE auth/authorization
+app.UseRateLimiter();
 app.UseAuthentication();     // 👈 MUST be BEFORE UseAuthorization
 app.UseAuthorization();
 app.MapGet("/", () => builder.Environment);

@@ -20,9 +20,11 @@ public class UserAuthorizationController : MyController
 {
     private readonly IUserAuthorizationRepository _repository;
     private readonly MyDbContext _db;
+    private readonly SecurityAudit _audit;
 
-    public UserAuthorizationController(IUserAuthorizationRepository repository, MyDbContext db)
+    public UserAuthorizationController(IUserAuthorizationRepository repository, MyDbContext db, SecurityAudit audit)
     {
+        _audit = audit;
         _repository = repository;
         _db = db;
     }
@@ -116,6 +118,9 @@ public class UserAuthorizationController : MyController
         else { a.UpdatedAt = DateTime.UtcNow; _repository.Update(a); }
 
         _repository.Commit();
+        _audit.Changed("permissions.save", user.UserId, a.FullAuthorization
+            ? "full authorisation"
+            : $"{perms.Count(p => p.Value == "Full")} full, {perms.Count(p => p.Value == "Read")} read-only");
         return Ok(new { message = "Authorisations saved", userId, fullAuthorization = a.FullAuthorization });
     }
 
@@ -140,6 +145,7 @@ public class UserAuthorizationController : MyController
         else { a.UpdatedAt = DateTime.UtcNow; _repository.Update(a); }
 
         _repository.Commit();
+        _audit.Changed("permissions.grant-full", user.UserId);
         return Ok(new { message = $"Full authorisation granted to {user.UserName}", userId });
     }
 
@@ -151,6 +157,8 @@ public class UserAuthorizationController : MyController
         if (a == null) return NotFound($"No authorisations for user {userId}");
         _repository.Remove(a);
         _repository.Commit();
+        var who = _db.Set<UserEntity>().Where(u => u.Id == userId).Select(u => u.UserId).FirstOrDefault() ?? $"#{userId}";
+        _audit.Changed("permissions.delete", who, "record removed");
         return NoContent();
     }
 }

@@ -35,7 +35,9 @@ public class MyController : ControllerBase
     [NonAction]
     protected IActionResult ItemNotFound()
     {
-        return Error("Item is not found!");
+        // A missing record is a 404 (same body as Error(), so callers reading Message still work);
+        // answering 200 made delete/get of a missing id look like a success.
+        return NotFound(new { Status = "E", Message = "Item is not found!" });
     }
 
     [NonAction]

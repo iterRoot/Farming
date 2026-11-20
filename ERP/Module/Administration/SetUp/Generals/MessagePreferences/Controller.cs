@@ -10,12 +10,14 @@ public class MessagePreferenceController : ControllerBase
 {
     private readonly IMessagePreferenceRepository _repo;
     private readonly IMapper                      _mapper;
+    private readonly MyDbContext                  _db;
 
     public MessagePreferenceController(
-        IMessagePreferenceRepository repo, IMapper mapper)
+        IMessagePreferenceRepository repo, IMapper mapper, MyDbContext db)
     {
         _repo   = repo;
         _mapper = mapper;
+        _db     = db;
     }
 
     // ── GET /MessagePreference ─────────────────────────────────
@@ -211,6 +213,7 @@ public class MessagePreferenceController : ControllerBase
     public IActionResult DeleteByUser(string userCode)
     {
         var list = _repo.GetAll().Where(x => x.UserCode == userCode.Trim().ToUpper()).ToList();
+        if (list.Count == 0) return NotFound($"No preferences stored for '{userCode}'.");
         foreach (var e in list) _repo.Remove(e);
         _repo.Commit();
         return Ok(new { deleted = list.Count });
@@ -234,6 +237,8 @@ public class MessagePreferenceController : ControllerBase
     public IActionResult SeedForUser(string userCode, [FromQuery] string? userName = null)
     {
         var code = userCode.Trim().ToUpper();
+        if (code != "ALL" && !_db.Set<FarmingApi.Modules.Administration.SetUp.User.User>().Any(u => u.UserId.ToUpper() == code))
+            return NotFound($"No user '{userCode}'.");
         if (_repo.GetAll().Any(x => x.UserCode == code))
             return BadRequest($"Preferences for '{code}' already exist.");
 

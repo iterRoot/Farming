@@ -70,6 +70,10 @@ public class PurchaseRequestController : ControllerBase
     public async Task<IActionResult> Create([FromBody] PurchaseRequestRequest dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
+        if (dto.Items == null || dto.Items.Count == 0)
+            return BadRequest("Add at least one line before saving.");
+        if (dto.Items.Any(l => l.Quantity <= 0))
+            return BadRequest("Every line needs a quantity above zero.");
 
         // Vendor is optional — a requisition can be raised before anyone has
         // decided who to buy from. Validate it only when one was actually sent.

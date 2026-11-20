@@ -27,7 +27,10 @@ namespace FarmingApi.Core;
 // ═══════════════════════════════════════════════════════════════
 public static class DefaultUserSeeder
 {
+
     public const string DefaultUserId = "Manager";
+    /// <summary>The only user allowed in without an Authorisations record (see SubjectAuthorizationFilter).</summary>
+    public const string ManagerUserId = DefaultUserId;
     public const string DefaultGroup  = "Managers";
 
     // The app's own strength rule (see UserController.ValidatePasswordStrength).
@@ -120,9 +123,5 @@ public static class DefaultUserSeeder
         return new string(chars.ToArray());
     }
 
-    private static string HashPassword(string password)
-    {
-        using var sha256 = SHA256.Create();
-        return Convert.ToBase64String(sha256.ComputeHash(Encoding.UTF8.GetBytes(password)));
-    }
+    private static string HashPassword(string password) => PasswordHashing.Hash(password);
 }

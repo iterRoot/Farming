@@ -7,7 +7,7 @@ namespace FarmingApi.Core;
 // A rule a request broke. DocumentRuleFilter turns it into a plain 400 carrying the message —
 // as a filter rather than in the error middleware so it behaves the same in every environment
 // (in Development the developer error page would otherwise answer 500 with a stack trace).
-public class DocumentRuleException : Exception
+public class DocumentRuleException : InvalidOperationException   // so controllers that already map InvalidOperationException to 400 do the same for it
 {
     public DocumentRuleException(string message) : base(message) { }
 }

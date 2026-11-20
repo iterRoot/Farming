@@ -4257,6 +4257,9 @@ namespace Farming.Migrations
                     b.Property<DateTime?>("LastLogin")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("LockedUntil")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("LoginAttempts")
                         .HasColumnType("integer");
 
@@ -4270,6 +4273,9 @@ namespace Farming.Migrations
                     b.Property<string>("Phone")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
+
+                    b.Property<DateTime?>("SessionsValidFrom")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
