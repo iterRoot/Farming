@@ -1,3 +1,4 @@
+using FarmingApi.Core;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -219,9 +220,13 @@ public class SAPLinkController : ControllerBase
         var sw = Stopwatch.StartNew();
         try
         {
-            using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
+            // Only public addresses: this runs from the server, so an internal URL would otherwise let any
+            // user probe the server's own network (see Core/SafeHttp.cs).
+            if (!SafeHttp.TryParse(entity.Url, out var target, out var urlError))
+                return Ok(new LinkHealthResult { Id = id, Code = entity.Code, Title = entity.Title, Url = entity.Url, IsReachable = false, Error = urlError });
+            using var client = SafeHttp.CreateClient(TimeSpan.FromSeconds(10));
             client.DefaultRequestHeaders.Add("User-Agent", "FarmingERP/HealthCheck");
-            var resp = await client.GetAsync(entity.Url);
+            var resp = await client.GetAsync(target);
             sw.Stop();
 
             entity.LastStatusCode = ((int)resp.StatusCode).ToString();
@@ -251,7 +256,8 @@ public class SAPLinkController : ControllerBase
             {
                 Id = id, Code = entity.Code, Title = entity.Title, Url = entity.Url,
                 IsReachable = false, ResponseMs = (int)sw.ElapsedMilliseconds,
-                Error = ex.Message,
+                // Don't hand back the exception text (socket errors name hosts and ports): blocked or not reachable is all a caller needs.
+                Error = ex is SafeHttp.BlockedAddressException ? ex.Message : "Could not connect to that address.",
             });
         }
     }

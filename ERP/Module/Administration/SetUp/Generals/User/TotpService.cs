@@ -14,6 +14,8 @@ public interface ITotpService
     string GenerateSecret();
     string BuildOtpAuthUri(string secret, string account, string issuer);
     bool   VerifyCode(string secret, string code, int windowSteps = 1);
+    /// <summary>Like VerifyCode, but also returns the 30-second step the code belongs to, so the caller can refuse a code it has already accepted.</summary>
+    bool   TryVerify(string secret, string code, out long matchedStep, int windowSteps = 1);
     List<string> GenerateRecoveryCodes(int count = 8);
 }
 
@@ -41,8 +43,11 @@ public class TotpService : ITotpService
 
     // ── Verification ───────────────────────────────────────────────
     // windowSteps allows +/- N steps of clock drift (1 => ±30s).
-    public bool VerifyCode(string secret, string code, int windowSteps = 1)
+    public bool VerifyCode(string secret, string code, int windowSteps = 1) => TryVerify(secret, code, out _, windowSteps);
+
+    public bool TryVerify(string secret, string code, out long matchedStep, int windowSteps = 1)
     {
+        matchedStep = 0;
         if (string.IsNullOrWhiteSpace(secret) || string.IsNullOrWhiteSpace(code))
             return false;
 
@@ -59,7 +64,7 @@ public class TotpService : ITotpService
             if (CryptographicOperations.FixedTimeEquals(
                     Encoding.ASCII.GetBytes(candidate),
                     Encoding.ASCII.GetBytes(code)))
-                return true;
+            { matchedStep = step + offset; return true; }
         }
         return false;
     }

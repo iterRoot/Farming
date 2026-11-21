@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Farming.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20261112031517_AddProcessChecklists")]
-    partial class AddProcessChecklists
+    [Migration("20261121015633_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -4260,6 +4260,9 @@ namespace Farming.Migrations
                     b.Property<DateTime?>("LastLogin")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("LockedUntil")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("LoginAttempts")
                         .HasColumnType("integer");
 
@@ -4274,8 +4277,14 @@ namespace Farming.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
+                    b.Property<DateTime?>("SessionsValidFrom")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
+
+                    b.Property<long?>("TwoFactorLastStep")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("TwoFactorRecoveryCodes")
                         .HasColumnType("text");
@@ -14165,7 +14174,7 @@ namespace Farming.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.Property<decimal>("ItemCost")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,6)");
 
                     b.Property<string>("ItemGroup")
                         .IsRequired()
@@ -17222,6 +17231,10 @@ namespace Farming.Migrations
                     b.Property<string>("ReferencedDocumentLabel")
                         .HasMaxLength(120)
                         .HasColumnType("character varying(120)");
+
+                    b.Property<string>("ReferencedDocumentType")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
 
                     b.Property<string>("Remarks")
                         .HasMaxLength(500)

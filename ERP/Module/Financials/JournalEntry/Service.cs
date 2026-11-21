@@ -43,8 +43,11 @@ public class JournalEntryNumberService : IJournalEntryNumberService
     /// rather than each growing a constructor parameter; the interface above
     /// exists for anything resolved through DI.
     /// </summary>
-    public static string Next(MyDbContext db, DateTime postingDate) =>
-        Next(db.Set<JournalEntry>(), postingDate);
+    public static string Next(MyDbContext db, DateTime postingDate)
+    {
+        db.LockJournalNumbering();   // one number at a time — see MyDbContext.LockJournalNumbering
+        return Next(db.Set<JournalEntry>(), postingDate);
+    }
 
     /// <summary>
     /// Overload for callers holding a repository rather than a context — the

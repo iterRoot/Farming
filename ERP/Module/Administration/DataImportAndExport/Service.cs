@@ -972,9 +972,7 @@ public class DataTransferService : IDataTransferService
     private static string HashPassword(string password) => FarmingApi.Core.PasswordHashing.Hash(password);
 
     private static bool StrongPassword(string p) =>
-        !string.IsNullOrWhiteSpace(p) && p.Length >= 8
-        && p.Any(char.IsUpper) && p.Any(char.IsLower)
-        && p.Any(char.IsDigit) && p.Any(c => "@$!%*?&".Contains(c));
+        FarmingApi.Core.PasswordRules.Check(p, new FarmingApi.Core.PasswordPolicyView(12, true, true, true, true)) == null;
 
     // ═══════════════════════════════════════════════════════════════
     // ITEM GROUP IMPORTER

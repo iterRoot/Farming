@@ -42,7 +42,7 @@ services:
       - key: DB_CONNECTION
         sync: false
       # Optional: the password for the first "Manager" login, used only when that account is
-      # created on an empty database (8+ characters with upper, lower, a digit and one of @$!%*?&).
+      # created on an empty database (12+ characters with upper, lower, a digit and one of @$!%*?&, not a common password).
       # Leave it unset and a random password is generated and written once to the startup log.
       # An existing Manager is never changed by this.
       - key: Seed__ManagerPassword

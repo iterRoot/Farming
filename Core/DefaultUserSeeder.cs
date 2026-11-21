@@ -32,6 +32,8 @@ public static class DefaultUserSeeder
     /// <summary>The only user allowed in without an Authorisations record (see SubjectAuthorizationFilter).</summary>
     public const string ManagerUserId = DefaultUserId;
     public const string DefaultGroup  = "Managers";
+    /// <summary>Manager's row Id on a fresh database.</summary>
+    public const int ManagerId = 1;
 
     // The app's own strength rule (see UserController.ValidatePasswordStrength).
     private const string Special = "@$!%*?&";
@@ -69,13 +71,20 @@ public static class DefaultUserSeeder
                 else
                 {
                     if (!string.IsNullOrEmpty(configured))
-                        logger.LogWarning("Seed__ManagerPassword is set but too weak (8+ characters with upper, lower, a digit and one of {Special}); a random password is used instead.", Special);
+                        logger.LogWarning("Seed__ManagerPassword is set but too weak (12+ characters with upper, lower, a digit and one of {Special}, and not a common password); a random password is used instead.", Special);
                     password  = Generate();
                     generated = true;
                 }
 
+                // Manager always gets Id 1 when that Id is free (a fresh database). The identity counter is moved
+                // past it afterwards so the next user doesn't collide. If something else already holds Id 1 the
+                // database picks the Id as usual.
+                var idOne = !db.Set<UserEntity>().Any(u => u.Id == ManagerId);
+                if (!idOne) logger.LogWarning("User Id {Id} is already taken, so {UserId} was given the next free Id.", ManagerId, DefaultUserId);
+
                 db.Set<UserEntity>().Add(new UserEntity
                 {
+                    Id           = idOne ? ManagerId : 0,
                     UserId       = DefaultUserId,
                     UserName     = "Manager",
                     Email        = "manager@farm-erp.local",
@@ -88,6 +97,8 @@ public static class DefaultUserSeeder
                     InActive     = false,
                 });
                 db.SaveChanges();
+                if (idOne)
+                    db.Database.ExecuteSqlRaw("SELECT setval(pg_get_serial_sequence('\"KUSR\"', 'Id'), (SELECT MAX(\"Id\") FROM \"KUSR\"))");
                 if (generated)
                     logger.LogWarning("Seeded login {UserId} with the generated password {Password} — it is shown only now. Sign in and change it (Administration > Set Up > General > Security > Change Password).", DefaultUserId, password);
                 else
@@ -102,8 +113,9 @@ public static class DefaultUserSeeder
         }
     }
 
+    // The same rules new passwords follow everywhere else (Core/PasswordRules.cs), with the default policy.
     private static bool IsStrong(string? p) =>
-        p is { Length: >= 8 } && p.Any(char.IsUpper) && p.Any(char.IsLower) && p.Any(char.IsDigit) && p.Any(c => Special.Contains(c));
+        PasswordRules.Check(p, new PasswordPolicyView(12, true, true, true, true), DefaultUserId) == null;
 
     // 20 characters that always satisfy the strength rule; ambiguous ones (0/O, 1/l/I) are left out
     // so it can be read from a log line and typed.

@@ -28,6 +28,8 @@ public class User : AuditableEntity
     /// <summary>Base32 shared secret. Set at setup; only trusted once TwoFactorEnabled is true.</summary>
     public string? TwoFactorSecret  { get; set; }
     public bool    TwoFactorEnabled { get; set; } = false;
+    /// <summary>The newest authenticator time-step already accepted. A code from this step or an earlier one is refused, so a code can't be used twice.</summary>
+    public long?   TwoFactorLastStep { get; set; }
     /// <summary>Comma-separated SHA-256 hashes of single-use recovery codes.</summary>
     public string? TwoFactorRecoveryCodes { get; set; }
 

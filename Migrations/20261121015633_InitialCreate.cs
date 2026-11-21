@@ -125,6 +125,32 @@ namespace Farming.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "KALT",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ItemCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    AltItemCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    AltItemName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    Factor = table.Column<decimal>(type: "numeric(18,4)", precision: 18, scale: 4, nullable: false),
+                    Ranking = table.Column<int>(type: "integer", nullable: false),
+                    Criteria = table.Column<string>(type: "character varying(254)", maxLength: 254, nullable: true),
+                    GuidId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    InActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KALT", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "KAPT",
                 columns: table => new
                 {
@@ -311,6 +337,66 @@ namespace Farming.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "KBCS",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Code = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    ClearingAccount = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    SettlementAccount = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
+                    FeePercent = table.Column<decimal>(type: "numeric(9,4)", precision: 9, scale: 4, nullable: false),
+                    FeeAccount = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
+                    GuidId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    InActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KBCS", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KBCT",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DocNum = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    CardCode = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    PostingDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    BankAccount = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    ClearingAccount = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    GrossAmount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    FeeAmount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    NetAmount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    FeeAccount = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
+                    Reference = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    Status = table.Column<string>(type: "character varying(1)", maxLength: 1, nullable: false, defaultValue: "P"),
+                    JournalEntryId = table.Column<int>(type: "integer", nullable: true),
+                    JournalNo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    GuidId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    InActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KBCT", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "KBGT",
                 columns: table => new
                 {
@@ -340,6 +426,70 @@ namespace Farming.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_KBGT", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KBIN",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Code = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    WarehouseCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    Sublevel1 = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    Sublevel2 = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    IsReceivingBin = table.Column<bool>(type: "boolean", nullable: false),
+                    MaxWeight = table.Column<decimal>(type: "numeric(18,4)", precision: 18, scale: 4, nullable: true),
+                    GuidId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    InActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KBIN", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KBIT",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DocNum = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    PostingDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    FromAccount = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    FromAccountName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false, defaultValue: ""),
+                    ToAccount = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    ToAccountName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false, defaultValue: ""),
+                    Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    BankCharge = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    ChargeAccount = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
+                    Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false, defaultValue: "USD"),
+                    Reference = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    Memo = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    Status = table.Column<string>(type: "character varying(1)", maxLength: 1, nullable: false, defaultValue: "P"),
+                    JournalEntryId = table.Column<int>(type: "integer", nullable: true),
+                    JournalNo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    UserSign = table.Column<int>(type: "integer", nullable: true),
+                    GuidId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    InActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KBIT", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -484,6 +634,64 @@ namespace Farming.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "KBST",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    StatementNo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    AccountCode = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    AccountName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false, defaultValue: ""),
+                    BankName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    BankAccountNo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false, defaultValue: "USD"),
+                    StatementDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    FromDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ToDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    OpeningBalance = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    ClosingBalance = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Status = table.Column<string>(type: "character varying(1)", maxLength: 1, nullable: false, defaultValue: "O"),
+                    Remarks = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    UserSign = table.Column<int>(type: "integer", nullable: true),
+                    GuidId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    InActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KBST", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KBTT",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Code = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    Description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Remarks = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    GuidId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    InActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KBTT", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "KBTX",
                 columns: table => new
                 {
@@ -567,6 +775,80 @@ namespace Farming.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_KCDF", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KCLR",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    RunNo = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    ChecklistTemplateId = table.Column<int>(type: "integer", nullable: false),
+                    TemplateCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    ContextRef = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    StartedBy = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    DueDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Notes = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    Status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    StartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    RequireSignOff = table.Column<bool>(type: "boolean", nullable: false),
+                    SignOffRole = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    SignedOffBy = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    SignedOffAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    GuidId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    InActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KCLR", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KCLT",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Code = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Name = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    Category = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    Module = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: true),
+                    SubCategory = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    TriggerType = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    TriggerEvent = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    LinkedDocType = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    AssignedRole = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    AssignedTo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    RequireSignOff = table.Column<bool>(type: "boolean", nullable: false),
+                    SignOffRole = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    Tags = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
+                    IconName = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
+                    Version = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    SortOrder = table.Column<int>(type: "integer", nullable: false),
+                    Remarks = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    GuidId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    InActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KCLT", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -1606,6 +1888,39 @@ namespace Farming.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "KEQP",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CardCode = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    ItemCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    ItemName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    ManufacturerSN = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    InternalSN = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    CustomerCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    CustomerName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    Status = table.Column<string>(type: "character varying(15)", maxLength: 15, nullable: false),
+                    DeliveryDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    WarrantyStart = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    WarrantyEnd = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Location = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    Remarks = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    GuidId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    InActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KEQP", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "KERD",
                 columns: table => new
                 {
@@ -1636,6 +1951,33 @@ namespace Farming.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_KERD", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KFCS",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Code = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    PeriodType = table.Column<string>(type: "character varying(15)", maxLength: 15, nullable: false),
+                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    Remarks = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    GuidId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    InActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KFCS", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -1859,6 +2201,62 @@ namespace Farming.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "KIGE",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DocNum = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    PostingDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Warehouse = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    ProductionOrderNo = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: true),
+                    Status = table.Column<string>(type: "character varying(5)", maxLength: 5, nullable: false),
+                    JournalEntryId = table.Column<int>(type: "integer", nullable: true),
+                    TotalCost = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Remarks = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    GuidId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    InActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KIGE", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KIGN",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DocNum = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    PostingDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Warehouse = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    ProductionOrderNo = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: true),
+                    Status = table.Column<string>(type: "character varying(5)", maxLength: 5, nullable: false),
+                    JournalEntryId = table.Column<int>(type: "integer", nullable: true),
+                    TotalCost = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Remarks = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    GuidId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    InActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KIGN", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "KIMP",
                 columns: table => new
                 {
@@ -2058,7 +2456,7 @@ namespace Farming.Migrations
                     StockCountingUomCode = table.Column<string>(type: "text", nullable: true),
                     StockCountingUomName = table.Column<string>(type: "text", nullable: true),
                     ItemsPerCountingUnit = table.Column<decimal>(type: "numeric(18,3)", nullable: false),
-                    ItemCost = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    ItemCost = table.Column<decimal>(type: "numeric(18,6)", nullable: false),
                     ManageStockByWarehouse = table.Column<bool>(type: "boolean", nullable: false),
                     RequiredStock = table.Column<decimal>(type: "numeric(18,3)", nullable: false),
                     PlanningMethod = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
@@ -2229,6 +2627,36 @@ namespace Farming.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_KJVH", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KKBA",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Code = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    Title = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Category = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    ItemCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    Symptom = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
+                    Cause = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
+                    Solution = table.Column<string>(type: "character varying(4000)", maxLength: 4000, nullable: false),
+                    Status = table.Column<string>(type: "character varying(15)", maxLength: 15, nullable: false),
+                    Tags = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
+                    ViewCount = table.Column<int>(type: "integer", nullable: false),
+                    GuidId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    InActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KKBA", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -2569,6 +2997,11 @@ namespace Farming.Migrations
                     ChequesBalance = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false, defaultValue: 0m),
                     TaxId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     VatGroup = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
+                    TaxStatus = table.Column<string>(type: "character varying(1)", maxLength: 1, nullable: false, defaultValue: "Y"),
+                    TaxExemptionNo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    TaxExemptionExpiry = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    SubjectToWithholding = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    WithholdingTaxCode = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
                     UserSign = table.Column<int>(type: "integer", nullable: true),
                     VersionNum = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
                     GuidId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -2774,6 +3207,40 @@ namespace Farming.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_KPCK", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KPEC",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DocNum = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    FromDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ToDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PostingDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    RetainedEarnings = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    TotalRevenue = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    TotalExpense = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    NetProfit = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    AccountCount = table.Column<int>(type: "integer", nullable: false),
+                    Remarks = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    Status = table.Column<string>(type: "character varying(1)", maxLength: 1, nullable: false, defaultValue: "P"),
+                    JournalEntryId = table.Column<int>(type: "integer", nullable: true),
+                    JournalNo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    UserSign = table.Column<int>(type: "integer", nullable: true),
+                    GuidId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    InActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KPEC", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -3404,6 +3871,22 @@ namespace Farming.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "KSFL",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    StoredName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Content = table.Column<byte[]>(type: "bytea", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    GuidId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KSFL", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "KSHT",
                 columns: table => new
                 {
@@ -3578,6 +4061,7 @@ namespace Farming.Migrations
                     Ref2 = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: true),
                     InflationBased = table.Column<bool>(type: "boolean", nullable: false),
                     ReferencedDocumentId = table.Column<int>(type: "integer", nullable: true),
+                    ReferencedDocumentType = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: true),
                     ReferencedDocumentLabel = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: true),
                     Status = table.Column<string>(type: "character varying(15)", maxLength: 15, nullable: false, defaultValue: "Posted"),
                     Remarks = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
@@ -4425,6 +4909,37 @@ namespace Farming.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BCT1",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreditCardSettlementId = table.Column<int>(type: "integer", nullable: false),
+                    IncomingPaymentId = table.Column<int>(type: "integer", nullable: false),
+                    PaymentDocNum = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    CustomerName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    GuidId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    InActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BCT1", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BCT1_KBCT_CreditCardSettlementId",
+                        column: x => x.CreditCardSettlementId,
+                        principalTable: "KBCT",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BGT1",
                 columns: table => new
                 {
@@ -4537,6 +5052,68 @@ namespace Farming.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BST1",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    BankStatementId = table.Column<int>(type: "integer", nullable: false),
+                    LineNum = table.Column<int>(type: "integer", nullable: false),
+                    ValueDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Reference = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    AmountIn = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    AmountOut = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Status = table.Column<string>(type: "character varying(1)", maxLength: 1, nullable: false, defaultValue: "U"),
+                    JournalEntryId = table.Column<int>(type: "integer", nullable: true),
+                    JournalNo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    Remarks = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    GuidId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    InActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BST1", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BST1_KBST_BankStatementId",
+                        column: x => x.BankStatementId,
+                        principalTable: "KBST",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BTT1",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PostingTemplateId = table.Column<int>(type: "integer", nullable: false),
+                    LineNum = table.Column<int>(type: "integer", nullable: false),
+                    AccountCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    AccountName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Side = table.Column<string>(type: "character varying(1)", maxLength: 1, nullable: false),
+                    Percentage = table.Column<decimal>(type: "numeric(9,4)", precision: 9, scale: 4, nullable: false),
+                    LineDescription = table.Column<string>(type: "character varying(254)", maxLength: 254, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BTT1", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BTT1_KBTT_PostingTemplateId",
+                        column: x => x.PostingTemplateId,
+                        principalTable: "KBTT",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CDF1",
                 columns: table => new
                 {
@@ -4562,6 +5139,70 @@ namespace Farming.Migrations
                         name: "FK_CDF1_KCDF_ConversionDifferenceId",
                         column: x => x.ConversionDifferenceId,
                         principalTable: "KCDF",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CLR1",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ChecklistRunId = table.Column<int>(type: "integer", nullable: false),
+                    StepNo = table.Column<int>(type: "integer", nullable: false),
+                    Title = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    StepType = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    GroupName = table.Column<string>(type: "character varying(80)", maxLength: 80, nullable: true),
+                    IsRequired = table.Column<bool>(type: "boolean", nullable: false),
+                    DependsOnStepNo = table.Column<int>(type: "integer", nullable: true),
+                    LinkedRoute = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    StepStatus = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    CompletedBy = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    CompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Note = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CLR1", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CLR1_KCLR_ChecklistRunId",
+                        column: x => x.ChecklistRunId,
+                        principalTable: "KCLR",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CLT1",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ChecklistTemplateId = table.Column<int>(type: "integer", nullable: false),
+                    StepNo = table.Column<int>(type: "integer", nullable: false),
+                    Title = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    StepType = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    GroupName = table.Column<string>(type: "character varying(80)", maxLength: 80, nullable: true),
+                    AssignedRole = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    AssignedTo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    EstimatedMinutes = table.Column<int>(type: "integer", nullable: false),
+                    IsRequired = table.Column<bool>(type: "boolean", nullable: false),
+                    RequiresAttachment = table.Column<bool>(type: "boolean", nullable: false),
+                    RequiresNote = table.Column<bool>(type: "boolean", nullable: false),
+                    DependsOnStepNo = table.Column<int>(type: "integer", nullable: true),
+                    LinkedRoute = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    Instructions = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
+                    AcceptanceCriteria = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CLT1", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CLT1_KCLT_ChecklistTemplateId",
+                        column: x => x.ChecklistTemplateId,
+                        principalTable: "KCLT",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -4925,6 +5566,30 @@ namespace Farming.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FCS1",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ForecastId = table.Column<int>(type: "integer", nullable: false),
+                    LineNum = table.Column<int>(type: "integer", nullable: false),
+                    ItemCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    ItemName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    ForecastDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Quantity = table.Column<decimal>(type: "numeric(18,4)", precision: 18, scale: 4, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FCS1", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FCS1_KFCS_ForecastId",
+                        column: x => x.ForecastId,
+                        principalTable: "KFCS",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FRT1",
                 columns: table => new
                 {
@@ -5003,6 +5668,55 @@ namespace Farming.Migrations
                         name: "FK_GRT1_KGRT_GoodsReceiptId",
                         column: x => x.GoodsReceiptId,
                         principalTable: "KGRT",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "IGE1",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    IssueForProductionId = table.Column<int>(type: "integer", nullable: false),
+                    LineNum = table.Column<int>(type: "integer", nullable: false),
+                    ItemCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    ItemName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Quantity = table.Column<decimal>(type: "numeric(18,4)", precision: 18, scale: 4, nullable: false),
+                    Cost = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IGE1", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_IGE1_KIGE_IssueForProductionId",
+                        column: x => x.IssueForProductionId,
+                        principalTable: "KIGE",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "IGN1",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ReceiptFromProductionId = table.Column<int>(type: "integer", nullable: false),
+                    LineNum = table.Column<int>(type: "integer", nullable: false),
+                    ItemCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    ItemName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Quantity = table.Column<decimal>(type: "numeric(18,4)", precision: 18, scale: 4, nullable: false),
+                    UnitCost = table.Column<decimal>(type: "numeric(18,4)", precision: 18, scale: 4, nullable: false),
+                    Total = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IGN1", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_IGN1_KIGN_ReceiptFromProductionId",
+                        column: x => x.ReceiptFromProductionId,
+                        principalTable: "KIGN",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -5185,6 +5899,7 @@ namespace Farming.Migrations
                     TaxAmount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Total = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Remarks = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    SalesEmployeeCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     BaseEntry = table.Column<int>(type: "integer", nullable: true),
                     BaseType = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     CustomerId = table.Column<int>(type: "integer", nullable: false),
@@ -5226,6 +5941,7 @@ namespace Farming.Migrations
                     DownPaymentPct = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     DownPaymentAmt = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Remarks = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    SalesEmployeeCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     CustomerId = table.Column<int>(type: "integer", nullable: false),
                     GuidId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -5301,6 +6017,7 @@ namespace Farming.Migrations
                     TaxAmount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Total = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Remarks = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    SalesEmployeeCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     CustomerId = table.Column<int>(type: "integer", nullable: false),
                     GuidId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -5424,6 +6141,7 @@ namespace Farming.Migrations
                     TaxAmount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Total = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Remarks = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    SalesEmployeeCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     CustomerId = table.Column<int>(type: "integer", nullable: false),
                     GuidId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -5750,6 +6468,7 @@ namespace Farming.Migrations
                     TaxAmount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Total = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Remarks = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    BuyerCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     VendorId = table.Column<int>(type: "integer", nullable: false),
                     GuidId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -5825,6 +6544,7 @@ namespace Farming.Migrations
                     TaxAmount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Total = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Remarks = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    BuyerCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     VendorId = table.Column<int>(type: "integer", nullable: false),
                     GuidId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -5893,6 +6613,7 @@ namespace Farming.Migrations
                     Status = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
                     Total = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Remarks = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    BuyerCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     VendorId = table.Column<int>(type: "integer", nullable: false),
                     GuidId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -5963,6 +6684,7 @@ namespace Farming.Migrations
                     Status = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
                     Total = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Remarks = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    BuyerCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     VendorId = table.Column<int>(type: "integer", nullable: false),
                     GuidId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -6099,6 +6821,7 @@ namespace Farming.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     DocNum = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     VendorId = table.Column<int>(type: "integer", nullable: true),
+                    BuyerCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     RequestedBy = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     Department = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     PostingDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -6310,6 +7033,38 @@ namespace Farming.Migrations
                         name: "FK_PCK1_KPCK_PickListId",
                         column: x => x.PickListId,
                         principalTable: "KPCK",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PEC1",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PeriodEndClosingRunId = table.Column<int>(type: "integer", nullable: false),
+                    AccountCode = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    AccountName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false, defaultValue: ""),
+                    AccountType = table.Column<string>(type: "character varying(1)", maxLength: 1, nullable: false),
+                    Balance = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    ClosedTo = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    GuidId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    InActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PEC1", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PEC1_KPEC_PeriodEndClosingRunId",
+                        column: x => x.PeriodEndClosingRunId,
+                        principalTable: "KPEC",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -6843,9 +7598,12 @@ namespace Farming.Migrations
                     LastLogin = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     LoginAttempts = table.Column<int>(type: "integer", nullable: false),
                     IsLocked = table.Column<bool>(type: "boolean", nullable: false),
+                    LockedUntil = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    SessionsValidFrom = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     PasswordChangedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     TwoFactorSecret = table.Column<string>(type: "text", nullable: true),
                     TwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    TwoFactorLastStep = table.Column<long>(type: "bigint", nullable: true),
                     TwoFactorRecoveryCodes = table.Column<string>(type: "text", nullable: true),
                     GuidId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -8100,6 +8858,7 @@ namespace Farming.Migrations
                     Type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Total = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Remarks = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    BuyerCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     VendorId = table.Column<int>(type: "integer", nullable: false),
                     BaseEntry = table.Column<int>(type: "integer", nullable: true),
                     BaseType = table.Column<string>(type: "text", nullable: true),
@@ -8400,6 +9159,7 @@ namespace Farming.Migrations
                     Type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Total = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Remarks = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    BuyerCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     VendorId = table.Column<int>(type: "integer", nullable: false),
                     BaseEntry = table.Column<int>(type: "integer", nullable: true),
                     BaseType = table.Column<string>(type: "text", nullable: true),
@@ -8575,6 +9335,16 @@ namespace Farming.Migrations
                 column: "IsDefault");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BCT1_CreditCardSettlementId",
+                table: "BCT1",
+                column: "CreditCardSettlementId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BCT1_IncomingPaymentId",
+                table: "BCT1",
+                column: "IncomingPaymentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_BGT1_AcctCode",
                 table: "BGT1",
                 column: "AcctCode");
@@ -8620,9 +9390,39 @@ namespace Farming.Migrations
                 column: "IsReconciled");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BST1_BankStatementId",
+                table: "BST1",
+                column: "BankStatementId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BST1_JournalEntryId",
+                table: "BST1",
+                column: "JournalEntryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BST1_Status",
+                table: "BST1",
+                column: "Status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BTT1_PostingTemplateId",
+                table: "BTT1",
+                column: "PostingTemplateId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CDF1_ConversionDifferenceId",
                 table: "CDF1",
                 column: "ConversionDifferenceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CLR1_ChecklistRunId",
+                table: "CLR1",
+                column: "ChecklistRunId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CLT1_ChecklistTemplateId",
+                table: "CLT1",
+                column: "ChecklistTemplateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CMP1_CampaignId_BPCode",
@@ -8687,6 +9487,11 @@ namespace Farming.Migrations
                 column: "ExchangeRateDifferenceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FCS1_ForecastId",
+                table: "FCS1",
+                column: "ForecastId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_FRT1_TemplateId",
                 table: "FRT1",
                 column: "TemplateId");
@@ -8706,6 +9511,16 @@ namespace Farming.Migrations
                 name: "IX_GRT1_GoodsReceiptId",
                 table: "GRT1",
                 column: "GoodsReceiptId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_IGE1_IssueForProductionId",
+                table: "IGE1",
+                column: "IssueForProductionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_IGN1_ReceiptFromProductionId",
+                table: "IGN1",
+                column: "ReceiptFromProductionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_JRN1_AccountCode",
@@ -8798,6 +9613,17 @@ namespace Farming.Migrations
                 name: "IX_KALR_SenderUserId",
                 table: "KALR",
                 column: "SenderUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KALT_ItemCode",
+                table: "KALT",
+                column: "ItemCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KALT_ItemCode_AltItemCode",
+                table: "KALT",
+                columns: new[] { "ItemCode", "AltItemCode" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_KAPR_ApprovalTemplateId",
@@ -8896,6 +9722,28 @@ namespace Farming.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_KBCS_Code",
+                table: "KBCS",
+                column: "Code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KBCT_CardCode",
+                table: "KBCT",
+                column: "CardCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KBCT_DocNum",
+                table: "KBCT",
+                column: "DocNum",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KBCT_PostingDate",
+                table: "KBCT",
+                column: "PostingDate");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_KBGT_BudgetNo",
                 table: "KBGT",
                 column: "BudgetNo",
@@ -8910,6 +9758,38 @@ namespace Farming.Migrations
                 name: "IX_KBGT_Status",
                 table: "KBGT",
                 column: "Status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KBIN_Code",
+                table: "KBIN",
+                column: "Code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KBIN_WarehouseCode",
+                table: "KBIN",
+                column: "WarehouseCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KBIT_DocNum",
+                table: "KBIT",
+                column: "DocNum",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KBIT_FromAccount",
+                table: "KBIT",
+                column: "FromAccount");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KBIT_PostingDate",
+                table: "KBIT",
+                column: "PostingDate");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KBIT_ToAccount",
+                table: "KBIT",
+                column: "ToAccount");
 
             migrationBuilder.CreateIndex(
                 name: "IX_KBNR_AccountCode",
@@ -8972,6 +9852,33 @@ namespace Farming.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_KBST_AccountCode",
+                table: "KBST",
+                column: "AccountCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KBST_StatementDate",
+                table: "KBST",
+                column: "StatementDate");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KBST_StatementNo",
+                table: "KBST",
+                column: "StatementNo",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KBST_Status",
+                table: "KBST",
+                column: "Status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KBTT_Code",
+                table: "KBTT",
+                column: "Code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_KBTX_BaseDocType_BaseDocEntry",
                 table: "KBTX",
                 columns: new[] { "BaseDocType", "BaseDocEntry" });
@@ -8997,6 +9904,23 @@ namespace Farming.Migrations
                 name: "IX_KCDF_SystemCurrency_PostingDate",
                 table: "KCDF",
                 columns: new[] { "SystemCurrency", "PostingDate" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KCLR_ChecklistTemplateId",
+                table: "KCLR",
+                column: "ChecklistTemplateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KCLR_RunNo",
+                table: "KCLR",
+                column: "RunNo",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KCLT_Code",
+                table: "KCLT",
+                column: "Code",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_KCLY_ItemCode_WhsCode_ReceivedDate_Id",
@@ -9245,6 +10169,17 @@ namespace Farming.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_KEQP_CardCode",
+                table: "KEQP",
+                column: "CardCode",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KEQP_CustomerCode",
+                table: "KEQP",
+                column: "CustomerCode");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_KERD_Currency_PostingDate",
                 table: "KERD",
                 columns: new[] { "Currency", "PostingDate" });
@@ -9253,6 +10188,12 @@ namespace Farming.Migrations
                 name: "IX_KERD_DocNo",
                 table: "KERD",
                 column: "DocNo",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KFCS_Code",
+                table: "KFCS",
+                column: "Code",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -9270,6 +10211,18 @@ namespace Farming.Migrations
                 name: "IX_KGLO_Scope_GroupKey_Field",
                 table: "KGLO",
                 columns: new[] { "Scope", "GroupKey", "Field" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KIGE_DocNum",
+                table: "KIGE",
+                column: "DocNum",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KIGN_DocNum",
+                table: "KIGN",
+                column: "DocNum",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -9365,6 +10318,17 @@ namespace Farming.Migrations
                 table: "KJVH",
                 column: "VoucherNo",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KKBA_Code",
+                table: "KKBA",
+                column: "Code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KKBA_Status",
+                table: "KKBA",
+                column: "Status");
 
             migrationBuilder.CreateIndex(
                 name: "IX_KLCP_Code",
@@ -9552,6 +10516,22 @@ namespace Farming.Migrations
                 name: "IX_KPDR_VendorId",
                 table: "KPDR",
                 column: "VendorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KPEC_DocNum",
+                table: "KPEC",
+                column: "DocNum",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KPEC_Status",
+                table: "KPEC",
+                column: "Status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KPEC_ToDate",
+                table: "KPEC",
+                column: "ToDate");
 
             migrationBuilder.CreateIndex(
                 name: "IX_KPGQ_VendorId",
@@ -9782,6 +10762,12 @@ namespace Farming.Migrations
                 name: "IX_KSEB_Code",
                 table: "KSEB",
                 column: "Code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KSFL_StoredName",
+                table: "KSFL",
+                column: "StoredName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -10125,6 +11111,11 @@ namespace Farming.Migrations
                 column: "PickListId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PEC1_PeriodEndClosingRunId",
+                table: "PEC1",
+                column: "PeriodEndClosingRunId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PGQ1_BaseEntry",
                 table: "PGQ1",
                 column: "BaseEntry");
@@ -10333,6 +11324,9 @@ namespace Farming.Migrations
                 name: "BCD1");
 
             migrationBuilder.DropTable(
+                name: "BCT1");
+
+            migrationBuilder.DropTable(
                 name: "BGT1");
 
             migrationBuilder.DropTable(
@@ -10345,7 +11339,19 @@ namespace Farming.Migrations
                 name: "BPR1");
 
             migrationBuilder.DropTable(
+                name: "BST1");
+
+            migrationBuilder.DropTable(
+                name: "BTT1");
+
+            migrationBuilder.DropTable(
                 name: "CDF1");
+
+            migrationBuilder.DropTable(
+                name: "CLR1");
+
+            migrationBuilder.DropTable(
+                name: "CLT1");
 
             migrationBuilder.DropTable(
                 name: "CMP1");
@@ -10372,6 +11378,9 @@ namespace Farming.Migrations
                 name: "ERD1");
 
             migrationBuilder.DropTable(
+                name: "FCS1");
+
+            migrationBuilder.DropTable(
                 name: "FRT1");
 
             migrationBuilder.DropTable(
@@ -10379,6 +11388,12 @@ namespace Farming.Migrations
 
             migrationBuilder.DropTable(
                 name: "GRT1");
+
+            migrationBuilder.DropTable(
+                name: "IGE1");
+
+            migrationBuilder.DropTable(
+                name: "IGN1");
 
             migrationBuilder.DropTable(
                 name: "JRN1");
@@ -10399,6 +11414,9 @@ namespace Farming.Migrations
                 name: "KALR");
 
             migrationBuilder.DropTable(
+                name: "KALT");
+
+            migrationBuilder.DropTable(
                 name: "KAPR");
 
             migrationBuilder.DropTable(
@@ -10412,6 +11430,15 @@ namespace Farming.Migrations
 
             migrationBuilder.DropTable(
                 name: "KBAT");
+
+            migrationBuilder.DropTable(
+                name: "KBCS");
+
+            migrationBuilder.DropTable(
+                name: "KBIN");
+
+            migrationBuilder.DropTable(
+                name: "KBIT");
 
             migrationBuilder.DropTable(
                 name: "KBPP");
@@ -10495,6 +11522,9 @@ namespace Farming.Migrations
                 name: "KEMP");
 
             migrationBuilder.DropTable(
+                name: "KEQP");
+
+            migrationBuilder.DropTable(
                 name: "KFXS");
 
             migrationBuilder.DropTable(
@@ -10526,6 +11556,9 @@ namespace Farming.Migrations
 
             migrationBuilder.DropTable(
                 name: "KJOB");
+
+            migrationBuilder.DropTable(
+                name: "KKBA");
 
             migrationBuilder.DropTable(
                 name: "KLCP");
@@ -10636,6 +11669,9 @@ namespace Farming.Migrations
                 name: "KSEB");
 
             migrationBuilder.DropTable(
+                name: "KSFL");
+
+            migrationBuilder.DropTable(
                 name: "KSHT");
 
             migrationBuilder.DropTable(
@@ -10712,6 +11748,9 @@ namespace Farming.Migrations
 
             migrationBuilder.DropTable(
                 name: "PCK1");
+
+            migrationBuilder.DropTable(
+                name: "PEC1");
 
             migrationBuilder.DropTable(
                 name: "PGQ1");
@@ -10804,6 +11843,9 @@ namespace Farming.Migrations
                 name: "KBCD");
 
             migrationBuilder.DropTable(
+                name: "KBCT");
+
+            migrationBuilder.DropTable(
                 name: "KBGT");
 
             migrationBuilder.DropTable(
@@ -10816,7 +11858,19 @@ namespace Farming.Migrations
                 name: "KBPR");
 
             migrationBuilder.DropTable(
+                name: "KBST");
+
+            migrationBuilder.DropTable(
+                name: "KBTT");
+
+            migrationBuilder.DropTable(
                 name: "KCDF");
+
+            migrationBuilder.DropTable(
+                name: "KCLR");
+
+            migrationBuilder.DropTable(
+                name: "KCLT");
 
             migrationBuilder.DropTable(
                 name: "KCMP");
@@ -10843,6 +11897,9 @@ namespace Farming.Migrations
                 name: "KERD");
 
             migrationBuilder.DropTable(
+                name: "KFCS");
+
+            migrationBuilder.DropTable(
                 name: "KFRT");
 
             migrationBuilder.DropTable(
@@ -10850,6 +11907,12 @@ namespace Farming.Migrations
 
             migrationBuilder.DropTable(
                 name: "KGRT");
+
+            migrationBuilder.DropTable(
+                name: "KIGE");
+
+            migrationBuilder.DropTable(
+                name: "KIGN");
 
             migrationBuilder.DropTable(
                 name: "KJRN");
@@ -10925,6 +11988,9 @@ namespace Farming.Migrations
 
             migrationBuilder.DropTable(
                 name: "KPCK");
+
+            migrationBuilder.DropTable(
+                name: "KPEC");
 
             migrationBuilder.DropTable(
                 name: "KPGQ");

@@ -14,6 +14,38 @@ namespace FarmingApi
         {
         }
 
+        // ── Journal-number lock ───────────────────────────────────────
+        // Journal numbers are 'highest + 1'. Two postings at once read the same highest and the second one
+        // failed on the unique index. JournalEntryNumberService.Next takes this lock first so numbers are handed
+        // out one at a time. Inside a transaction it's an xact lock, released at commit or rollback (so a
+        // rolled-back posting leaves no gap). Outside one it's a session lock on this context's own connection,
+        // released after the next save, or when the context is disposed.
+        private const long JournalNumberLockKey = 0x4A524E4E4F; // "JRNNO"
+        private bool _holdsJournalLock;
+
+        public void LockJournalNumbering()
+        {
+            if (Database.CurrentTransaction != null)
+            {
+                Database.ExecuteSqlRaw($"SELECT pg_advisory_xact_lock({JournalNumberLockKey})");
+                return;
+            }
+            if (_holdsJournalLock) return;
+            Database.OpenConnection();                       // keep one connection so the session lock stays ours
+            Database.ExecuteSqlRaw($"SELECT pg_advisory_lock({JournalNumberLockKey})");
+            _holdsJournalLock = true;
+        }
+
+        private void ReleaseJournalLock()
+        {
+            if (!_holdsJournalLock) return;
+            _holdsJournalLock = false;
+            try { Database.ExecuteSqlRaw($"SELECT pg_advisory_unlock({JournalNumberLockKey})"); }
+            finally { Database.CloseConnection(); }
+        }
+
+        public override void Dispose() { try { ReleaseJournalLock(); } catch { /* connection already gone: the server drops the lock */ } base.Dispose(); }
+
         // Folds any Chart-of-Accounts balance impact of this call's
         // JournalEntry/JournalEntryLine changes into the same atomic write
         // — see Core/GLBalanceSync.cs.
@@ -22,7 +54,8 @@ namespace FarmingApi
             DocumentTotalsGuard.Apply(this);      // refuses invoices whose total doesn't match their lines — Core/DocumentTotalsGuard.cs
             DocumentLedgerGuard.Apply(this);      // voids a deleted document's journal entry first — Core/DocumentLedgerGuard.cs
             GLBalanceSync.ApplyPendingDeltas(this);
-            return base.SaveChanges(acceptAllChangesOnSuccess);
+            try { return base.SaveChanges(acceptAllChangesOnSuccess); }
+            finally { ReleaseJournalLock(); }
         }
 
         public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
@@ -30,7 +63,8 @@ namespace FarmingApi
             DocumentTotalsGuard.Apply(this);
             DocumentLedgerGuard.Apply(this);
             GLBalanceSync.ApplyPendingDeltas(this);
-            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            try { return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken); }
+            finally { ReleaseJournalLock(); }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

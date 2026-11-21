@@ -38,6 +38,7 @@ var allowedOrigins = (builder.Configuration["Cors:AllowedOrigins"] ?? "")
     .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
     .Select(o => o.TrimEnd('/'))
     .ToHashSet(StringComparer.OrdinalIgnoreCase);
+var allowLocalhost = builder.Environment.IsDevelopment() || builder.Configuration.GetValue<bool>("Cors:AllowLocalhost");
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReact",
@@ -51,8 +52,12 @@ builder.Services.AddCors(options =>
                 .SetIsOriginAllowed(origin =>
                 {
                     if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri)) return false;
-                    return uri.Host is "localhost" or "127.0.0.1" || allowedOrigins.Contains(origin.TrimEnd('/'));
+                    // Local dev servers are only trusted in Development (or with Cors__AllowLocalhost=true).
+                    // In production any page running on someone's localhost shouldn't be treated as the app.
+                    var local = (uri.Host is "localhost" or "127.0.0.1") && allowLocalhost;
+                    return local || allowedOrigins.Contains(origin.TrimEnd('/'));
                 })
+                .WithExposedHeaders("X-Access-Token", "X-Access-Token-Expires")
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
@@ -147,6 +152,23 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 else if (u.IsLocked && (u.LockedUntil == null || u.LockedUntil.Value.ToUniversalTime() > DateTime.UtcNow)) why = "user is locked";
                 else if (u.SessionsValidFrom is DateTime from && issuedMs < new DateTimeOffset(from.ToUniversalTime()).ToUnixTimeMilliseconds())   // the DB layer hands back Local-kind values
                     why = "signed out, password changed or reset since this token was issued";
+                // The session as a whole has a ceiling, however active the user is.
+                var startedMs = long.TryParse(ctx.Principal?.FindFirst("authms")?.Value, out var st) ? st : 0;
+                if (why == null && startedMs > 0 &&
+                    DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - startedMs > TimeSpan.FromHours(FarmingApi.Core.JwtTokenService.MaxSessionHours(ctx.HttpContext.RequestServices.GetRequiredService<IConfiguration>())).TotalMilliseconds)
+                    why = "session reached its maximum length";
+                if (why == null && ctx.Principal != null && issuedMs > 0 &&
+                    DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - issuedMs > TimeSpan.FromMinutes(FarmingApi.Core.JwtTokenService.RefreshAfterMinutes(ctx.HttpContext.RequestServices.GetRequiredService<IConfiguration>())).TotalMilliseconds)
+                {
+                    // Active user, token getting old: hand back a fresh one (same session) in a response header.
+                    var (fresh, freshExpires) = ctx.HttpContext.RequestServices.GetRequiredService<FarmingApi.Core.IJwtTokenService>().Refresh(ctx.Principal);
+                    ctx.Response.OnStarting(() =>
+                    {
+                        ctx.Response.Headers["X-Access-Token"] = fresh;
+                        ctx.Response.Headers["X-Access-Token-Expires"] = freshExpires.ToString("o");
+                        return Task.CompletedTask;
+                    });
+                }
                 if (why != null)
                 {
                     ctx.HttpContext.RequestServices.GetRequiredService<FarmingApi.Core.SecurityAudit>()
@@ -260,7 +282,7 @@ app.UseCors("AllowReact");   // 👈 MUST be BEFORE auth/authorization
 app.UseRateLimiter();
 app.UseAuthentication();     // 👈 MUST be BEFORE UseAuthorization
 app.UseAuthorization();
-app.MapGet("/", () => builder.Environment);
+app.MapGet("/", () => Results.Ok(new { status = "ok" }));   // still needs a token; says nothing about the host
 app.MapMethods("{*path}", new[] { "OPTIONS" }, () => Results.Ok());
 
 app.MapControllers();

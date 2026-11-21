@@ -77,7 +77,7 @@ public class JournalEntryController : MyController
 
         // Map header
         var entity = _mapper.Map<JournalEntry>(request);
-        entity.JrnlNo         = JournalEntryNumberService.Next(_repository.GetAll(), entity.TransDate);
+        entity.JrnlNo         = JournalEntryNumberService.Next(_db, entity.TransDate);
         entity.TotalDebit     = totalDebit;
         entity.TotalCredit    = totalCredit;
         entity.TotalLC        = totalDebit;
@@ -279,7 +279,7 @@ public class JournalEntryController : MyController
 
         var rev = new JournalEntry
         {
-            JrnlNo          = JournalEntryNumberService.Next(_repository.GetAll(), when),
+            JrnlNo          = JournalEntryNumberService.Next(_db, when),
             TransDate       = when,
             DueDate         = when,
             DocDate         = when,
@@ -411,7 +411,7 @@ public class JournalEntryController : MyController
 
         var entity = new JournalEntry
         {
-            JrnlNo         = JournalEntryNumberService.Next(_repository.GetAll(), request.TransDate),
+            JrnlNo         = JournalEntryNumberService.Next(_db, request.TransDate),
             TransDate      = request.TransDate,
             DueDate        = request.TransDate,
             DocDate        = request.TransDate,

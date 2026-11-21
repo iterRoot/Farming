@@ -222,6 +222,8 @@ public class SubjectAuthorizationFilter : IAsyncAuthorizationFilter
     private static bool IsSelfService(string path, string method, int userId)
     {
         var p = path.ToLowerInvariant().TrimEnd('/');
+        // Every user manages their OWN two-factor sign-in (status, set up, enable, disable — disable still asks for the password).
+        if (p.StartsWith($"/user/{userId}/twofactor/")) return true;
         if (method is "GET" or "HEAD") return p == "/passwordpolicy";
         return method == "POST" && (p == $"/user/{userId}/changepassword" || p == "/user/logout");
     }

@@ -40,6 +40,14 @@ public class UserController : MyController
 
     private bool VerifyPassword(string password, string hash) => PasswordHashing.Verify(password, hash, out _);
 
+    // Every sign-in failure says the same thing, whether the user exists, is locked or inactive, or the password was
+    // wrong, so the form can't be used to find out which accounts exist. Status is only revealed to someone who has
+    // proved they know the password.
+    private const string GenericLoginFailure = "Invalid user ID or password. After repeated failures an account is locked for a while.";
+
+    // Checked against when the user doesn't exist, so an unknown ID costs the same time as a real one.
+    private static readonly string DummyHash = PasswordHashing.Hash("not-a-real-password-" + Guid.NewGuid());
+
     // How long a lockout from failed attempts lasts before the account opens again by itself.
     // An administrator can always unlock sooner (POST /User/{id}/Unlock).
     private int LockoutMinutes => _config.GetValue<int?>("Security:LockoutMinutes") ?? 15;
@@ -52,6 +60,15 @@ public class UserController : MyController
         var set = _db.Set<User>().Where(u => u.Id == user.Id);
         set.ExecuteUpdate(s => s.SetProperty(u => u.LoginAttempts, u => u.LoginAttempts + 1));
         return set.Select(u => u.LoginAttempts).First();
+    }
+
+    // True when this step is newer than any accepted before. The UPDATE is the check, so it's safe under parallel requests.
+    private bool ClaimTotpStep(User user, long step)
+    {
+        var claimed = _db.Set<User>().Where(u => u.Id == user.Id && (u.TwoFactorLastStep == null || u.TwoFactorLastStep < step))
+            .ExecuteUpdate(s => s.SetProperty(u => u.TwoFactorLastStep, step)) > 0;
+        if (claimed) user.TwoFactorLastStep = step;
+        return claimed;
     }
 
     private void ReleaseAttempt(User user) =>
@@ -92,28 +109,9 @@ public class UserController : MyController
     // a database with no KPWDPOL row behaves exactly as before this existed.
     private PasswordPolicyDto GetPolicy() => PasswordPolicyController.GetPolicy(_db);
 
-    private static bool ValidatePasswordStrength(string password, PasswordPolicyDto policy)
-    {
-        if (string.IsNullOrWhiteSpace(password) || password.Length < policy.MinLength)
-            return false;
-
-        if (policy.RequireUppercase && !password.Any(char.IsUpper)) return false;
-        if (policy.RequireLowercase && !password.Any(char.IsLower)) return false;
-        if (policy.RequireDigit && !password.Any(char.IsDigit)) return false;
-        if (policy.RequireSpecial && !password.Any(c => "@$!%*?&".Contains(c))) return false;
-
-        return true;
-    }
-
-    private static string PolicyDescription(PasswordPolicyDto p)
-    {
-        var parts = new List<string> { $"at least {p.MinLength} characters" };
-        if (p.RequireUppercase) parts.Add("an uppercase letter");
-        if (p.RequireLowercase) parts.Add("a lowercase letter");
-        if (p.RequireDigit) parts.Add("a number");
-        if (p.RequireSpecial) parts.Add("a special character (@$!%*?&)");
-        return "Password must have " + string.Join(", ", parts) + ".";
-    }
+    // null = acceptable; otherwise the reason (see Core/PasswordRules.cs)
+    private static string? PasswordProblem(string? password, PasswordPolicyDto p, string? userId, string? email) =>
+        PasswordRules.Check(password, new PasswordPolicyView(p.MinLength, p.RequireUppercase, p.RequireLowercase, p.RequireDigit, p.RequireSpecial), userId, email);
 
     // ── POST /User/Login ───────────────────────────────────────
     // Accepts either UserId or Email. Locks the account after the
@@ -138,8 +136,9 @@ public class UserController : MyController
         // wrong — don't reveal which accounts exist.
         if (user == null)
         {
+            PasswordHashing.Verify(request.Password, DummyHash, out _);   // same work as a real account
             _audit.LoginFailed(key, "unknown-user");
-            return Unauthorized("Invalid user ID or password");
+            return Unauthorized(GenericLoginFailure);
         }
 
         if (user.IsLocked && user.LockedUntil is DateTime lockEnds && lockEnds.ToUniversalTime() <= DateTime.UtcNow)
@@ -150,18 +149,17 @@ public class UserController : MyController
             _repository.Commit();
         }
 
-        if (user.IsLocked)
+        if (user.IsLocked || user.ActiveStatus != 'A')
         {
-            _audit.LoginFailed(user.UserId, "account-locked");
-            return StatusCode(403, user.LockedUntil == null
-                ? "Account is locked. Contact your administrator."
-                : "Account is temporarily locked after too many failed attempts. Try again later or contact your administrator.");
-        }
-
-        if (user.ActiveStatus != 'A')
-        {
-            _audit.LoginFailed(user.UserId, "account-inactive");
-            return StatusCode(403, "Account is inactive. Contact your administrator.");
+            // Check the password without counting an attempt; only the real owner (right password) is told why.
+            var owner = PasswordHashing.Verify(request.Password, user.PasswordHash, out _);
+            _audit.LoginFailed(user.UserId, user.IsLocked ? "account-locked" : "account-inactive");
+            if (!owner) return Unauthorized(GenericLoginFailure);
+            return StatusCode(403, user.IsLocked
+                ? (user.LockedUntil == null
+                    ? "Account is locked. Contact your administrator."
+                    : "Account is temporarily locked after too many failed attempts. Try again later or contact your administrator.")
+                : "Account is inactive. Contact your administrator.");
         }
 
         var maxAttempts = GetPolicy().MaxFailedAttempts;
@@ -173,7 +171,7 @@ public class UserController : MyController
             LockNow(user);
             _audit.LoginFailed(user.UserId, "too-many-attempts");
             _audit.AccountLocked(user.UserId, "sign-in");
-            return StatusCode(403, "Account is temporarily locked after too many failed attempts. Try again later or contact your administrator.");
+            return Unauthorized(GenericLoginFailure);
         }
 
         if (!PasswordHashing.Verify(request.Password, user.PasswordHash, out var upgradeHash))
@@ -186,9 +184,7 @@ public class UserController : MyController
             _audit.LoginFailed(user.UserId, "wrong-password", Math.Max(0, maxAttempts - attempts));
             if (locked) _audit.AccountLocked(user.UserId, "sign-in");
 
-            return Unauthorized(user.IsLocked
-                ? $"Account locked after {maxAttempts} failed attempts. Try again in {LockoutMinutes} minutes or contact your administrator."
-                : $"Invalid user ID or password ({maxAttempts - user.LoginAttempts} attempt(s) left)");
+            return Unauthorized(GenericLoginFailure);
         }
 
         // ── Second factor ──────────────────────────────────────────
@@ -207,7 +203,9 @@ public class UserController : MyController
             }
 
             var code = request.TwoFactorCode.Trim();
-            var okTotp = _totp.VerifyCode(user.TwoFactorSecret!, code);
+            // A code is good once: the step it belongs to must be newer than the last one accepted (claimed atomically,
+            // so two simultaneous sign-ins can't both use it).
+            var okTotp = _totp.TryVerify(user.TwoFactorSecret!, code, out var step) && ClaimTotpStep(user, step);
 
             // Fall back to a single-use recovery code
             var okRecovery = false;
@@ -233,9 +231,7 @@ public class UserController : MyController
                 _audit.LoginFailed(user.UserId, "wrong-2fa-code", Math.Max(0, maxAttempts - attempts2));
                 if (locked2) _audit.AccountLocked(user.UserId, "2fa code");
 
-                return Unauthorized(user.IsLocked
-                    ? $"Account locked after {maxAttempts} failed attempts. Try again in {LockoutMinutes} minutes or contact your administrator."
-                    : $"Invalid authenticator code ({maxAttempts - user.LoginAttempts} attempt(s) left)");
+                return Unauthorized("Invalid authenticator code.");
             }
         }
 
@@ -306,7 +302,7 @@ public class UserController : MyController
         if (user.TwoFactorEnabled)
             return BadRequest("Two-factor is already enabled.");
 
-        if (!_totp.VerifyCode(user.TwoFactorSecret, request.Code ?? ""))
+        if (!(_totp.TryVerify(user.TwoFactorSecret, request.Code ?? "", out var enableStep) && ClaimTotpStep(user, enableStep)))
         {
             _audit.ChangeRefused("2fa.enable", user.UserId, "wrong code");
             return BadRequest("That code is not valid. Check your device's clock and try again.");
@@ -395,8 +391,8 @@ public class UserController : MyController
             return BadRequest("Password is required");
 
         var policy = GetPolicy();
-        if (!ValidatePasswordStrength(request.Password, policy))
-            return BadRequest(PolicyDescription(policy));
+        var pwProblem = PasswordProblem(request.Password, policy, request.UserId, request.Email);
+        if (pwProblem != null) return BadRequest(pwProblem);
 
         if (!_db.Set<UserGroupEntity>().Any(g => g.Id == request.UserGroupId))
             return BadRequest("The selected user group doesn't exist");
@@ -462,8 +458,8 @@ public class UserController : MyController
         if (!string.IsNullOrWhiteSpace(request.Password))
         {
             var policy = GetPolicy();
-            if (!ValidatePasswordStrength(request.Password, policy))
-                return BadRequest(PolicyDescription(policy));
+            var pwProblem = PasswordProblem(request.Password, policy, user.UserId, request.Email);
+            if (pwProblem != null) return BadRequest(pwProblem);
             user.PasswordHash = HashPassword(request.Password);
             user.PasswordChangedAt = DateTime.UtcNow;
         }
@@ -583,8 +579,9 @@ public class UserController : MyController
             return BadRequest("New passwords do not match");
 
         var policy = GetPolicy();
-        if (!ValidatePasswordStrength(request.NewPassword, policy))
-            return BadRequest(PolicyDescription(policy));
+        var pwProblem = PasswordProblem(request.NewPassword, policy, user.UserId, user.Email);
+        if (pwProblem != null) return BadRequest(pwProblem);
+        if (request.NewPassword == request.OldPassword) return BadRequest("The new password must be different from the current one.");
 
         user.PasswordHash = HashPassword(request.NewPassword);
         user.PasswordChangedAt = DateTime.UtcNow;

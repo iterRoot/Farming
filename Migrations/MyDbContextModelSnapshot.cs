@@ -4280,6 +4280,9 @@ namespace Farming.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
 
+                    b.Property<long?>("TwoFactorLastStep")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("TwoFactorRecoveryCodes")
                         .HasColumnType("text");
 
