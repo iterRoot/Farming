@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Inventory.GoodsReceipt;
+namespace KamnttraApi.Modules.Inventory.GoodsReceipt;
 
 // ═══════════════════════════════════════════════════════════════
 // GOODS RECEIPT HEADER
@@ -40,7 +40,7 @@ public class GoodsReceiptLine
 {
     // Batch / serial numbers entered for this line — used when the document posts stock; not stored on the line.
     [System.ComponentModel.DataAnnotations.Schema.NotMapped]
-    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
+    public List<KamnttraApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
 
     public int  Id             { get; set; }
     public int  GoodsReceiptId { get; set; }

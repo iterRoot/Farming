@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.BusinessPartners.BPProperties;
+namespace KamnttraApi.Modules.BusinessPartners.BPProperties;
 
 public class BPPropertyResponse
 {

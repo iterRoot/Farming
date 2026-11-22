@@ -1,7 +1,7 @@
 using AutoMapper;
 using System.Text.Json;
 
-namespace FarmingApi.Modules.Administration.ReferenceFieldLink;
+namespace KamnttraApi.Modules.Administration.ReferenceFieldLink;
 
 public class ReferenceFieldLinkMapper : Profile
 {

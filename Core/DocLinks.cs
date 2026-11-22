@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 // ═══════════════════════════════════════════════════════════════════════
 // COPY FROM / COPY TO — draw-down of source documents
@@ -275,7 +275,7 @@ public class DocLinkFilter : IAsyncActionFilter
             l.GetType().GetProperty("BaseType")?.SetValue(l, src.Name);
 
             var itemId = Get<int>(l, "ItemId"); var qty = Get<decimal>(l, "Quantity");
-            var code = _db.Set<FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster>().Where(i => i.Id == itemId).Select(i => i.ItemCode).FirstOrDefault();
+            var code = _db.Set<KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster>().Where(i => i.Id == itemId).Select(i => i.ItemCode).FirstOrDefault();
             if (code == null) continue;
             var key = (src.Name, baseEntry.Value);
             if (!wanted.TryGetValue(key, out var d)) wanted[key] = d = new(StringComparer.OrdinalIgnoreCase);

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 public interface IRepository<T> where T : Entity
 {

@@ -2,15 +2,15 @@ using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using System.Security.Cryptography;
 using System.Text;
-using UserGroupEntity = FarmingApi.Modules.Administration.SetUp.UserGroup.UserGroup;
-using ApprovalTemplateApproverEntity = FarmingApi.Modules.Administration.ApprovalProcess.ApprovalTemplateApprover;
-using ApprovalRequestEntity = FarmingApi.Modules.Administration.ApprovalRequest.ApprovalRequest;
-using FarmingApi.Modules.Administration.Security;
+using UserGroupEntity = KamnttraApi.Modules.Administration.SetUp.UserGroup.UserGroup;
+using ApprovalTemplateApproverEntity = KamnttraApi.Modules.Administration.ApprovalProcess.ApprovalTemplateApprover;
+using ApprovalRequestEntity = KamnttraApi.Modules.Administration.ApprovalRequest.ApprovalRequest;
+using KamnttraApi.Modules.Administration.Security;
 
-namespace FarmingApi.Modules.Administration.SetUp.User;
+namespace KamnttraApi.Modules.Administration.SetUp.User;
 
 public class UserController : MyController
 {
@@ -416,7 +416,7 @@ public class UserController : MyController
 
         // Start with no access. Without a record the permission filter denies everything, but an explicit
         // record shows up (as "None") on the Authorisations screen for an administrator to configure.
-        _db.Set<FarmingApi.Modules.Administration.Authorisations.UserAuthorization>().Add(new()
+        _db.Set<KamnttraApi.Modules.Administration.Authorisations.UserAuthorization>().Add(new()
         {
             UserId = entity.Id, FullAuthorization = false, Permissions = "{}", CreatedAt = DateTime.UtcNow, InActive = false,
         });

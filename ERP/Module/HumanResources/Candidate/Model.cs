@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.HumanResources.Candidate;
+namespace KamnttraApi.Modules.HumanResources.Candidate;
 
 public static class CandidateOptions
 {

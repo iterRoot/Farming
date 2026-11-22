@@ -1,10 +1,10 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi;
-using FarmingApi.Core;
+using KamnttraApi;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.ApprovalRequest;
+namespace KamnttraApi.Modules.Administration.ApprovalRequest;
 
 // Read-only queue: rows here are created/decided exclusively through
 // IApprovalGateService (invoked from each document's own Post/Approve/Reject

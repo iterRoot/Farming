@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.FixedAssets.DepreciationRun;
+namespace KamnttraApi.Modules.Financials.FixedAssets.DepreciationRun;
 
 public interface IDepreciationRunRepository : IRepository<DepreciationRun> { }
 

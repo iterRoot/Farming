@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
-using FarmingApi.Modules.Inventory.ItemsMaster;
-using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Inventory.ItemsMaster;
+using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
-namespace FarmingApi.Modules.SaleAR.ARDownPaymentInvoice;
+namespace KamnttraApi.Modules.SaleAR.ARDownPaymentInvoice;
 
 public class ARDownPaymentInvoice : AuditableEntity
 {

@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
-using APDREntity = FarmingApi.Modules.PurchaseAP.APDownPaymentRequest.APDownPaymentRequest;
-using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using KamnttraApi.Core;
+using APDREntity = KamnttraApi.Modules.PurchaseAP.APDownPaymentRequest.APDownPaymentRequest;
+using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
-namespace FarmingApi.Modules.PurchaseAP.APDownPaymentInvoice;
+namespace KamnttraApi.Modules.PurchaseAP.APDownPaymentInvoice;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // HEADER

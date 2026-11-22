@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using JournalEntity = FarmingApi.Modules.InventoryManagement.InventoryJournal.InventoryJournal;
-using ItemsMasterEntity = FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster;
+using JournalEntity = KamnttraApi.Modules.InventoryManagement.InventoryJournal.InventoryJournal;
+using ItemsMasterEntity = KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster;
 
-namespace FarmingApi.Modules.InventoryManagement.StockManagementReports.InventoryReport;
+namespace KamnttraApi.Modules.InventoryManagement.StockManagementReports.InventoryReport;
 
 // ═══════════════════════════════════════════════════════════════
 // INVENTORY REPORT — beginning/in/out/ending qty & value per item,

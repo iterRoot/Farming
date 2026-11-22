@@ -1,9 +1,9 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.SetUp.Currencies;
+namespace KamnttraApi.Modules.Administration.SetUp.Currencies;
 
 // ═══════════════════════════════════════════════════════════════
 // CURRENCIES — SETUP  (route: /Currency, alias: /Currencies)

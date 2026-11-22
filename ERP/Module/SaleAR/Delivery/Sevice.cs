@@ -1,9 +1,9 @@
-using FarmingApi.Modules.Financials.GLAccountDetermination;
-using FarmingApi.Modules.Financials.JournalEntry;
-using FarmingApi.Modules.Inventory.ItemsMaster;
-using FarmingApi.Modules.InventoryManagement.InventoryJournal;
+using KamnttraApi.Modules.Financials.GLAccountDetermination;
+using KamnttraApi.Modules.Financials.JournalEntry;
+using KamnttraApi.Modules.Inventory.ItemsMaster;
+using KamnttraApi.Modules.InventoryManagement.InventoryJournal;
 
-namespace FarmingApi.Modules.SaleAR.Delivery;
+namespace KamnttraApi.Modules.SaleAR.Delivery;
 public interface IDeliveryJournalService
 {
     JournalEntry? CreateJournalEntry(Delivery delivery);

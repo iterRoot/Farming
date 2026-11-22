@@ -1,9 +1,9 @@
 // using AutoMapper;
 // using Microsoft.AspNetCore.Authorization;
 // using Microsoft.AspNetCore.Mvc;
-// using FarmingApi.Core;
+// using KamnttraApi.Core;
 
-// namespace FarmingApi.Modules.BusinessPartner.Activity;
+// namespace KamnttraApi.Modules.BusinessPartner.Activity;
 
 // public class ActivityController : MyController
 // {

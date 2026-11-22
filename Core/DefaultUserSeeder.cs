@@ -1,10 +1,10 @@
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using UserEntity = FarmingApi.Modules.Administration.SetUp.User.User;
-using UserGroupEntity = FarmingApi.Modules.Administration.SetUp.UserGroup.UserGroup;
+using UserEntity = KamnttraApi.Modules.Administration.SetUp.User.User;
+using UserGroupEntity = KamnttraApi.Modules.Administration.SetUp.UserGroup.UserGroup;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 // ═══════════════════════════════════════════════════════════════
 // DEFAULT MANAGER LOGIN

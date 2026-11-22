@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Financials.ChartOfAccounts;
+namespace KamnttraApi.Modules.Financials.ChartOfAccounts;
 
 // ═══════════════════════════════════════════════════════════════════
 // SAP B1 Account Type — 8 types matching right-panel tabs

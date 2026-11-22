@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
-using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
-using GoodsReceiptPOEntity = FarmingApi.Modules.PurchaseAP.GoodsReceiptPO.GoodsReceiptPO;
+using KamnttraApi.Core;
+using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using GoodsReceiptPOEntity = KamnttraApi.Modules.PurchaseAP.GoodsReceiptPO.GoodsReceiptPO;
 
-namespace FarmingApi.Modules.PurchaseAP.LandingCost;
+namespace KamnttraApi.Modules.PurchaseAP.LandingCost;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // HEADER — allocates a set of extra costs (freight, customs duty, insurance,

@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.PurchaseAP.PurchaseBlanketAgreement;
+namespace KamnttraApi.Modules.PurchaseAP.PurchaseBlanketAgreement;
 
 public class PurchaseBlanketAgreementMapper : Profile
 {

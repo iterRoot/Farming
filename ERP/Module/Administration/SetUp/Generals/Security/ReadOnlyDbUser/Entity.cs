@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Administration.Security;
+namespace KamnttraApi.Modules.Administration.Security;
 
 // SAP-B1-style "Read-Only DB User" screen: a registry of the read-only
 // database logins your DBA has provisioned directly in Postgres for

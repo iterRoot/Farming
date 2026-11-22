@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.ElectronicFileManager;
+namespace KamnttraApi.Modules.Administration.ElectronicFileManager;
 
 // ── Responses ─────────────────────────────────────────────────
 public class ElectronicFileResponse

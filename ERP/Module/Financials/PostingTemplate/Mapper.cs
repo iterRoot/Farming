@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Financials.PostingTemplate;
+namespace KamnttraApi.Modules.Financials.PostingTemplate;
 
 public class PostingTemplateMapper : Profile
 {

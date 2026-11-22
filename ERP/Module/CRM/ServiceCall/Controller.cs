@@ -1,10 +1,10 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
-using BPEntity   = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
-using ItemEntity = FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster;
+using KamnttraApi.Core;
+using BPEntity   = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using ItemEntity = KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster;
 
-namespace FarmingApi.Modules.CRM.ServiceCall;
+namespace KamnttraApi.Modules.CRM.ServiceCall;
 
 // ═══════════════════════════════════════════════════════════════════
 // SERVICE CALL  (route: /ServiceCall)
@@ -163,7 +163,7 @@ public class ServiceCallController : ControllerBase
 
         if (dto.ServiceContractId is int contractId)
         {
-            var contract = _db.Set<FarmingApi.Modules.CRM.ServiceContract.ServiceContract>()
+            var contract = _db.Set<KamnttraApi.Modules.CRM.ServiceContract.ServiceContract>()
                 .FirstOrDefault(c => c.Id == contractId);
             if (contract == null) return ($"Service contract {contractId} does not exist.", null, null);
             if (contract.CustomerCode != dto.CustomerCode)

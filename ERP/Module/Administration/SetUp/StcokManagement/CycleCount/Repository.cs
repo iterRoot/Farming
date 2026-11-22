@@ -3,9 +3,9 @@
 // ═══════════════════════════════════════════════════════════════
 // Repository.cs
 // ═══════════════════════════════════════════════════════════════
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Inventory.CycleCount;
+namespace KamnttraApi.Modules.Inventory.CycleCount;
 
 public interface ICycleCountRepository : IRepository<CycleCountDetermination> { }
 

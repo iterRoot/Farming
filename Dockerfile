@@ -1,9 +1,9 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
-COPY Farming.csproj ./
-RUN dotnet restore Farming.csproj
+COPY Kamnttra.csproj ./
+RUN dotnet restore Kamnttra.csproj
 COPY . .
-RUN dotnet publish Farming.csproj -c Release -o /app/publish --no-restore
+RUN dotnet publish Kamnttra.csproj -c Release -o /app/publish --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 # QuestPDF (SkiaSharp) needs fontconfig on Linux.
@@ -17,4 +17,4 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 # The app reads one key=value connection string from DB_CONNECTION (see AddDatabase in
 # MyDbContext.cs). Use it as-is when set (Neon); otherwise assemble it from the separate
 # DB_HOST/DB_PORT/DB_NAME/DB_USER/DB_PASSWORD values (Render's own Postgres, local testing).
-CMD ["sh", "-c", "if [ -z \"$DB_CONNECTION\" ]; then export DB_CONNECTION=\"Host=${DB_HOST};Port=${DB_PORT};Database=${DB_NAME};Username=${DB_USER};Password='${DB_PASSWORD}'\"; fi; exec dotnet Farming.dll"]
+CMD ["sh", "-c", "if [ -z \"$DB_CONNECTION\" ]; then export DB_CONNECTION=\"Host=${DB_HOST};Port=${DB_PORT};Database=${DB_NAME};Username=${DB_USER};Password='${DB_PASSWORD}'\"; fi; exec dotnet Kamnttra.dll"]

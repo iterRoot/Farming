@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
-using PostingPeriodEntity = FarmingApi.Modules.Administration.PostingPeriods.PostingPeriod;
+using PostingPeriodEntity = KamnttraApi.Modules.Administration.PostingPeriods.PostingPeriod;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Wires the PostingPeriods status dropdown (Unlocked / Closing Period /

@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NSwag;
 using NSwag.Generation.Processors.Security;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 internal static class SwaggerExtension
 {

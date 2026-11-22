@@ -4,7 +4,7 @@
 // ═══════════════════════════════════════════════════════════════
 using AutoMapper;
 
-namespace FarmingApi.Modules.Inventory.ItemProperties;
+namespace KamnttraApi.Modules.Inventory.ItemProperties;
 
 public class ItemPropertyMapper : Profile
 {

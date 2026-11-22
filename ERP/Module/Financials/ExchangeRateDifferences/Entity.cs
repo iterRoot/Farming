@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Financials.ExchangeRateDifferences;
+namespace KamnttraApi.Modules.Financials.ExchangeRateDifferences;
 
 // ═══════════════════════════════════════════════════════════════
 // EXCHANGE RATE DIFFERENCES — HEADER (KERD)

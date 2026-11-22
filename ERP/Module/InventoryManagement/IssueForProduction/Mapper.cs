@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.InventoryManagement.IssueForProduction;
+namespace KamnttraApi.Modules.InventoryManagement.IssueForProduction;
 
 public class IssueForProductionMapper : Profile
 {

@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Inventory.StockTransferRequest;
+namespace KamnttraApi.Modules.Inventory.StockTransferRequest;
 
 public interface IStockTransferRequestRepository : IRepository<StockTransferRequest>
 {

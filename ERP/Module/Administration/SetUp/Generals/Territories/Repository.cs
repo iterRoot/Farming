@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Sales.Territories;
+namespace KamnttraApi.Modules.Sales.Territories;
 
 public interface ITerritoryRepository : IRepository<Territory> { }
 

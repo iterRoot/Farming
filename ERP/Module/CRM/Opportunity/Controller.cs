@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FarmingApi.Modules.CRM.Opportunity;
+namespace KamnttraApi.Modules.CRM.Opportunity;
 
 [ApiController]
 [Route("[controller]")]

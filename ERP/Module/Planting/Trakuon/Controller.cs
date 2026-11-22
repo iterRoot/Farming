@@ -2,11 +2,11 @@
 // using AutoMapper;
 // using Microsoft.AspNetCore.Authorization;
 // using Microsoft.AspNetCore.Mvc;
-// using FarmingApi.Core;
+// using KamnttraApi.Core;
 
-// using FarmingApi;
+// using KamnttraApi;
 
-// namespace FarmingApi.Modules.Trakuons;
+// namespace KamnttraApi.Modules.Trakuons;
 // public class TrakuonsController : MyController
 
 // {

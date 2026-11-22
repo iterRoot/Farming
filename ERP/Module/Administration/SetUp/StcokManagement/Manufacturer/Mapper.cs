@@ -4,7 +4,7 @@
 // ═══════════════════════════════════════════════════════════════
 using AutoMapper;
 
-namespace FarmingApi.Modules.Inventory.Manufacturers;
+namespace KamnttraApi.Modules.Inventory.Manufacturers;
 
 public class ManufacturerMapper : Profile
 {

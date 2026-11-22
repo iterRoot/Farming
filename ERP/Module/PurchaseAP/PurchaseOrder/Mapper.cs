@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.PurchaseAP.PurchaseOrder;
+namespace KamnttraApi.Modules.PurchaseAP.PurchaseOrder;
 
 public class PurchaseOrderMapper : Profile
 {

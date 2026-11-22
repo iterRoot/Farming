@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Banking.CreditCard;
+namespace KamnttraApi.Modules.Banking.CreditCard;
 
 public class CreditCardSetupDto
 {

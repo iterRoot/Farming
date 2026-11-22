@@ -1,4 +1,4 @@
-// namespace FarmingApi.Modules.Administration.AddOn;
+// namespace KamnttraApi.Modules.Administration.AddOn;
 //
 //
 // public class AddOnListResponse

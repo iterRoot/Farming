@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.PurchaseAP.PurchaseBlanketAgreement;
+namespace KamnttraApi.Modules.PurchaseAP.PurchaseBlanketAgreement;
 
 public interface IPurchaseBlanketAgreementRepository : IRepository<PurchaseBlanketAgreement>
 {

@@ -1,23 +1,23 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using ARInvoiceEntity      = FarmingApi.Modules.SaleAR.ARInvoice.ARInvoice;
-using DeliveryEntity       = FarmingApi.Modules.SaleAR.Delivery.Delivery;
-using SaleOrderEntity      = FarmingApi.Modules.SaleAR.SaleOrder.SaleOrder;
-using IncomingPaymentEntity = FarmingApi.Modules.Banking.IncomingPayment.IncomingPayment;
-using OpportunityEntity     = FarmingApi.Modules.CRM.Opportunity.Opportunity;
+using KamnttraApi.Core;
+using ARInvoiceEntity      = KamnttraApi.Modules.SaleAR.ARInvoice.ARInvoice;
+using DeliveryEntity       = KamnttraApi.Modules.SaleAR.Delivery.Delivery;
+using SaleOrderEntity      = KamnttraApi.Modules.SaleAR.SaleOrder.SaleOrder;
+using IncomingPaymentEntity = KamnttraApi.Modules.Banking.IncomingPayment.IncomingPayment;
+using OpportunityEntity     = KamnttraApi.Modules.CRM.Opportunity.Opportunity;
 
-namespace FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster;
+namespace KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster;
 
 public class BusinessPartnersMasterController : MyController
 {
     private readonly IBusinessPartnersMasterRepository _repository;
     private readonly MyDbContext _db;
-    private readonly FarmingApi.Modules.Administration.Attachment.AttachmentStorage _attachments;
+    private readonly KamnttraApi.Modules.Administration.Attachment.AttachmentStorage _attachments;
 
     public BusinessPartnersMasterController(IBusinessPartnersMasterRepository repository, MyDbContext db,
-        FarmingApi.Modules.Administration.Attachment.AttachmentStorage attachments)
+        KamnttraApi.Modules.Administration.Attachment.AttachmentStorage attachments)
     {
         _repository  = repository;
         _db          = db;
@@ -227,7 +227,7 @@ public class BusinessPartnersMasterController : MyController
     {
         if (string.IsNullOrWhiteSpace(r.SalesEmployee)) { r.SalesEmployee = null; return null; }
         var c = r.SalesEmployee.Trim().ToUpperInvariant();
-        var e = _db.Set<FarmingApi.Modules.Sales.SaleEmployeeBuyer.SaleEmployeeBuyer>().FirstOrDefault(x => x.Code == c);
+        var e = _db.Set<KamnttraApi.Modules.Sales.SaleEmployeeBuyer.SaleEmployeeBuyer>().FirstOrDefault(x => x.Code == c);
         if (e == null) return $"Sales employee / buyer '{r.SalesEmployee.Trim()}' does not exist.";
         if (!e.IsActive) return $"Sales employee / buyer '{c}' is inactive.";
         r.SalesEmployee = c;
@@ -240,14 +240,14 @@ public class BusinessPartnersMasterController : MyController
         if (!string.IsNullOrWhiteSpace(r.VatGroup))
         {
             var code = r.VatGroup.Trim();
-            var tax = _db.Set<FarmingApi.Modules.Administration.TaxCode.TaxCodeEntry>().FirstOrDefault(x => x.Code == code);
+            var tax = _db.Set<KamnttraApi.Modules.Administration.TaxCode.TaxCodeEntry>().FirstOrDefault(x => x.Code == code);
             if (tax == null) return $"Tax group '{code}' does not exist in Tax Codes setup.";
             if (tax.InActive == true) return $"Tax group '{code}' is inactive.";
         }
         if (r.SubjectToWithholding && !string.IsNullOrWhiteSpace(r.WithholdingTaxCode))
         {
             var code = r.WithholdingTaxCode.Trim();
-            var wht = _db.Set<FarmingApi.Modules.Administration.WithholdingTax.WithholdingTaxCode>().FirstOrDefault(x => x.Code == code);
+            var wht = _db.Set<KamnttraApi.Modules.Administration.WithholdingTax.WithholdingTaxCode>().FirstOrDefault(x => x.Code == code);
             if (wht == null) return $"Withholding tax code '{code}' does not exist in Withholding Tax setup.";
             if (wht.InActive == true) return $"Withholding tax code '{code}' is inactive.";
         }

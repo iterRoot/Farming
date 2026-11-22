@@ -1,7 +1,7 @@
-using FarmingApi.Core;
-using FarmingApi.Modules.Administration.DocumentNumberRange;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Administration.DocumentNumberRange;
 
-namespace FarmingApi.Modules.Administration.DocumentNumberRange;
+namespace KamnttraApi.Modules.Administration.DocumentNumberRange;
 
 public interface IDocumentNumberRangeRepository : IRepository<DocumentNumberRange>
 {

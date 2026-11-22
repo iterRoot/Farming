@@ -1,9 +1,9 @@
-namespace FarmingApi.Modules.PurchaseAP.APDownPaymentRequest;
+namespace KamnttraApi.Modules.PurchaseAP.APDownPaymentRequest;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // REQUEST
 // ══════════════════════════════════════════════════════════════════════════════
-public class APDownPaymentRequestRequest : FarmingApi.Core.IHasBuyer
+public class APDownPaymentRequestRequest : KamnttraApi.Core.IHasBuyer
 {
     public string?   BuyerCode   { get; set; }
     public string    DocNum      { get; set; } = "";

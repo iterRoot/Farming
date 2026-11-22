@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Branch;
+namespace KamnttraApi.Modules.Branch;
 
 // SAP B1 style "Branches - Setup" matrix
 public class Branch : AuditableEntity

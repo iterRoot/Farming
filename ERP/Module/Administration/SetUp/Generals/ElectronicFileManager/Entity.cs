@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Administration.ElectronicFileManager;
+namespace KamnttraApi.Modules.Administration.ElectronicFileManager;
 
 // ═══════════════════════════════════════════════════════════════
 // ELECTRONIC FILE  (KEFM)

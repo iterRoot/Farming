@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.InventoryManagement.AlternativeItem;
+namespace KamnttraApi.Modules.InventoryManagement.AlternativeItem;
 
 public class AlternativeItemRequest
 {

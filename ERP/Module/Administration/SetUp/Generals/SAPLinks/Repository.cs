@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.SAPLinks;
+namespace KamnttraApi.Modules.Administration.SAPLinks;
 
 public interface ISAPLinkRepository : IRepository<SAPLink> { }
 

@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Inventory.ItemsMaster;
+namespace KamnttraApi.Modules.Inventory.ItemsMaster;
 
 public enum ItemStatus
 {

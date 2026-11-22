@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.JournalVoucher;
+namespace KamnttraApi.Modules.Financials.JournalVoucher;
 
 // ═══════════════════════════════════════════════════════════════════
 // JOURNAL VOUCHER HEADER (KJVH)

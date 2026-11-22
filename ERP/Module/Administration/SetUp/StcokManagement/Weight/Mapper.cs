@@ -4,7 +4,7 @@
 // ═══════════════════════════════════════════════════════════════
 using AutoMapper;
 
-namespace FarmingApi.Modules.Inventory.Weight;
+namespace KamnttraApi.Modules.Inventory.Weight;
 
 public class WeightUomMapper : Profile
 {

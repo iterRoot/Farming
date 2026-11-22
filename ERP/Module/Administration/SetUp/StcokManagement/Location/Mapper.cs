@@ -5,7 +5,7 @@
 // ═══════════════════════════════════════════════════════════════
 using AutoMapper;
 
-namespace FarmingApi.Modules.Inventory.Locations;
+namespace KamnttraApi.Modules.Inventory.Locations;
 
 public class LocationMapper : Profile
 {

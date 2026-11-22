@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.PurchaseAP.LandedCostType;
+namespace KamnttraApi.Modules.PurchaseAP.LandedCostType;
 
 public interface ILandedCostTypeRepository : IRepository<LandedCostType> { }
 

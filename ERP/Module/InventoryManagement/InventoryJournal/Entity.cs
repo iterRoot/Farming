@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.InventoryManagement.InventoryJournal;
+namespace KamnttraApi.Modules.InventoryManagement.InventoryJournal;
 
 // ═══════════════════════════════════════════════════════════════
 // INVENTORY JOURNAL — one row per stock-affecting transaction.

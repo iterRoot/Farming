@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Administration.SetUp.Currencies;
+namespace KamnttraApi.Modules.Administration.SetUp.Currencies;
 
 public class CurrenciesMapper : Profile
 {

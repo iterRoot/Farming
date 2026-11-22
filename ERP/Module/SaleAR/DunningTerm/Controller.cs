@@ -1,10 +1,10 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using KamnttraApi.Core;
+using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
-namespace FarmingApi.Modules.SaleAR.DunningTerm;
+namespace KamnttraApi.Modules.SaleAR.DunningTerm;
 
 // ═══════════════════════════════════════════════════════════════════
 // DUNNING TERM  (route: /DunningTerm)

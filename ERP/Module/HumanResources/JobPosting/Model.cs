@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.HumanResources.JobPosting;
+namespace KamnttraApi.Modules.HumanResources.JobPosting;
 
 public static class JobPostingOptions
 {

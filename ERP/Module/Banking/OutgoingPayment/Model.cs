@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace FarmingApi.Modules.Banking.OutgoingPayment;
+namespace KamnttraApi.Modules.Banking.OutgoingPayment;
 
 // ═══════════════════════════════════════════════════════════════════
 // RESPONSE DTOs

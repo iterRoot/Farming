@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Modules.Administration.AlertManagement;
+using KamnttraApi.Modules.Administration.AlertManagement;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // Central hook any module can call to drop a notification into a user's

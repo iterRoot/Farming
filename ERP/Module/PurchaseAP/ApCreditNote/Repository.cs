@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.PurchaseAP.APCreditNote;
+namespace KamnttraApi.Modules.PurchaseAP.APCreditNote;
 
 public interface IAPCreditNoteRepository : IRepository<APCreditNote>
 {

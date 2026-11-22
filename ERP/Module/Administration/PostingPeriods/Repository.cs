@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.PostingPeriods;
+namespace KamnttraApi.Modules.Administration.PostingPeriods;
 
 public interface IPostingPeriodRepository : IRepository<PostingPeriod> { }
 

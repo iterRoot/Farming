@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.CRM.OpportunitySetup;
+namespace KamnttraApi.Modules.CRM.OpportunitySetup;
 
 // ── GET/POST/PUT/DELETE /OpportunityStage ──────────────────────────────
 public class OpportunityStageController : MyController

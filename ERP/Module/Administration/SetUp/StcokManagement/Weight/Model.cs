@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
 // Model.cs
 // ═══════════════════════════════════════════════════════════════
-namespace FarmingApi.Modules.Inventory.Weight;
+namespace KamnttraApi.Modules.Inventory.Weight;
 
 public class WeightUomResponse
 {

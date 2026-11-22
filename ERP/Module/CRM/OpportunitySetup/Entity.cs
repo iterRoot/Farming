@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.CRM.OpportunitySetup;
+namespace KamnttraApi.Modules.CRM.OpportunitySetup;
 
 // Reusable master lists for the Opportunities module. The Opportunity
 // entity itself (Modules.CRM.Opportunity) stores Stage/Reason/Competitor

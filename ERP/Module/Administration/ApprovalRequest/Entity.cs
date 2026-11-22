@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
-using FarmingApi.Modules.Administration.ApprovalProcess;
-using UserEntity = FarmingApi.Modules.Administration.SetUp.User.User;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Administration.ApprovalProcess;
+using UserEntity = KamnttraApi.Modules.Administration.SetUp.User.User;
 
-namespace FarmingApi.Modules.Administration.ApprovalRequest;
+namespace KamnttraApi.Modules.Administration.ApprovalRequest;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // One row per document submitted for approval. DocumentId is deliberately NOT a

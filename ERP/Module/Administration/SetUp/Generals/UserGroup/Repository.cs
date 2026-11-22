@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.SetUp.UserGroup;
+namespace KamnttraApi.Modules.Administration.SetUp.UserGroup;
 
 public interface IUserGroupRepository : IRepository<UserGroup>
 {

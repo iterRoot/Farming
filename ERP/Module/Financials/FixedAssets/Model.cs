@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Financials.FixedAssets;
+namespace KamnttraApi.Modules.Financials.FixedAssets;
 
 // Full shape returned by GET and accepted by POST/PUT. Audit fields are set
 // server-side, never taken from the request.

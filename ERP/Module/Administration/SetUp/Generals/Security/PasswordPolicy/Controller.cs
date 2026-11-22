@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
-using UserEntity = FarmingApi.Modules.Administration.SetUp.User.User;
+using KamnttraApi.Core;
+using UserEntity = KamnttraApi.Modules.Administration.SetUp.User.User;
 
-namespace FarmingApi.Modules.Administration.Security;
+namespace KamnttraApi.Modules.Administration.Security;
 
 // SAP-B1-style "Password Administration" screen: one policy record that
 // UserController reads on login / change-password (see GetPolicy() there),

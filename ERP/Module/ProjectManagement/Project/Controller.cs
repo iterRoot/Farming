@@ -3,11 +3,11 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using FarmingApi.Modules.Financials.FinancialProjects;
-using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Financials.FinancialProjects;
+using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
-namespace FarmingApi.Modules.ProjectManagement.Project;
+namespace KamnttraApi.Modules.ProjectManagement.Project;
 
 // ═══════════════════════════════════════════════════════════════════
 // PROJECT  (route: /Project, also reached as /projects)

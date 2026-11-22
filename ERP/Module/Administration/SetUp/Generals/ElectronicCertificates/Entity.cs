@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Administration.ElectronicCertificates;
+namespace KamnttraApi.Modules.Administration.ElectronicCertificates;
 
 // ═══════════════════════════════════════════════════════════════
 // ELECTRONIC CERTIFICATE  (KECT)

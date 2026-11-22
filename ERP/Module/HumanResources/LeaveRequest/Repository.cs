@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.HumanResources.LeaveRequest;
+namespace KamnttraApi.Modules.HumanResources.LeaveRequest;
 
 public interface ILeaveRequestRepository : IRepository<LeaveRequest>
 {

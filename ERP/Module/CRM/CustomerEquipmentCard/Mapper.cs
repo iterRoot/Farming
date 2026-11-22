@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.CRM.CustomerEquipmentCard;
+namespace KamnttraApi.Modules.CRM.CustomerEquipmentCard;
 
 public class CustomerEquipmentCardMapper : Profile
 {

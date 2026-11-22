@@ -1,11 +1,11 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi;
-using FarmingApi.Modules.InventoryManagement.InventoryJournal;
-using InventoryBalanceRow = FarmingApi.Modules.Sale.Inventory.Inventory;
+using KamnttraApi;
+using KamnttraApi.Modules.InventoryManagement.InventoryJournal;
+using InventoryBalanceRow = KamnttraApi.Modules.Sale.Inventory.Inventory;
 
-namespace FarmingApi.Modules.Inventory.ItemsMaster;
+namespace KamnttraApi.Modules.Inventory.ItemsMaster;
 
 [ApiController]
 [Route("[controller]")]

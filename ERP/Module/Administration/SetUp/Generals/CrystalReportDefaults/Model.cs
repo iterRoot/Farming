@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.CrystalReportDefaults;
+namespace KamnttraApi.Modules.Administration.CrystalReportDefaults;
 
 public class CrystalReportDefaultResponse
 {

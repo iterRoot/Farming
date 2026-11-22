@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.ElectronicDocuments;
+namespace KamnttraApi.Modules.Administration.ElectronicDocuments;
 
 public interface IElectronicDocumentRepository
     : IRepository<ElectronicDocument> { }

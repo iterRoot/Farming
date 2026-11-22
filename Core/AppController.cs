@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 [ApiController]
 [Route("[controller]")]
 public class MyController : ControllerBase

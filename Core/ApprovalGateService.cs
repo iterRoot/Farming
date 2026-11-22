@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Modules.Administration.ApprovalProcess;
-using ApprovalRequestEntity = FarmingApi.Modules.Administration.ApprovalRequest.ApprovalRequest;
+using KamnttraApi.Modules.Administration.ApprovalProcess;
+using ApprovalRequestEntity = KamnttraApi.Modules.Administration.ApprovalRequest.ApprovalRequest;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 public record ApprovalGateResult(bool RequiresApproval, int? ApprovalRequestId);
 public record ApprovalDecisionResult(bool Success, string? Error);

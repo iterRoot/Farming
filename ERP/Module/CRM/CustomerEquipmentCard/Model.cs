@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.CRM.CustomerEquipmentCard;
+namespace KamnttraApi.Modules.CRM.CustomerEquipmentCard;
 
 public class CustomerEquipmentCardRequest
 {

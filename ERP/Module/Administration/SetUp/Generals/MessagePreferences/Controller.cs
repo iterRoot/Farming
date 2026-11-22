@@ -2,7 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FarmingApi.Modules.Administration.MessagePreferences;
+namespace KamnttraApi.Modules.Administration.MessagePreferences;
 
 [ApiController]
 [Route("[controller]")]
@@ -237,7 +237,7 @@ public class MessagePreferenceController : ControllerBase
     public IActionResult SeedForUser(string userCode, [FromQuery] string? userName = null)
     {
         var code = userCode.Trim().ToUpper();
-        if (code != "ALL" && !_db.Set<FarmingApi.Modules.Administration.SetUp.User.User>().Any(u => u.UserId.ToUpper() == code))
+        if (code != "ALL" && !_db.Set<KamnttraApi.Modules.Administration.SetUp.User.User>().Any(u => u.UserId.ToUpper() == code))
             return NotFound($"No user '{userCode}'.");
         if (_repo.GetAll().Any(x => x.UserCode == code))
             return BadRequest($"Preferences for '{code}' already exist.");

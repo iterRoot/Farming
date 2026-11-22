@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.UserDefaults;
+namespace KamnttraApi.Modules.Administration.UserDefaults;
 
 public class UserDefaultResponse
 {

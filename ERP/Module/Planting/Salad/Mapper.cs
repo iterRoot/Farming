@@ -1,6 +1,6 @@
 // using AutoMapper;
 
-// namespace FarmingApi.Modules.Salad;
+// namespace KamnttraApi.Modules.Salad;
 
 // public class SaladMapper : Profile
 // {

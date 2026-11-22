@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
-using FarmingApi.Core;
-using UserEntity      = FarmingApi.Modules.Administration.SetUp.User.User;
-using UserGroupEntity = FarmingApi.Modules.Administration.SetUp.UserGroup.UserGroup;
+using KamnttraApi.Core;
+using UserEntity      = KamnttraApi.Modules.Administration.SetUp.User.User;
+using UserGroupEntity = KamnttraApi.Modules.Administration.SetUp.UserGroup.UserGroup;
 
-namespace FarmingApi.Modules.Administration.Authorisations;
+namespace KamnttraApi.Modules.Administration.Authorisations;
 
 // ═══════════════════════════════════════════════════════════════
 // AUTHORISATIONS  (route: /UserAuthorization)

@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.ReferenceFieldLink;
+namespace KamnttraApi.Modules.Administration.ReferenceFieldLink;
 
 public interface IReferenceFieldLinkRepository
     : IRepository<ReferenceFieldLink> { }

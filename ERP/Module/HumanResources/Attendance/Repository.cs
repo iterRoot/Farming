@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.HumanResources.Attendance;
+namespace KamnttraApi.Modules.HumanResources.Attendance;
 
 public interface IAttendanceRepository : IRepository<Attendance> { }
 

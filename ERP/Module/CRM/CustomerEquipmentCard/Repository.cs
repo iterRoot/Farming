@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.CRM.CustomerEquipmentCard;
+namespace KamnttraApi.Modules.CRM.CustomerEquipmentCard;
 
 public interface ICustomerEquipmentCardRepository : IRepository<CustomerEquipmentCard> { }
 

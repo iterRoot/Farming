@@ -4,22 +4,22 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using BPEntity  = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
-using COAEntity  = FarmingApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
-using ItemEntity = FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster;
-using CompanyEntity = FarmingApi.Modules.Company.Company;
-using UserEntity = FarmingApi.Modules.Administration.SetUp.User.User;
-using UserGroupEntity = FarmingApi.Modules.Administration.SetUp.UserGroup.UserGroup;
-using ItemGroupEntity = FarmingApi.Modules.Inventory.ItemGroup.ItemGroup;
-using EmployeeEntity = FarmingApi.Modules.HumanResources.EmployeeMaster.EmployeeMaster;
-using AttendanceEntity = FarmingApi.Modules.HumanResources.Attendance.Attendance;
-using PayrollEntity = FarmingApi.Modules.HumanResources.Payroll.Payroll;
-using ExchangeRateEntity = FarmingApi.Modules.Financials.ExchangeRate.ExchangeRate;
-using HrAttendanceMath = FarmingApi.Modules.HumanResources.Attendance.AttendanceMath;
-using HrPayrollMath = FarmingApi.Modules.HumanResources.Payroll.PayrollMath;
-using FarmingApi.Modules.Inventory.ItemsMaster;
+using BPEntity  = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using COAEntity  = KamnttraApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
+using ItemEntity = KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster;
+using CompanyEntity = KamnttraApi.Modules.Company.Company;
+using UserEntity = KamnttraApi.Modules.Administration.SetUp.User.User;
+using UserGroupEntity = KamnttraApi.Modules.Administration.SetUp.UserGroup.UserGroup;
+using ItemGroupEntity = KamnttraApi.Modules.Inventory.ItemGroup.ItemGroup;
+using EmployeeEntity = KamnttraApi.Modules.HumanResources.EmployeeMaster.EmployeeMaster;
+using AttendanceEntity = KamnttraApi.Modules.HumanResources.Attendance.Attendance;
+using PayrollEntity = KamnttraApi.Modules.HumanResources.Payroll.Payroll;
+using ExchangeRateEntity = KamnttraApi.Modules.Financials.ExchangeRate.ExchangeRate;
+using HrAttendanceMath = KamnttraApi.Modules.HumanResources.Attendance.AttendanceMath;
+using HrPayrollMath = KamnttraApi.Modules.HumanResources.Payroll.PayrollMath;
+using KamnttraApi.Modules.Inventory.ItemsMaster;
 
-namespace FarmingApi.Modules.Administration.DataImportAndExport;
+namespace KamnttraApi.Modules.Administration.DataImportAndExport;
 
 // ═══════════════════════════════════════════════════════════════════
 // CSV ENGINE  (RFC 4180)
@@ -402,7 +402,7 @@ public class DataTransferService : IDataTransferService
             _db.SaveChanges();
             // Items imported without a barcode get a generated one (needs the new Ids).
             if (info.Key == "ItemMaster"
-                && FarmingApi.Modules.Inventory.ItemsMaster.ItemBarcodes.FillMissing(_db) > 0)
+                && KamnttraApi.Modules.Inventory.ItemsMaster.ItemBarcodes.FillMissing(_db) > 0)
                 _db.SaveChanges();
             tx.Commit();
         }
@@ -969,10 +969,10 @@ public class DataTransferService : IDataTransferService
         _              => "",
     };
 
-    private static string HashPassword(string password) => FarmingApi.Core.PasswordHashing.Hash(password);
+    private static string HashPassword(string password) => KamnttraApi.Core.PasswordHashing.Hash(password);
 
     private static bool StrongPassword(string p) =>
-        FarmingApi.Core.PasswordRules.Check(p, new FarmingApi.Core.PasswordPolicyView(12, true, true, true, true)) == null;
+        KamnttraApi.Core.PasswordRules.Check(p, new KamnttraApi.Core.PasswordPolicyView(12, true, true, true, true)) == null;
 
     // ═══════════════════════════════════════════════════════════════
     // ITEM GROUP IMPORTER

@@ -1,11 +1,11 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi;
-using UserEntity = FarmingApi.Modules.Administration.SetUp.User.User;
-using ApprovalRequestEntity = FarmingApi.Modules.Administration.ApprovalRequest.ApprovalRequest;
+using KamnttraApi;
+using UserEntity = KamnttraApi.Modules.Administration.SetUp.User.User;
+using ApprovalRequestEntity = KamnttraApi.Modules.Administration.ApprovalRequest.ApprovalRequest;
 
-namespace FarmingApi.Modules.Administration.ApprovalProcess;
+namespace KamnttraApi.Modules.Administration.ApprovalProcess;
 
 [ApiController]
 [Route("[controller]")]

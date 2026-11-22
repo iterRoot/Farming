@@ -2,9 +2,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Inventory.BarCode;
+namespace KamnttraApi.Modules.Inventory.BarCode;
 
 public class BarCodeController : MyController
 {
@@ -79,7 +79,7 @@ public class BarCodeController : MyController
         {
             // Not in the Bar Code table: fall back to the item's own barcode (Item Master),
             // which every item has — typed in or generated when the item was created.
-            var item = _db.Set<FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster>()
+            var item = _db.Set<KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster>()
                 .FirstOrDefault(i => i.Barcode == code);
             if (item == null) return NotFound($"No item found for barcode '{code}'");
             return Ok(WithStock(new BarCodeSearchResponse
@@ -111,17 +111,17 @@ public class BarCodeController : MyController
     // Adds the item's unit, selling price and quantity on hand in every warehouse.
     private BarCodeSearchResponse WithStock(BarCodeSearchResponse r)
     {
-        var item = _db.Set<FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster>().FirstOrDefault(i => i.ItemCode == r.ItemNo);
+        var item = _db.Set<KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster>().FirstOrDefault(i => i.ItemCode == r.ItemNo);
         if (item == null) return r;
 
         var uom   = FirstNonBlank(item.UomName, item.SaleUom, item.UomCode);
         var price = item.SalePrice != 0 ? item.SalePrice : item.UnitPrice;
-        var stock = _db.Set<FarmingApi.Modules.Sale.Inventory.Inventory>()
+        var stock = _db.Set<KamnttraApi.Modules.Sale.Inventory.Inventory>()
             .Where(b => b.ItemsCode == item.ItemCode)
             .GroupBy(b => b.WhsCode)
             .Select(g => new { WhsCode = g.Key, Qty = g.Sum(b => b.Balance) })
             .ToDictionary(x => x.WhsCode, x => x.Qty);
-        var warehouses = _db.Set<FarmingApi.Modules.Sale.Warehouse.Warehouse>()
+        var warehouses = _db.Set<KamnttraApi.Modules.Sale.Warehouse.Warehouse>()
             .Select(w => new { w.Code, w.Name }).ToList();
 
         r.StockUoM  = uom;

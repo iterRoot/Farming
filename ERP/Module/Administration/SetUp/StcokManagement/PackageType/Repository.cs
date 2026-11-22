@@ -2,9 +2,9 @@
 // ═══════════════════════════════════════════════════════════════
 // Repository.cs
 // ═══════════════════════════════════════════════════════════════
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Inventory.PackageTypes;
+namespace KamnttraApi.Modules.Inventory.PackageTypes;
 
 public interface IPackageTypeRepository : IRepository<PackageType> { }
 

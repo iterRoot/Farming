@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.DashboardParameters;
+namespace KamnttraApi.Modules.Administration.DashboardParameters;
 
 public class DashboardParameterResponse
 {

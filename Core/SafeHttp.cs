@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // OUTBOUND REQUESTS TO A URL A USER TYPED

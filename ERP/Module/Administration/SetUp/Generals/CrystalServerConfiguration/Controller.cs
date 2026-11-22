@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Net.Sockets;
 
-namespace FarmingApi.Modules.Administration.CrystalServer;
+namespace KamnttraApi.Modules.Administration.CrystalServer;
 
 [ApiController]
 [Route("[controller]")]

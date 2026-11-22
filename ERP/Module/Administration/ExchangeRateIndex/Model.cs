@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Financials.ExchangeRate;
+namespace KamnttraApi.Modules.Financials.ExchangeRate;
 
 // ── Exchange Rate ─────────────────────────────────────────────
 public class ExchangeRateResponse

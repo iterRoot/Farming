@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Administration.DashboardManager;
+namespace KamnttraApi.Modules.Administration.DashboardManager;
 
 public class DashboardManagerMapper : Profile
 {

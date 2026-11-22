@@ -1,10 +1,10 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ItemEntity = FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster;
-using BPEntity   = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using ItemEntity = KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster;
+using BPEntity   = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
-namespace FarmingApi.Modules.InventoryManagement.PriceLists;
+namespace KamnttraApi.Modules.InventoryManagement.PriceLists;
 
 // ═══════════════════════════════════════════════════════════════════
 // PRICE LISTS  (route: /PriceList)

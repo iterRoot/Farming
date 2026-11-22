@@ -3,9 +3,9 @@
 // ═══════════════════════════════════════════════════════════════
 // Repository.cs
 // ═══════════════════════════════════════════════════════════════
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Inventory.Locations;
+namespace KamnttraApi.Modules.Inventory.Locations;
 
 public interface ILocationRepository : IRepository<Location> { }
 

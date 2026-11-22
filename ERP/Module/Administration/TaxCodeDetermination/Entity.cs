@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.TaxCodeDetermination;
+namespace KamnttraApi.Modules.Administration.TaxCodeDetermination;
 
 // SAP B1 "Tax Code Determination - Setup": a rule that resolves which tax code
 // to default onto a document line, based on document type / business area and

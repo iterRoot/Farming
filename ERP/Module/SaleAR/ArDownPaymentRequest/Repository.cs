@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.SaleAR.ArDownPaymentRequest;
+namespace KamnttraApi.Modules.SaleAR.ArDownPaymentRequest;
 
 public interface IArDownPaymentRequestRepository : IRepository<ArDownPaymentRequest>
 {

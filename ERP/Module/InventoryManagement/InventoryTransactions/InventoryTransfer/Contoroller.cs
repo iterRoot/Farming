@@ -2,10 +2,10 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using FarmingApi.Modules.Inventory.StockTransferRequest;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Inventory.StockTransferRequest;
 
-namespace FarmingApi.Modules.Inventory.StockTransfer;
+namespace KamnttraApi.Modules.Inventory.StockTransfer;
 
 public class StockTransferController : MyController
 {

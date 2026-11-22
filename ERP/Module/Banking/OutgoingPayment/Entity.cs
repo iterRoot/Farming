@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Banking.OutgoingPayment;
+namespace KamnttraApi.Modules.Banking.OutgoingPayment;
 
 // ═══════════════════════════════════════════════════════════════════
 // OUTGOING PAYMENT HEADER (KPYO)

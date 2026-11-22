@@ -2,9 +2,9 @@
 // ═══════════════════════════════════════════════════════════════
 // Repository.cs
 // ═══════════════════════════════════════════════════════════════
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Inventory.UnitOfMeasure;
+namespace KamnttraApi.Modules.Inventory.UnitOfMeasure;
 
 public interface IUnitOfMeasureRepository : IRepository<UnitOfMeasure> { }
 

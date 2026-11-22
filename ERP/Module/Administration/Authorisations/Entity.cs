@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.Authorisations;
+namespace KamnttraApi.Modules.Administration.Authorisations;
 
 // SAP B1 "Authorisations" — one record per user holding a permission tree.
 //

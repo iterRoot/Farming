@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Financials.EditChartOfAccounts;
+namespace KamnttraApi.Modules.Financials.EditChartOfAccounts;
 
 public class ChartOfAccountsEditLineResponse
 {

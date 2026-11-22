@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.EditChartOfAccounts;
+namespace KamnttraApi.Modules.Financials.EditChartOfAccounts;
 
 public interface IChartOfAccountsEditBatchRepository : IRepository<ChartOfAccountsEditBatch> { }
 

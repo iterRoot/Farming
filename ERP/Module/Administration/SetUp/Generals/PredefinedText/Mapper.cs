@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Administration.PredefinedText;
+namespace KamnttraApi.Modules.Administration.PredefinedText;
 
 public class PredefinedTextMapper : Profile
 {

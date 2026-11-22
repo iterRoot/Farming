@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Financials.ExchangeRate;
+namespace KamnttraApi.Modules.Financials.ExchangeRate;
 
 public class ExchangeRateMapper : Profile
 {

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace FarmingApi.Modules.Company;
+namespace KamnttraApi.Modules.Company;
 
 public class CompanyMapper : Profile
 {

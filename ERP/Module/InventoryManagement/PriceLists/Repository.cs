@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.InventoryManagement.PriceLists;
+namespace KamnttraApi.Modules.InventoryManagement.PriceLists;
 
 public interface IPriceListRepository : IRepository<PriceList> { }
 

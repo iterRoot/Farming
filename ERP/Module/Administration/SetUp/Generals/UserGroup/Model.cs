@@ -1,6 +1,6 @@
 using System;
 
-namespace FarmingApi.Modules.Administration.SetUp.UserGroup;
+namespace KamnttraApi.Modules.Administration.SetUp.UserGroup;
 
 public class UserGroupListResponse
 {

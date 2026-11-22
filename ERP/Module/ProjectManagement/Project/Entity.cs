@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.ProjectManagement.Project;
+namespace KamnttraApi.Modules.ProjectManagement.Project;
 
 // Project Management project (table KPRM).
 //

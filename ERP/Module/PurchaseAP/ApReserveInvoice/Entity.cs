@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
-using FarmingApi.Modules.Inventory.ItemsMaster;
-using APINVEntity = FarmingApi.Modules.PurchaseAP.APInvoice.APInvoice;
-using BPEntity    = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Inventory.ItemsMaster;
+using APINVEntity = KamnttraApi.Modules.PurchaseAP.APInvoice.APInvoice;
+using BPEntity    = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
-namespace FarmingApi.Modules.PurchaseAP.APReserveInvoice;
+namespace KamnttraApi.Modules.PurchaseAP.APReserveInvoice;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // HEADER

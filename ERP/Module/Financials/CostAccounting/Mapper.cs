@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Financials.CostAccounting;
+namespace KamnttraApi.Modules.Financials.CostAccounting;
 
 public class CostAccountingMapper : Profile
 {

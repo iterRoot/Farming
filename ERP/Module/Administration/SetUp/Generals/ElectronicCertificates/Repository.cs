@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.ElectronicCertificates;
+namespace KamnttraApi.Modules.Administration.ElectronicCertificates;
 
 public interface IElectronicCertificateRepository
     : IRepository<ElectronicCertificate> { }

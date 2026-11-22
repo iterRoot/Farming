@@ -5,7 +5,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Farming.Migrations
+namespace Kamnttra.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

@@ -4,9 +4,9 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi
+namespace KamnttraApi
 {
     public class MyDbContext : DbContext
     {
@@ -82,7 +82,7 @@ namespace FarmingApi
             // Apply all IEntityTypeConfiguration automatically
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-            const string prefix = "FarmingApi.Modules";
+            const string prefix = "KamnttraApi.Modules";
             var baseType = typeof(Entity);
 
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
@@ -121,7 +121,7 @@ namespace FarmingApi
         public static void AddDatabase(this IServiceCollection service)
         {
             var dbConnection = Environment.GetEnvironmentVariable("DB_CONNECTION");
-            dbConnection ??= "Host=localhost;Port=5432;Database=Farming;Username=postgres;Password=mypassword;";
+            dbConnection ??= "Host=localhost;Port=5432;Database=Kamnttra;Username=postgres;Password=mypassword;";
             service.AddDbContext<MyDbContext>(options =>
             {
                 options.UseNpgsql(dbConnection);

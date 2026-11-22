@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.InventoryManagement.PickAndPack;
+namespace KamnttraApi.Modules.InventoryManagement.PickAndPack;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // PICK & PACK — a saved selection criteria that generates a pick list from open

@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Administration.DashboardParameters;
+namespace KamnttraApi.Modules.Administration.DashboardParameters;
 
 public class DashboardParameterMapper : Profile
 {

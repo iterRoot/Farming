@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Banking.Deposit;
+namespace KamnttraApi.Modules.Banking.Deposit;
 
 public interface IDepositRepository : IRepository<Deposit> { }
 

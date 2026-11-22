@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using FarmingApi.Modules.Administration.UserTables;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Administration.UserTables;
 
-namespace FarmingApi.Modules.Administration.UserDefinedFields;
+namespace KamnttraApi.Modules.Administration.UserDefinedFields;
 
 // ══════════════════════════════════════════════════════════════════
 // USER-DEFINED FIELDS  (route: /UserDefinedField)

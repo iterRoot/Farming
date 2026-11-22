@@ -1,10 +1,10 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
-using BPEntity   = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
-using ItemEntity = FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster;
+using KamnttraApi.Core;
+using BPEntity   = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using ItemEntity = KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster;
 
-namespace FarmingApi.Modules.CRM.ServiceContract;
+namespace KamnttraApi.Modules.CRM.ServiceContract;
 
 // ═══════════════════════════════════════════════════════════════════
 // SERVICE CONTRACT  (route: /ServiceContract)
@@ -139,7 +139,7 @@ public class ServiceContractController : ControllerBase
         var entity = _repository.GetSingle(x => x.Id == id);
         if (entity == null) return NotFound();
 
-        var inUse = _db.Set<FarmingApi.Modules.CRM.ServiceCall.ServiceCall>()
+        var inUse = _db.Set<KamnttraApi.Modules.CRM.ServiceCall.ServiceCall>()
             .Any(s => s.ServiceContractId == id);
         if (inUse) return BadRequest("This contract has Service Calls referencing it and cannot be deleted — cancel it instead.");
 

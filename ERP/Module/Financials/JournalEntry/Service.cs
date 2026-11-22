@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Financials.JournalEntry;
+namespace KamnttraApi.Modules.Financials.JournalEntry;
 
 // ═══════════════════════════════════════════════════════════════
 // JOURNAL NUMBERING

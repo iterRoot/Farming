@@ -1,13 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
-using FarmingApi.Modules.Inventory.ItemsMaster;
-using PBAEntity = FarmingApi.Modules.PurchaseAP.PurchaseBlanketAgreement.PurchaseBlanketAgreement;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Inventory.ItemsMaster;
+using PBAEntity = KamnttraApi.Modules.PurchaseAP.PurchaseBlanketAgreement.PurchaseBlanketAgreement;
 
-// using FarmingApi.Modules.PurchaseAP.PurchaseBlanketAgreement;
-using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+// using KamnttraApi.Modules.PurchaseAP.PurchaseBlanketAgreement;
+using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
-namespace FarmingApi.Modules.PurchaseAP.PurchaseQuotation;
+namespace KamnttraApi.Modules.PurchaseAP.PurchaseQuotation;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // HEADER

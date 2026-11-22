@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.CRM.ServiceCall;
+namespace KamnttraApi.Modules.CRM.ServiceCall;
 
 public interface IServiceCallRepository : IRepository<ServiceCall> { }
 

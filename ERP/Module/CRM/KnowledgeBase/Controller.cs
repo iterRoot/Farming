@@ -1,8 +1,8 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.CRM.KnowledgeBase;
+namespace KamnttraApi.Modules.CRM.KnowledgeBase;
 
 // ═══════════════════════════════════════════════════════════════════
 // KNOWLEDGE BASE  (route: /KnowledgeBase)

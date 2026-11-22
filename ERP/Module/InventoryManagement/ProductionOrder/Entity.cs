@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.InventoryManagement.ProductionOrder;
+namespace KamnttraApi.Modules.InventoryManagement.ProductionOrder;
 
 // ═══════════════════════════════════════════════════════════════════
 // PRODUCTION ORDER  (KWOR / WOR1)

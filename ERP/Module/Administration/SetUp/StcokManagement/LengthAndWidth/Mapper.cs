@@ -4,7 +4,7 @@
 // ═══════════════════════════════════════════════════════════════
 using AutoMapper;
 
-namespace FarmingApi.Modules.Inventory.LengthWidth;
+namespace KamnttraApi.Modules.Inventory.LengthWidth;
 
 public class LengthWidthUomMapper : Profile
 {

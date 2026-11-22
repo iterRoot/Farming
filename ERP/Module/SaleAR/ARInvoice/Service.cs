@@ -1,8 +1,8 @@
-using FarmingApi.Modules.Financials.GLAccountDetermination;
-using FarmingApi.Modules.Financials.JournalEntry;
+using KamnttraApi.Modules.Financials.GLAccountDetermination;
+using KamnttraApi.Modules.Financials.JournalEntry;
 
-using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
-namespace FarmingApi.Modules.SaleAR.ARInvoice;
+using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+namespace KamnttraApi.Modules.SaleAR.ARInvoice;
 public interface IARInvoiceJournalService
 {
     JournalEntry CreateJournalEntry(ARInvoice invoice, BPEntity customer);

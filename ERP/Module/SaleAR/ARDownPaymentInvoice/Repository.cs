@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.SaleAR.ARDownPaymentInvoice;
+namespace KamnttraApi.Modules.SaleAR.ARDownPaymentInvoice;
 
 public interface IARDownPaymentInvoiceRepository : IRepository<ARDownPaymentInvoice>
 {

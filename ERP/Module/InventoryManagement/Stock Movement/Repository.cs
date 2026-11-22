@@ -1,6 +1,6 @@
-// using FarmingApi.Core;
+// using KamnttraApi.Core;
 
-// namespace FarmingApi.Modules.Sale.StockMovement;
+// namespace KamnttraApi.Modules.Sale.StockMovement;
 
 // public interface IStockMovementRepository : IRepository<StockMovement>
 // {

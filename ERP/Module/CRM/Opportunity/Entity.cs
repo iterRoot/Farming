@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.CRM.Opportunity;
+namespace KamnttraApi.Modules.CRM.Opportunity;
 
 // ═══════════════════════════════════════════════════════════════
 // OPPORTUNITY  (KOPP)  ·  SAP B1 equivalent: OOPR / OPR1...

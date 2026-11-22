@@ -1,4 +1,4 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Net;
 
-namespace FarmingApi.Modules.Administration.SAPLinks;
+namespace KamnttraApi.Modules.Administration.SAPLinks;
 
 [ApiController]
 [Route("[controller]")]
@@ -225,7 +225,7 @@ public class SAPLinkController : ControllerBase
             if (!SafeHttp.TryParse(entity.Url, out var target, out var urlError))
                 return Ok(new LinkHealthResult { Id = id, Code = entity.Code, Title = entity.Title, Url = entity.Url, IsReachable = false, Error = urlError });
             using var client = SafeHttp.CreateClient(TimeSpan.FromSeconds(10));
-            client.DefaultRequestHeaders.Add("User-Agent", "FarmingERP/HealthCheck");
+            client.DefaultRequestHeaders.Add("User-Agent", "KamnttraERP/HealthCheck");
             var resp = await client.GetAsync(target);
             sw.Stop();
 
@@ -322,7 +322,7 @@ public class SAPLinkController : ControllerBase
         new(){ Code="LNK-CERTS",       Title="Certificate Registry",            Category="Internal",   LinkType="Navigation", Url="/Administration/ElectronicCertificate/List", IconName="🏅", Description="View and manage company certificates",                  Tags="certs,compliance",         IsPinned=false, IsOnDashboard=false, SortOrder=52 },
 
         // ── Social / Communication ───────────────────────────
-        new(){ Code="LNK-TG-SUPPORT",  Title="IT Support Telegram",             Category="Social",     LinkType="URL",  Url="https://t.me/farmingcorp_itsupport", IconName="✈️", Description="Telegram group for ERP support requests",                   Tags="telegram,support,it",      IsPinned=false, IsOnDashboard=false, SortOrder=60, RequiresLogin=false },
-        new(){ Code="LNK-LINKEDIN",    Title="Company LinkedIn",                Category="Social",     LinkType="URL",  Url="https://www.linkedin.com/company/farmingcorp", IconName="💼", Description="Official company LinkedIn page",                          Tags="linkedin,social",          IsPinned=false, IsOnDashboard=false, SortOrder=61 },
+        new(){ Code="LNK-TG-SUPPORT",  Title="IT Support Telegram",             Category="Social",     LinkType="URL",  Url="https://t.me/Kamnttracorp_itsupport", IconName="✈️", Description="Telegram group for ERP support requests",                   Tags="telegram,support,it",      IsPinned=false, IsOnDashboard=false, SortOrder=60, RequiresLogin=false },
+        new(){ Code="LNK-LINKEDIN",    Title="Company LinkedIn",                Category="Social",     LinkType="URL",  Url="https://www.linkedin.com/company/Kamnttracorp", IconName="💼", Description="Official company LinkedIn page",                          Tags="linkedin,social",          IsPinned=false, IsOnDashboard=false, SortOrder=61 },
     };
 }

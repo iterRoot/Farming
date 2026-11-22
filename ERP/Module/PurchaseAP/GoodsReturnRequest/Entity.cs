@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
-using FarmingApi.Modules.Inventory.ItemsMaster;
-using GRPOEntity = FarmingApi.Modules.PurchaseAP.GoodsReceiptPO.GoodsReceiptPO;
-using BPEntity   = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Inventory.ItemsMaster;
+using GRPOEntity = KamnttraApi.Modules.PurchaseAP.GoodsReceiptPO.GoodsReceiptPO;
+using BPEntity   = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
-namespace FarmingApi.Modules.PurchaseAP.GoodsReturnRequest;
+namespace KamnttraApi.Modules.PurchaseAP.GoodsReturnRequest;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // HEADER

@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.UserDefinedFields;
+namespace KamnttraApi.Modules.Administration.UserDefinedFields;
 
 public class UserDefinedFieldRequest
 {

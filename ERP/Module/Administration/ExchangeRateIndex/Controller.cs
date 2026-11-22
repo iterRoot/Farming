@@ -2,9 +2,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.ExchangeRate;
+namespace KamnttraApi.Modules.Financials.ExchangeRate;
 
 // ═══════════════════════════════════════════════════════════════
 // EXCHANGE RATE CONTROLLER

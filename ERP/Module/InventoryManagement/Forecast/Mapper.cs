@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.InventoryManagement.Forecast;
+namespace KamnttraApi.Modules.InventoryManagement.Forecast;
 
 public class ForecastMapper : Profile
 {

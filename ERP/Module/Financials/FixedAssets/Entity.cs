@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.FixedAssets;
+namespace KamnttraApi.Modules.Financials.FixedAssets;
 
 // SAP B1 "Asset Master Data" — an item whose Item Type is Fixed Assets, with a
 // dedicated Fixed Assets (depreciation) block on top of the general item fields.

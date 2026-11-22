@@ -1,13 +1,13 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using BPEntity        = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
-using ARInvoiceEntity = FarmingApi.Modules.SaleAR.ARInvoice.ARInvoice;
-using IPayInvoice     = FarmingApi.Modules.Banking.IncomingPayment.IncomingPaymentInvoice;
-using DunningTermEntity = FarmingApi.Modules.SaleAR.DunningTerm.DunningTerm;
+using KamnttraApi.Core;
+using BPEntity        = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using ARInvoiceEntity = KamnttraApi.Modules.SaleAR.ARInvoice.ARInvoice;
+using IPayInvoice     = KamnttraApi.Modules.Banking.IncomingPayment.IncomingPaymentInvoice;
+using DunningTermEntity = KamnttraApi.Modules.SaleAR.DunningTerm.DunningTerm;
 
-namespace FarmingApi.Modules.SaleAR.Dunning;
+namespace KamnttraApi.Modules.SaleAR.Dunning;
 
 // ═══════════════════════════════════════════════════════════════════
 // DUNNING  (route: /Dunning)

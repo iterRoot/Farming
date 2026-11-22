@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.Authorisations;
+namespace KamnttraApi.Modules.Administration.Authorisations;
 
 // Summary row for the List
 public class AuthorizationListResponse

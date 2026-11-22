@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 public abstract class Entity
 {

@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.ReportLayoutManager;
+namespace KamnttraApi.Modules.Administration.ReportLayoutManager;
 
 // ── Response ──────────────────────────────────────────────────
 public class ReportLayoutResponse

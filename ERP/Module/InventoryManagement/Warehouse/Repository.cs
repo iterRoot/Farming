@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Sale.Warehouse;
+namespace KamnttraApi.Modules.Sale.Warehouse;
 
 public interface IWarehouseRepository : IRepository<Warehouse>
 {

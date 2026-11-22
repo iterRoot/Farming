@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.ChartOfAccounts;
+namespace KamnttraApi.Modules.Financials.ChartOfAccounts;
 
 // ═══════════════════════════════════════════════════════════════════
 // CHART OF ACCOUNTS — SAP B1 OACT structure

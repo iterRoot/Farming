@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.CRM.Opportunity;
+namespace KamnttraApi.Modules.CRM.Opportunity;
 
 public interface IOpportunityRepository : IRepository<Opportunity> { }
 

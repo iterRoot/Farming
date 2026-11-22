@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.PeriodEndClosing;
+namespace KamnttraApi.Modules.Financials.PeriodEndClosing;
 
 public interface IPeriodEndClosingRepository : IRepository<PeriodEndClosingRun>
 {

@@ -1,4 +1,4 @@
-// namespace FarmingApi.Modules.BusinessPartner.Activity;
+// namespace KamnttraApi.Modules.BusinessPartner.Activity;
 
 // // ═══════════════════════════════════════════════════════════════════
 // // RESPONSE

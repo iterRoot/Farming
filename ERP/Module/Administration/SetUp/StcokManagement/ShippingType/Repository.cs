@@ -3,9 +3,9 @@
 // ═══════════════════════════════════════════════════════════════
 // Repository.cs
 // ═══════════════════════════════════════════════════════════════
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Inventory.ShippingTypes;
+namespace KamnttraApi.Modules.Inventory.ShippingTypes;
 
 public interface IShippingTypeRepository : IRepository<ShippingType> { }
 

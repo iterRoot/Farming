@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.CostAccounting;
+namespace KamnttraApi.Modules.Financials.CostAccounting;
 
 // ═══════════════════════════════════════════════════════════════════
 // COST ACCOUNTING — Cost Centers and Distribution Rules.

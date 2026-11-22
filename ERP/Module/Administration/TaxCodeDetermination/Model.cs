@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.TaxCodeDetermination;
+namespace KamnttraApi.Modules.Administration.TaxCodeDetermination;
 
 public class TaxDeterminationRuleDto
 {

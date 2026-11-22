@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Administration.Security;
+namespace KamnttraApi.Modules.Administration.Security;
 
 // Singleton row — the same shape as Company (Modules.Company): one record
 // holds the whole company's password rules, read by UserController on

@@ -2,9 +2,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.JournalEntry;
+namespace KamnttraApi.Modules.Financials.JournalEntry;
 
 public class JournalEntryController : MyController
 {
@@ -113,7 +113,7 @@ public class JournalEntryController : MyController
         }
 
         // Project / cost-centre tags must be real; a distribution rule is split into its centres.
-        var dimError = FarmingApi.Modules.Financials.CostAccounting.Dimensions.ApplyToEntry(_db, entity);
+        var dimError = KamnttraApi.Modules.Financials.CostAccounting.Dimensions.ApplyToEntry(_db, entity);
         if (dimError != null) return BadRequest(dimError);
 
         _repository.Add(entity);
@@ -196,7 +196,7 @@ public class JournalEntryController : MyController
             entry.Lines.Add(line);
         }
 
-        var dimError = FarmingApi.Modules.Financials.CostAccounting.Dimensions.ApplyToEntry(_db, entry);
+        var dimError = KamnttraApi.Modules.Financials.CostAccounting.Dimensions.ApplyToEntry(_db, entry);
         if (dimError != null) return BadRequest(dimError);
 
         _repository.Update(entry);

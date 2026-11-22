@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.CRM.Opportunity;
+namespace KamnttraApi.Modules.CRM.Opportunity;
 
 // ══════════════════ RESPONSE ══════════════════
 public class OpportunityResponse

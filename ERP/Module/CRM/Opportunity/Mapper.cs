@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.CRM.Opportunity;
+namespace KamnttraApi.Modules.CRM.Opportunity;
 
 public class OpportunityMapper : Profile
 {

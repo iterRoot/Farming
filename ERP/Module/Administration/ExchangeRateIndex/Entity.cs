@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Financials.ExchangeRate;
+namespace KamnttraApi.Modules.Financials.ExchangeRate;
 
 // ═══════════════════════════════════════════════════════════════
 // EXCHANGE RATE  (KRTT)
@@ -23,7 +23,7 @@ public class ExchangeRate : AuditableEntity
 
 // ═══════════════════════════════════════════════════════════════
 // PRICE INDEX  (KPRI)
-// Commodity / material price index for farming operations
+// Commodity / material price index for Kamnttra operations
 // e.g. Rice Price Index, Fertiliser Index, Fuel Price
 // ═══════════════════════════════════════════════════════════════
 public class PriceIndex : AuditableEntity

@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.InventoryManagement.BillOfMaterial;
+namespace KamnttraApi.Modules.InventoryManagement.BillOfMaterial;
 
 public interface IBillOfMaterialRepository : IRepository<BillOfMaterial> { }
 

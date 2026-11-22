@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.EmailSettings;
+namespace KamnttraApi.Modules.Administration.EmailSettings;
 
 // An SMTP profile used to send system e-mail (notifications, document copies…).
 // Multiple profiles are supported; exactly one may be flagged as the default.

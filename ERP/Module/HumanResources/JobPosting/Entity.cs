@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.HumanResources.JobPosting;
+namespace KamnttraApi.Modules.HumanResources.JobPosting;
 
 // ═══════════════════════════════════════════════════════════════
 // JOB POSTING  (KJOB)

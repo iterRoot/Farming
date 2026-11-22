@@ -1,8 +1,8 @@
-using FarmingApi.Modules.Financials.GLAccountDetermination;
-using FarmingApi.Modules.Financials.JournalEntry;
-using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+﻿using KamnttraApi.Modules.Financials.GLAccountDetermination;
+using KamnttraApi.Modules.Financials.JournalEntry;
+using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
-namespace FarmingApi.Modules.SaleAR.ARReserveInvoice;
+namespace KamnttraApi.Modules.SaleAR.ARReserveInvoice;
 
 public interface IARReserveInvoiceJournalService
 {
@@ -63,7 +63,7 @@ public class ARReserveInvoiceJournalService : IARReserveInvoiceJournalService
             Memo            = $"AR Reserve Invoice {reserveInvoice.DocNum} - {customer.CardName}",
             TransType       = "ARRI",
             BaseDocEntry    = reserveInvoice.Id,
-            BaseDocType     = "KARI",
+            BaseDocType     = "KARV",
             Currency        = "USD",
             ExchangeRate    = 1,
             TotalDebit      = 0,

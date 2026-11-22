@@ -1,10 +1,10 @@
 using AutoMapper;
-using FarmingApi.Modules.Financials.ChartOfAccounts;
+using KamnttraApi.Modules.Financials.ChartOfAccounts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FarmingApi.Modules.Financials.EditChartOfAccounts;
+namespace KamnttraApi.Modules.Financials.EditChartOfAccounts;
 
 // ═══════════════════════════════════════════════════════════════
 // GET    /EditChartOfAccounts             → batches, newest first

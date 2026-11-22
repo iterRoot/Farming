@@ -7,7 +7,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FarmingApi.Modules.Inventory.UnitOfMeasure;
+namespace KamnttraApi.Modules.Inventory.UnitOfMeasure;
 
 [ApiController]
 [Route("[controller]")]

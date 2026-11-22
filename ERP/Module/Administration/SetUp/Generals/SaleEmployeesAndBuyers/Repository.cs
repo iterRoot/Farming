@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Sales.SaleEmployeeBuyer;
+namespace KamnttraApi.Modules.Sales.SaleEmployeeBuyer;
 
 public interface ISaleEmployeeBuyerRepository
     : IRepository<SaleEmployeeBuyer> { }

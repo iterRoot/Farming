@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Banking.InternalTransfer;
+namespace KamnttraApi.Modules.Banking.InternalTransfer;
 
 // ═══════════════════════════════════════════════════════════════════
 // INTERNAL TRANSFER (KBIT) — money moved between two of the company's own

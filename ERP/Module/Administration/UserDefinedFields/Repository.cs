@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.UserDefinedFields;
+namespace KamnttraApi.Modules.Administration.UserDefinedFields;
 
 public interface IUserDefinedFieldRepository : IRepository<UserDefinedField>
 {

@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.ProjectManagement.Project;
+namespace KamnttraApi.Modules.ProjectManagement.Project;
 
 public class ProjectMapper : Profile
 {

@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // PASSWORD HASHING

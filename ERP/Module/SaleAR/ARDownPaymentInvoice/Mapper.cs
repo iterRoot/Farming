@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.SaleAR.ARDownPaymentInvoice;
+namespace KamnttraApi.Modules.SaleAR.ARDownPaymentInvoice;
 
 public class ARDownPaymentMapper : Profile  // ✅ renamed
 {

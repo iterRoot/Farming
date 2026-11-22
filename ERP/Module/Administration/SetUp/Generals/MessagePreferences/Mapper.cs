@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Administration.MessagePreferences;
+namespace KamnttraApi.Modules.Administration.MessagePreferences;
 
 public class MessagePreferenceMapper : Profile
 {

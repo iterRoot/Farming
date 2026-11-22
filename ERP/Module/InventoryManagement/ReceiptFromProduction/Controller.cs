@@ -1,13 +1,13 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using FarmingApi.Modules.Financials.JournalEntry;
-using FarmingApi.Modules.InventoryManagement.InventoryJournal;
-using ItemEntity = FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster;
-using FarmingApi.Modules.Financials.GLAccountDetermination;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Financials.JournalEntry;
+using KamnttraApi.Modules.InventoryManagement.InventoryJournal;
+using ItemEntity = KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster;
+using KamnttraApi.Modules.Financials.GLAccountDetermination;
 
-namespace FarmingApi.Modules.InventoryManagement.ReceiptFromProduction;
+namespace KamnttraApi.Modules.InventoryManagement.ReceiptFromProduction;
 
 // ═══════════════════════════════════════════════════════════════════
 // RECEIPT FROM PRODUCTION  (route: /ReceiptFromProduction)

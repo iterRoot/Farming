@@ -1,10 +1,10 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using ItemEntity = FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster;
+using KamnttraApi.Core;
+using ItemEntity = KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster;
 
-namespace FarmingApi.Modules.InventoryManagement.AlternativeItem;
+namespace KamnttraApi.Modules.InventoryManagement.AlternativeItem;
 
 // ═══════════════════════════════════════════════════════════════════
 // ALTERNATIVE ITEM  (route: /AlternativeItem)

@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.SaleAR.ARReserveInvoice;
+namespace KamnttraApi.Modules.SaleAR.ARReserveInvoice;
 
 public class ARReserveInvoiceMapper : Profile
 {

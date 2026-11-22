@@ -3,7 +3,7 @@
 // ═══════════════════════════════════════════════════════════════
 using AutoMapper;
 
-namespace FarmingApi.Modules.Financials.GLAccountDetermination;
+namespace KamnttraApi.Modules.Financials.GLAccountDetermination;
 
 public class GLAccountDeterminationMapper : Profile
 {

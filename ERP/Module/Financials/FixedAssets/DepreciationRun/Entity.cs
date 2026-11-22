@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Financials.FixedAssets.DepreciationRun;
+namespace KamnttraApi.Modules.Financials.FixedAssets.DepreciationRun;
 
 // ═══════════════════════════════════════════════════════════════
 // DEPRECIATION RUN  (KDPR / DPR1)  ·  SAP B1 equivalent: Depreciation Run

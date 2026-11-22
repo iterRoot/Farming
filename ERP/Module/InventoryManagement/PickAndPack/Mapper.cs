@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.InventoryManagement.PickAndPack;
+namespace KamnttraApi.Modules.InventoryManagement.PickAndPack;
 
 public class PickPackMapper : Profile
 {

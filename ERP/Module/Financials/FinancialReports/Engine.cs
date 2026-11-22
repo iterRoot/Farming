@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using CoaEntity = FarmingApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
-using JournalEntryDoc  = FarmingApi.Modules.Financials.JournalEntry.JournalEntry;
-using JournalEntryLine = FarmingApi.Modules.Financials.JournalEntry.JournalEntryLine;
+using CoaEntity = KamnttraApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
+using JournalEntryDoc  = KamnttraApi.Modules.Financials.JournalEntry.JournalEntry;
+using JournalEntryLine = KamnttraApi.Modules.Financials.JournalEntry.JournalEntryLine;
 
-namespace FarmingApi.Modules.Financials.FinancialReports;
+namespace KamnttraApi.Modules.Financials.FinancialReports;
 
 public record Acct(string Code, string Name, string Type, bool IsGroup, string? Parent, int Level, bool Cash);
 public record DrCr(decimal Dr, decimal Cr) { public decimal Net => Dr - Cr; }

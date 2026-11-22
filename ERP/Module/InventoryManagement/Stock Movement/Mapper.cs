@@ -1,6 +1,6 @@
 // using AutoMapper;
 
-// namespace FarmingApi.Modules.Sale.StockMovement;
+// namespace KamnttraApi.Modules.Sale.StockMovement;
 
 // public class StockMovementMapper : Profile
 // {

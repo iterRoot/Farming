@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.PurchaseAP.PurchaseOrder;
+namespace KamnttraApi.Modules.PurchaseAP.PurchaseOrder;
 
 public interface IPurchaseOrderRepository : IRepository<PurchaseOrder>
 {

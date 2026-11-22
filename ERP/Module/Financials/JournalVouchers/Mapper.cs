@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Financials.JournalVoucher;
+namespace KamnttraApi.Modules.Financials.JournalVoucher;
 
 public class JournalVoucherMapper : Profile
 {

@@ -1,11 +1,11 @@
 using System.Globalization;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
-using CurrencyMaster = FarmingApi.Modules.Administration.SetUp.Currencies.Currencies;
+using CurrencyMaster = KamnttraApi.Modules.Administration.SetUp.Currencies.Currencies;
 
-namespace FarmingApi.Modules.Financials.ExchangeRate;
+namespace KamnttraApi.Modules.Financials.ExchangeRate;
 
 public class FetchLine
 {

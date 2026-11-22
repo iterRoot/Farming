@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster;
+namespace KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster;
 
 public class BusinessPartnersMasterMapper : Profile
 {

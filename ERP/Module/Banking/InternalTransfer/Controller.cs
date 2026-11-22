@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using FarmingApi.Modules.Financials.ChartOfAccounts;
-using FarmingApi.Modules.Financials.JournalEntry;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Financials.ChartOfAccounts;
+using KamnttraApi.Modules.Financials.JournalEntry;
 
-namespace FarmingApi.Modules.Banking.InternalTransfer;
+namespace KamnttraApi.Modules.Banking.InternalTransfer;
 
 // ═══════════════════════════════════════════════════════════════════
 // INTERNAL TRANSFER  (route: /InternalTransfer)

@@ -5,7 +5,7 @@
 // ═══════════════════════════════════════════════════════════════
 using AutoMapper;
 
-namespace FarmingApi.Modules.Inventory.UnitOfMeasure;
+namespace KamnttraApi.Modules.Inventory.UnitOfMeasure;
 
 public class UnitOfMeasureMapper : Profile
 {

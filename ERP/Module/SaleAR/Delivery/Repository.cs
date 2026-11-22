@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.SaleAR.Delivery;
+namespace KamnttraApi.Modules.SaleAR.Delivery;
 
 public interface ISaleOrderRepository : IRepository<Delivery>
 {

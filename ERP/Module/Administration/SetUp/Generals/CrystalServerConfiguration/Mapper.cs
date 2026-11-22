@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Administration.CrystalServer;
+namespace KamnttraApi.Modules.Administration.CrystalServer;
 
 public class CrystalServerMapper : Profile
 {

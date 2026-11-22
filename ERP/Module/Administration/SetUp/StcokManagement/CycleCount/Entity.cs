@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Inventory.CycleCount;
+namespace KamnttraApi.Modules.Inventory.CycleCount;
 
 // ═══════════════════════════════════════════════════════════════
 // CYCLE COUNT DETERMINATION (KCCD)

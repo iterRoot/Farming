@@ -1,6 +1,6 @@
-namespace FarmingApi.Modules.PurchaseAP.APReserveInvoice;
+namespace KamnttraApi.Modules.PurchaseAP.APReserveInvoice;
 
-public class APReserveInvoiceRequest : FarmingApi.Core.IHasBuyer
+public class APReserveInvoiceRequest : KamnttraApi.Core.IHasBuyer
 {
     public string?   BuyerCode   { get; set; }
     public string    DocNum      { get; set; } = "";

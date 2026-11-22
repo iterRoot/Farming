@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Financials.CostAccounting;
+namespace KamnttraApi.Modules.Financials.CostAccounting;
 
 // ═══════════════════════════════════════════════════════════════════
 // COST CENTRE

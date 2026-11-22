@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Sale.Inventory;
+namespace KamnttraApi.Modules.Sale.Inventory;
 
 public class InventoryMapper : Profile
 {

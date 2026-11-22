@@ -1,11 +1,11 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Modules.HumanResources.Attendance;
-using FarmingApi.Modules.HumanResources.Payroll;
-using FarmingApi.Modules.Financials.ExchangeRate;
+using KamnttraApi.Modules.HumanResources.Attendance;
+using KamnttraApi.Modules.HumanResources.Payroll;
+using KamnttraApi.Modules.Financials.ExchangeRate;
 
-namespace FarmingApi.Modules.HumanResources.EmployeeMaster;
+namespace KamnttraApi.Modules.HumanResources.EmployeeMaster;
 
 [ApiController]
 [Route("[controller]")]

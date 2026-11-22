@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.HumanResources.Attendance;
+namespace KamnttraApi.Modules.HumanResources.Attendance;
 
 public class AttendanceMapper : Profile
 {

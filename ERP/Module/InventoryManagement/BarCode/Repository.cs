@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Inventory.BarCode;
+namespace KamnttraApi.Modules.Inventory.BarCode;
 
 public interface IBarCodeRepository : IRepository<BarCode> { }
 

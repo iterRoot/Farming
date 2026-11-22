@@ -1,18 +1,18 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi;
-using FarmingApi.Core;
-using FarmingApi.Modules.Administration.ApprovalRequest;
-using FarmingApi.Modules.Inventory.ItemsMaster;
-using FarmingApi.Modules.Financials.JournalEntry;
-using FarmingApi.Services;
+using KamnttraApi;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Administration.ApprovalRequest;
+using KamnttraApi.Modules.Inventory.ItemsMaster;
+using KamnttraApi.Modules.Financials.JournalEntry;
+using KamnttraApi.Services;
 using QuestPDF.Fluent;
-using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
-using CompanyEntity = FarmingApi.Modules.Company.Company;
-using DpRequest = FarmingApi.Modules.SaleAR.ArDownPaymentRequest.ArDownPaymentRequest;
+using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using CompanyEntity = KamnttraApi.Modules.Company.Company;
+using DpRequest = KamnttraApi.Modules.SaleAR.ArDownPaymentRequest.ArDownPaymentRequest;
 
-namespace FarmingApi.Modules.SaleAR.ARDownPaymentInvoice;
+namespace KamnttraApi.Modules.SaleAR.ARDownPaymentInvoice;
 
 [ApiController]
 [Route("[controller]")]          // ✅ route = /ARDownPaymentInvoice

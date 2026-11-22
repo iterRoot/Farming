@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster;
+namespace KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster;
 
 // ═══════════════════════════════════════════════════════════════
 // BUSINESS PARTNER TRADING STATUS

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.TaxCode;
+namespace KamnttraApi.Modules.Administration.TaxCode;
 
 // ═══════════════════════════════════════════════════════════════
 // TAX CODES  (route: /TaxCode)

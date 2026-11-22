@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Company.Staff;
+namespace KamnttraApi.Modules.Company.Staff;
 
 public enum ActiveStatus
 {

@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.CRM.Activity;
+namespace KamnttraApi.Modules.CRM.Activity;
 
 public interface IActivityRepository : IRepository<Activity> { }
 

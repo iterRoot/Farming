@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Financials.FixedAssets.DepreciationRun;
+namespace KamnttraApi.Modules.Financials.FixedAssets.DepreciationRun;
 
 public class DepreciationPeriodRequest
 {

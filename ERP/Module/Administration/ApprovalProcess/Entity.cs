@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
-using UserEntity = FarmingApi.Modules.Administration.SetUp.User.User;
+using KamnttraApi.Core;
+using UserEntity = KamnttraApi.Modules.Administration.SetUp.User.User;
 
-namespace FarmingApi.Modules.Administration.ApprovalProcess;
+namespace KamnttraApi.Modules.Administration.ApprovalProcess;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // HEADER — one condition-based rule per document type (e.g. "PurchaseOrder,

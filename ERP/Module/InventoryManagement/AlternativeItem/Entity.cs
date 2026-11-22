@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.InventoryManagement.AlternativeItem;
+namespace KamnttraApi.Modules.InventoryManagement.AlternativeItem;
 
 // ═══════════════════════════════════════════════════════════════════
 // ALTERNATIVE ITEM  (KALT)

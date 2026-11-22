@@ -2,7 +2,7 @@ using System.Collections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // STOPS A DOCUMENT FROM BEING SAVED WITH A TOTAL ITS LINES DON'T ADD UP TO

@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Financials.FixedAssets;
+namespace KamnttraApi.Modules.Financials.FixedAssets;
 
 public class AssetMasterProfile : Profile
 {

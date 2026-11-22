@@ -1,9 +1,9 @@
-namespace FarmingApi.Modules.SaleAR.SaleQuotion;
+namespace KamnttraApi.Modules.SaleAR.SaleQuotion;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // REQUEST (UI → API)
 // ══════════════════════════════════════════════════════════════════════════════
-public class SaleQuotionListRequest : FarmingApi.Core.IHasSalesEmployee
+public class SaleQuotionListRequest : KamnttraApi.Core.IHasSalesEmployee
 {
     public string? SalesEmployeeCode { get; set; }
 

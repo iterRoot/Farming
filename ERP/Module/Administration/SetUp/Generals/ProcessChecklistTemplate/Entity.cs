@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.SetUp.ProcessChecklistTemplate;
+namespace KamnttraApi.Modules.Administration.SetUp.ProcessChecklistTemplate;
 
 // ═══════════════════════════════════════════════════════════════
 // PROCESS CHECKLIST TEMPLATE  (KCLT / CLT1)

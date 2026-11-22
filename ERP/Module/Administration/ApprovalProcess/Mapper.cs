@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Administration.ApprovalProcess;
+namespace KamnttraApi.Modules.Administration.ApprovalProcess;
 
 public class ApprovalProcessMapper : Profile
 {

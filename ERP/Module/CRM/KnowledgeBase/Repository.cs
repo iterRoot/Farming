@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.CRM.KnowledgeBase;
+namespace KamnttraApi.Modules.CRM.KnowledgeBase;
 
 public interface IKnowledgeBaseArticleRepository : IRepository<KnowledgeBaseArticle> { }
 

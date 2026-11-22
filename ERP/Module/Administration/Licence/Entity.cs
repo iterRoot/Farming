@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.Licence;
+namespace KamnttraApi.Modules.Administration.Licence;
 
 // License packages — the subscription tiers offered to companies.
 // Table KLCP.

@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
-using FarmingApi.Modules.Inventory.ItemsMaster;
-using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
-namespace FarmingApi.Modules.SaleAR.ARCreditNote;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Inventory.ItemsMaster;
+using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+namespace KamnttraApi.Modules.SaleAR.ARCreditNote;
 public class ARCreditNote : AuditableEntity
 {
     [System.ComponentModel.DataAnnotations.MaxLength(50)]
@@ -27,7 +27,7 @@ public class ARCreditNoteLine : AuditableEntity  // ✅ renamed
 {
     // Batch / serial numbers entered for this line — used when the document posts stock; not stored on the line.
     [System.ComponentModel.DataAnnotations.Schema.NotMapped]
-    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
+    public List<KamnttraApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
 
     public int ARCreditNoteId { get; set; }  // ✅ renamed FK
     public ARCreditNote ARCreditNote   { get; set; } = null!;

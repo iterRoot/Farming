@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.Budget;
+namespace KamnttraApi.Modules.Financials.Budget;
 
 public interface IBudgetRepository : IRepository<Budget>
 {

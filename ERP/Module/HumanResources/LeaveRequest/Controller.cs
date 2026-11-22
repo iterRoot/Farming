@@ -1,10 +1,10 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Modules.HumanResources.Attendance;
-using FarmingApi.Modules.HumanResources.EmployeeMaster;
+using KamnttraApi.Modules.HumanResources.Attendance;
+using KamnttraApi.Modules.HumanResources.EmployeeMaster;
 
-namespace FarmingApi.Modules.HumanResources.LeaveRequest;
+namespace KamnttraApi.Modules.HumanResources.LeaveRequest;
 
 [ApiController]
 [Route("[controller]")]

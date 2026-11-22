@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.JournalVoucher;
+namespace KamnttraApi.Modules.Financials.JournalVoucher;
 
 public interface IJournalVoucherRepository : IRepository<JournalVoucher>
 {

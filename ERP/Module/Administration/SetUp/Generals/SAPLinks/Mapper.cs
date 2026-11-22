@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Administration.SAPLinks;
+namespace KamnttraApi.Modules.Administration.SAPLinks;
 
 public class SAPLinkMapper : Profile
 {

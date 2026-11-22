@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace FarmingApi.Modules.ProjectManagement.Project;
+namespace KamnttraApi.Modules.ProjectManagement.Project;
 
 // Row shape for the list grid.
 public class ProjectListResponse

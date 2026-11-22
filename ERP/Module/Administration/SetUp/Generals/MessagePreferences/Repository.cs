@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.MessagePreferences;
+namespace KamnttraApi.Modules.Administration.MessagePreferences;
 
 public interface IMessagePreferenceRepository
     : IRepository<MessagePreference> { }

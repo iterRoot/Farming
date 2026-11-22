@@ -2,10 +2,10 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using FarmingApi.Modules.Financials.ChartOfAccounts;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Financials.ChartOfAccounts;
 
-namespace FarmingApi.Modules.Financials.Budget;
+namespace KamnttraApi.Modules.Financials.Budget;
 
 public class BudgetController : MyController
 {
@@ -323,14 +323,14 @@ public class BudgetController : MyController
             if (!string.IsNullOrWhiteSpace(project))
             {
                 var p = project.Trim().ToUpper();
-                var found = _db.Set<FarmingApi.Modules.Financials.FinancialProjects.FinancialProject>().FirstOrDefault(x => x.ProjectCode.ToUpper() == p);
+                var found = _db.Set<KamnttraApi.Modules.Financials.FinancialProjects.FinancialProject>().FirstOrDefault(x => x.ProjectCode.ToUpper() == p);
                 if (found == null) return $"Line {n}: project '{project.Trim()}' doesn't exist.";
                 if (found.InActive == true) return $"Line {n}: project '{found.ProjectCode}' is inactive.";
             }
             if (!string.IsNullOrWhiteSpace(center))
             {
                 var c = center.Trim().ToUpper();
-                var found = _db.Set<FarmingApi.Modules.Financials.CostAccounting.CostCenter>().FirstOrDefault(x => x.CostCenterCode == c);
+                var found = _db.Set<KamnttraApi.Modules.Financials.CostAccounting.CostCenter>().FirstOrDefault(x => x.CostCenterCode == c);
                 if (found == null) return $"Line {n}: cost centre '{center.Trim()}' doesn't exist.";
                 if (!found.IsActive || found.InActive == true) return $"Line {n}: cost centre '{found.CostCenterCode}' is inactive.";
             }
@@ -342,7 +342,7 @@ public class BudgetController : MyController
     {
         if (string.IsNullOrWhiteSpace(code)) return null;
         var c = code.Trim().ToUpper();
-        return _db.Set<FarmingApi.Modules.Financials.FinancialProjects.FinancialProject>().Where(x => x.ProjectCode.ToUpper() == c).Select(x => x.ProjectCode).FirstOrDefault() ?? code.Trim();
+        return _db.Set<KamnttraApi.Modules.Financials.FinancialProjects.FinancialProject>().Where(x => x.ProjectCode.ToUpper() == c).Select(x => x.ProjectCode).FirstOrDefault() ?? code.Trim();
     }
 
     private static string? CanonCostCenter(string? code) => string.IsNullOrWhiteSpace(code) ? null : code.Trim().ToUpperInvariant();

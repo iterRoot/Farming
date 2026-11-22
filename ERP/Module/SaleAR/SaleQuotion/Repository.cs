@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.SaleAR.SaleQuotion;
+namespace KamnttraApi.Modules.SaleAR.SaleQuotion;
 
 public interface ISaleQuotionRepository : IRepository<SaleQuotion>
 {

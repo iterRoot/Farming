@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.InventoryManagement.BinLocation;
+namespace KamnttraApi.Modules.InventoryManagement.BinLocation;
 
 public class BinLocationRequest
 {

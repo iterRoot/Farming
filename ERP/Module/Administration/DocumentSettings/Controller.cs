@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.DocumentSettings;
+namespace KamnttraApi.Modules.Administration.DocumentSettings;
 
 // ═══════════════════════════════════════════════════════════════
 // DOCUMENT SETTINGS  (route: /DocumentSetting)

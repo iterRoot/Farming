@@ -2,11 +2,11 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-using FarmingApi;
+using KamnttraApi;
 
-namespace FarmingApi.Modules.Sale.Inventory;
+namespace KamnttraApi.Modules.Sale.Inventory;
 public class InventoryController : MyController
 
 {

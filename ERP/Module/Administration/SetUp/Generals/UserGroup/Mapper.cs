@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Administration.SetUp.UserGroup;
+namespace KamnttraApi.Modules.Administration.SetUp.UserGroup;
 
 public class UserGroupMapper : Profile
 {

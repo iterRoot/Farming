@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.Licence;
+namespace KamnttraApi.Modules.Administration.Licence;
 
 public interface ILicensePackageRepository : IRepository<LicensePackage> { }
 

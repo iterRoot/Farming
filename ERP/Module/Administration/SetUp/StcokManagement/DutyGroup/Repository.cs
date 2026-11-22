@@ -4,9 +4,9 @@
 // ═══════════════════════════════════════════════════════════════
 // Repository.cs
 // ═══════════════════════════════════════════════════════════════
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Inventory.DutyGroups;
+namespace KamnttraApi.Modules.Inventory.DutyGroups;
 
 public interface IDutyGroupRepository : IRepository<DutyGroup> { }
 

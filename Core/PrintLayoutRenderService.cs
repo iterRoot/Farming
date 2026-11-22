@@ -3,9 +3,9 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Modules.Administration.ReportLayoutManager;
+using KamnttraApi.Modules.Administration.ReportLayoutManager;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // Central hook every document's own GET {id}/Pdf action calls first. If an
@@ -36,126 +36,126 @@ public class PrintLayoutRenderService : IPrintLayoutRenderService
         {
             case "SaleQuotion":
             {
-                var e = await _db.Set<FarmingApi.Modules.SaleAR.SaleQuotion.SaleQuotion>()
+                var e = await _db.Set<KamnttraApi.Modules.SaleAR.SaleQuotion.SaleQuotion>()
                     .Include(x => x.Customer).Include(x => x.Items).ThenInclude(l => l.Item)
                     .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 return (e, e?.Items);
             }
             case "SaleBlanketAgreement":
             {
-                var e = await _db.Set<FarmingApi.Modules.SaleAR.SaleBlanketAgreement.SaleBlanketAgreement>()
+                var e = await _db.Set<KamnttraApi.Modules.SaleAR.SaleBlanketAgreement.SaleBlanketAgreement>()
                     .Include(x => x.Customer).Include(x => x.Items).ThenInclude(l => l.Item)
                     .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 return (e, e?.Items);
             }
             case "SaleOrder":
             {
-                var e = await _db.Set<FarmingApi.Modules.SaleAR.SaleOrder.SaleOrder>()
+                var e = await _db.Set<KamnttraApi.Modules.SaleAR.SaleOrder.SaleOrder>()
                     .Include(x => x.Customer).Include(x => x.Items).ThenInclude(l => l.Item)
                     .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 return (e, e?.Items);
             }
             case "ArDownPaymentRequest":
             {
-                var e = await _db.Set<FarmingApi.Modules.SaleAR.ArDownPaymentRequest.ArDownPaymentRequest>()
+                var e = await _db.Set<KamnttraApi.Modules.SaleAR.ArDownPaymentRequest.ArDownPaymentRequest>()
                     .Include(x => x.Customer).Include(x => x.Items).ThenInclude(l => l.Item)
                     .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 return (e, e?.Items);
             }
             case "Delivery":
             {
-                var e = await _db.Set<FarmingApi.Modules.SaleAR.Delivery.Delivery>()
+                var e = await _db.Set<KamnttraApi.Modules.SaleAR.Delivery.Delivery>()
                     .Include(x => x.Customer).Include(x => x.Items).ThenInclude(l => l.Item)
                     .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 return (e, e?.Items);
             }
             case "ARInvoice":
             {
-                var e = await _db.Set<FarmingApi.Modules.SaleAR.ARInvoice.ARInvoice>()
+                var e = await _db.Set<KamnttraApi.Modules.SaleAR.ARInvoice.ARInvoice>()
                     .Include(x => x.Customer).Include(x => x.Items).ThenInclude(l => l.Item)
                     .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 return (e, e?.Items);
             }
             case "ARReserveInvoice":
             {
-                var e = await _db.Set<FarmingApi.Modules.SaleAR.ARReserveInvoice.ARReserveInvoice>()
+                var e = await _db.Set<KamnttraApi.Modules.SaleAR.ARReserveInvoice.ARReserveInvoice>()
                     .Include(x => x.Customer).Include(x => x.Items).ThenInclude(l => l.Item)
                     .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 return (e, e?.Items);
             }
             case "ARCreditNote":
             {
-                var e = await _db.Set<FarmingApi.Modules.SaleAR.ARCreditNote.ARCreditNote>()
+                var e = await _db.Set<KamnttraApi.Modules.SaleAR.ARCreditNote.ARCreditNote>()
                     .Include(x => x.Customer).Include(x => x.Items).ThenInclude(l => l.Item)
                     .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 return (e, e?.Items);
             }
             case "ARDownPaymentInvoice":
             {
-                var e = await _db.Set<FarmingApi.Modules.SaleAR.ARDownPaymentInvoice.ARDownPaymentInvoice>()
+                var e = await _db.Set<KamnttraApi.Modules.SaleAR.ARDownPaymentInvoice.ARDownPaymentInvoice>()
                     .Include(x => x.Customer).Include(x => x.Items).ThenInclude(l => l.Item)
                     .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 return (e, e?.Items);
             }
             case "PurchaseQuotation":
             {
-                var e = await _db.Set<FarmingApi.Modules.PurchaseAP.PurchaseQuotation.PurchaseQuotation>()
+                var e = await _db.Set<KamnttraApi.Modules.PurchaseAP.PurchaseQuotation.PurchaseQuotation>()
                     .Include(x => x.Vendor).Include(x => x.Items).ThenInclude(l => l.Item)
                     .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 return (e, e?.Items);
             }
             case "PurchaseBlanketAgreement":
             {
-                var e = await _db.Set<FarmingApi.Modules.PurchaseAP.PurchaseBlanketAgreement.PurchaseBlanketAgreement>()
+                var e = await _db.Set<KamnttraApi.Modules.PurchaseAP.PurchaseBlanketAgreement.PurchaseBlanketAgreement>()
                     .Include(x => x.Vendor).Include(x => x.Items).ThenInclude(l => l.Item)
                     .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 return (e, e?.Items);
             }
             case "PurchaseOrder":
             {
-                var e = await _db.Set<FarmingApi.Modules.PurchaseAP.PurchaseOrder.PurchaseOrder>()
+                var e = await _db.Set<KamnttraApi.Modules.PurchaseAP.PurchaseOrder.PurchaseOrder>()
                     .Include(x => x.Vendor).Include(x => x.Lines).ThenInclude(l => l.Item)
                     .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 return (e, e?.Lines);
             }
             case "APDownPaymentRequest":
             {
-                var e = await _db.Set<FarmingApi.Modules.PurchaseAP.APDownPaymentRequest.APDownPaymentRequest>()
+                var e = await _db.Set<KamnttraApi.Modules.PurchaseAP.APDownPaymentRequest.APDownPaymentRequest>()
                     .Include(x => x.Vendor)
                     .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 return (e, null);
             }
             case "GoodsReceiptPO":
             {
-                var e = await _db.Set<FarmingApi.Modules.PurchaseAP.GoodsReceiptPO.GoodsReceiptPO>()
+                var e = await _db.Set<KamnttraApi.Modules.PurchaseAP.GoodsReceiptPO.GoodsReceiptPO>()
                     .Include(x => x.Vendor).Include(x => x.Lines).ThenInclude(l => l.Item)
                     .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 return (e, e?.Lines);
             }
             case "APInvoice":
             {
-                var e = await _db.Set<FarmingApi.Modules.PurchaseAP.APInvoice.APInvoice>()
+                var e = await _db.Set<KamnttraApi.Modules.PurchaseAP.APInvoice.APInvoice>()
                     .Include(x => x.Vendor).Include(x => x.Items).ThenInclude(l => l.Item)
                     .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 return (e, e?.Items);
             }
             case "APCreditNote":
             {
-                var e = await _db.Set<FarmingApi.Modules.PurchaseAP.APCreditNote.APCreditNote>()
+                var e = await _db.Set<KamnttraApi.Modules.PurchaseAP.APCreditNote.APCreditNote>()
                     .Include(x => x.Vendor).Include(x => x.Items).ThenInclude(l => l.Item)
                     .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 return (e, e?.Items);
             }
             case "APReserveInvoice":
             {
-                var e = await _db.Set<FarmingApi.Modules.PurchaseAP.APReserveInvoice.APReserveInvoice>()
+                var e = await _db.Set<KamnttraApi.Modules.PurchaseAP.APReserveInvoice.APReserveInvoice>()
                     .Include(x => x.Vendor).Include(x => x.Items).ThenInclude(l => l.Item)
                     .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 return (e, e?.Items);
             }
             case "APDownPaymentInvoice":
             {
-                var e = await _db.Set<FarmingApi.Modules.PurchaseAP.APDownPaymentInvoice.APDownPaymentInvoice>()
+                var e = await _db.Set<KamnttraApi.Modules.PurchaseAP.APDownPaymentInvoice.APDownPaymentInvoice>()
                     .Include(x => x.Vendor)
                     .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 return (e, null);

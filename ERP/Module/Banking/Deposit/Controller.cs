@@ -1,11 +1,11 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using FarmingApi.Modules.Financials.JournalEntry;
-using IPay = FarmingApi.Modules.Banking.IncomingPayment.IncomingPayment;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Financials.JournalEntry;
+using IPay = KamnttraApi.Modules.Banking.IncomingPayment.IncomingPayment;
 
-namespace FarmingApi.Modules.Banking.Deposit;
+namespace KamnttraApi.Modules.Banking.Deposit;
 
 // ═══════════════════════════════════════════════════════════════════
 // DEPOSIT  (route: /Deposit)
@@ -89,7 +89,7 @@ public class DepositController : ControllerBase
     private IActionResult SaveDraft(int? id, DepositRequest dto)
     {
         if (string.IsNullOrWhiteSpace(dto.BankAccount)) return BadRequest("Bank account is required.");
-        var bank = _db.Set<FarmingApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts>()
+        var bank = _db.Set<KamnttraApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts>()
             .FirstOrDefault(a => a.AcctCode == dto.BankAccount);
         if (bank == null) return BadRequest($"GL account '{dto.BankAccount}' does not exist.");
 

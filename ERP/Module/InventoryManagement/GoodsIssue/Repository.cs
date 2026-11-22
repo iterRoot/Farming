@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Inventory.GoodsIssue;
+namespace KamnttraApi.Modules.Inventory.GoodsIssue;
 
 public interface IGoodsIssueRepository : IRepository<GoodsIssue> { }
 

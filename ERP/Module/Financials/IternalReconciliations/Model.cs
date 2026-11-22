@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Financials.IternalReconciliations;
+namespace KamnttraApi.Modules.Financials.IternalReconciliations;
 
 // ── Response ─────────────────────────────────────────────────────────────
 public class BPReconciliationResponse

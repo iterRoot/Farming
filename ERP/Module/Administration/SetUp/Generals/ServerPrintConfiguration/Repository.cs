@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.ServerPrintConfig;
+namespace KamnttraApi.Modules.Administration.ServerPrintConfig;
 
 public interface IServerPrintConfigRepository
     : IRepository<ServerPrintConfig> { }

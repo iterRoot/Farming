@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.DataImportAndExport;
+namespace KamnttraApi.Modules.Administration.DataImportAndExport;
 
 public interface IDataTransferJobRepository : IRepository<DataTransferJob>
 {

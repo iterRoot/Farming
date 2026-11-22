@@ -1,10 +1,10 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using WarehouseEntity = FarmingApi.Modules.Sale.Warehouse.Warehouse;
+using KamnttraApi.Core;
+using WarehouseEntity = KamnttraApi.Modules.Sale.Warehouse.Warehouse;
 
-namespace FarmingApi.Modules.InventoryManagement.BinLocation;
+namespace KamnttraApi.Modules.InventoryManagement.BinLocation;
 
 // ═══════════════════════════════════════════════════════════════════
 // BIN LOCATION  (route: /BinLocation)

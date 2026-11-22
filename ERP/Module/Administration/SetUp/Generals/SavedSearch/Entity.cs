@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Administration.SetUp.Generals.SavedSearch;
+namespace KamnttraApi.Modules.Administration.SetUp.Generals.SavedSearch;
 
 // ═══════════════════════════════════════════════════════════════
 // SAVED SEARCH  (KSRCH / SRC1)  ·  SAP B1 equivalent: Formatted Search

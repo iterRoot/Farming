@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Administration.Attachment;
+namespace KamnttraApi.Modules.Administration.Attachment;
 
 // ═══════════════════════════════════════════════════════════════
 // ATTACHMENT  (KATF)  ·  a real uploaded file linked to a record

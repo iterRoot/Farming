@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.MenuAlias;
+namespace KamnttraApi.Modules.Administration.MenuAlias;
 
 // ═══════════════════════════════════════════════════════════════
 // MENU ALIAS FOR SEARCHING  (route: /MenuAlias)

@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.PurchaseAP.APReserveInvoice;
+namespace KamnttraApi.Modules.PurchaseAP.APReserveInvoice;
 
 public interface IAPReserveInvoiceRepository : IRepository<APReserveInvoice>
 {

@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.CRM.ServiceContract;
+namespace KamnttraApi.Modules.CRM.ServiceContract;
 
 public interface IServiceContractRepository : IRepository<ServiceContract> { }
 

@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Administration.ReferenceFieldLink;
+namespace KamnttraApi.Modules.Administration.ReferenceFieldLink;
 
 // ═══════════════════════════════════════════════════════════════
 // REFERENCE FIELD LINK  (KRFL)

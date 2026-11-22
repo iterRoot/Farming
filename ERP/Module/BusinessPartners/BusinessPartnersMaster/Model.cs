@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.BusinessPartners;
+namespace KamnttraApi.Modules.BusinessPartners;
 
 // ══════════════════════════════════════════════════════════════════
 // SUB-TABLE DTOs

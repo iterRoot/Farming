@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.SaleAR.ArDownPaymentRequest;
+namespace KamnttraApi.Modules.SaleAR.ArDownPaymentRequest;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // REQUEST

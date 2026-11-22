@@ -2,7 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FarmingApi.Modules.BusinessPartners.BPProperties;
+namespace KamnttraApi.Modules.BusinessPartners.BPProperties;
 
 [ApiController]
 [Route("[controller]")]

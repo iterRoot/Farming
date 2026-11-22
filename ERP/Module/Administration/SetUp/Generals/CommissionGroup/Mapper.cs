@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Sales.CommissionGroup;
+namespace KamnttraApi.Modules.Sales.CommissionGroup;
 
 public class CommissionGroupMapper : Profile
 {

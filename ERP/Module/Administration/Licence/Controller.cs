@@ -1,9 +1,9 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.Licence;
+namespace KamnttraApi.Modules.Administration.Licence;
 
 // ═══════════════════════════════════════════════════════════════════
 // LICENSE PACKAGES  (route: /LicensePackage)

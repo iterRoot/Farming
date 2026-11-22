@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Administration.AddressFormats;
+namespace KamnttraApi.Modules.Administration.AddressFormats;
 
 public class AddressFormatMapper : Profile
 {

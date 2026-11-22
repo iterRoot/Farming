@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster;
+namespace KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster;
 
 // ⚠️  Values are locked to match existing KOCR rows — do NOT reorder.
 

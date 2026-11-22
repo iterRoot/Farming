@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
 // Model.cs
 // ═══════════════════════════════════════════════════════════════
-namespace FarmingApi.Modules.Inventory.ItemProperties;
+namespace KamnttraApi.Modules.Inventory.ItemProperties;
 
 public class ItemPropertyResponse
 {

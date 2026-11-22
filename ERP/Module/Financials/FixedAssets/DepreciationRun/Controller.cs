@@ -1,14 +1,14 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using JournalEntryDoc  = FarmingApi.Modules.Financials.JournalEntry.JournalEntry;
-using JournalEntryLine = FarmingApi.Modules.Financials.JournalEntry.JournalEntryLine;
-using JournalEntryNumberService = FarmingApi.Modules.Financials.JournalEntry.JournalEntryNumberService;
-using CoaEntity           = FarmingApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
-using PostingPeriodEntity = FarmingApi.Modules.Administration.PostingPeriods.PostingPeriod;
+using KamnttraApi.Core;
+using JournalEntryDoc  = KamnttraApi.Modules.Financials.JournalEntry.JournalEntry;
+using JournalEntryLine = KamnttraApi.Modules.Financials.JournalEntry.JournalEntryLine;
+using JournalEntryNumberService = KamnttraApi.Modules.Financials.JournalEntry.JournalEntryNumberService;
+using CoaEntity           = KamnttraApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
+using PostingPeriodEntity = KamnttraApi.Modules.Administration.PostingPeriods.PostingPeriod;
 
-namespace FarmingApi.Modules.Financials.FixedAssets.DepreciationRun;
+namespace KamnttraApi.Modules.Financials.FixedAssets.DepreciationRun;
 
 // ═══════════════════════════════════════════════════════════════════
 // DEPRECIATION RUN  (route: /DepreciationRun)

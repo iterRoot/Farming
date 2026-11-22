@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.TaxCode;
+namespace KamnttraApi.Modules.Administration.TaxCode;
 
 public interface ITaxCodeRepository : IRepository<TaxCodeEntry> { }
 public class TaxCodeRepository : Repository<TaxCodeEntry>, ITaxCodeRepository

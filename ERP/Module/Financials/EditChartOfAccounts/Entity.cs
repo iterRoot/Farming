@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Financials.EditChartOfAccounts;
+namespace KamnttraApi.Modules.Financials.EditChartOfAccounts;
 
 // ═══════════════════════════════════════════════════════════════
 // EDIT CHART OF ACCOUNTS — BATCH (KCOE)

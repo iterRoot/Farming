@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.FinancialReportTemplates;
+namespace KamnttraApi.Modules.Financials.FinancialReportTemplates;
 
 public interface IFinancialReportTemplateRepository : IRepository<FinancialReportTemplate> { }
 

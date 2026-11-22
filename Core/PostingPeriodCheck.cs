@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using PostingPeriodEntity = FarmingApi.Modules.Administration.PostingPeriods.PostingPeriod;
+using PostingPeriodEntity = KamnttraApi.Modules.Administration.PostingPeriods.PostingPeriod;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 // For actions that post on a date without carrying it in a request body (so
 // PostingPeriodGuardFilter can't see it): the same Locked-period rule, asked directly.

@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Banking.BankReconciliation;
+namespace KamnttraApi.Modules.Banking.BankReconciliation;
 
 public class BankReconciliationMapper : Profile
 {

@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.FinancialProjects;
+namespace KamnttraApi.Modules.Financials.FinancialProjects;
 
 // SAP B1 "Projects - Setup" — a financial project code used to tag journal
 // entries and documents for project-level reporting. `InActive` (from

@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.WithholdingTax;
+namespace KamnttraApi.Modules.Administration.WithholdingTax;
 
 // SAP B1 "Withholding Tax Codes - Setup" — a WHT code with its category, base
 // type, rounding and posting account. `InActive` (from AuditableEntity) is the

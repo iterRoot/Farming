@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.PostingTemplate;
+namespace KamnttraApi.Modules.Financials.PostingTemplate;
 
 public interface IPostingTemplateRepository : IRepository<PostingTemplate> { }
 

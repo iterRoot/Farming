@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.CRM.ServiceContract;
+namespace KamnttraApi.Modules.CRM.ServiceContract;
 
 public class ServiceContractMapper : Profile
 {

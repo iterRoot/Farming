@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 public static class DependencyInjection
 {

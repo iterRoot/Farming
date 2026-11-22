@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
-using FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster;
-using FarmingApi.Modules.Inventory.ItemsMaster;
-using ARInvoiceEntity = FarmingApi.Modules.SaleAR.ARInvoice.ARInvoice;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster;
+using KamnttraApi.Modules.Inventory.ItemsMaster;
+using ARInvoiceEntity = KamnttraApi.Modules.SaleAR.ARInvoice.ARInvoice;
 
-namespace FarmingApi.Modules.SaleAR.SaleBlanketAgreement;
+namespace KamnttraApi.Modules.SaleAR.SaleBlanketAgreement;
 
 public class SaleBlanketAgreement : AuditableEntity
 {

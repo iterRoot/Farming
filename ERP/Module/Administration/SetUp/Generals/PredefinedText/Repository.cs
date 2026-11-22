@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.PredefinedText;
+namespace KamnttraApi.Modules.Administration.PredefinedText;
 
 public interface IPredefinedTextRepository : IRepository<PredefinedText> { }
 

@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.SaleAR.Return;
+namespace KamnttraApi.Modules.SaleAR.Return;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // REQUEST (UI → API)  ✅ renamed from SaleOrder → Return
@@ -27,7 +27,7 @@ public class ReturnLineRequest
     public string? BaseType  { get; set; }
 
     /// <summary>Batch / serial numbers for this line — required when the item is managed by them.</summary>
-    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
+    public List<KamnttraApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
 
     public int     ItemId   { get; set; }
     /// <summary>Optional — falls back to the default warehouse when omitted.</summary>

@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.InventoryManagement.StockRevaluation;
+namespace KamnttraApi.Modules.InventoryManagement.StockRevaluation;
 
 // Stock revaluation document — sets a new moving-average cost for items and
 // posts the resulting inventory-value variance. Header KSRV, cost lines SRV1,

@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
-using IPay = FarmingApi.Modules.Banking.IncomingPayment.IncomingPayment;
-using OPay = FarmingApi.Modules.Banking.OutgoingPayment.OutgoingPayment;
+using KamnttraApi.Core;
+using IPay = KamnttraApi.Modules.Banking.IncomingPayment.IncomingPayment;
+using OPay = KamnttraApi.Modules.Banking.OutgoingPayment.OutgoingPayment;
 
-namespace FarmingApi.Modules.Banking.CheckRegister;
+namespace KamnttraApi.Modules.Banking.CheckRegister;
 
 // ═══════════════════════════════════════════════════════════════════
 // CHECK REGISTER  (route: /CheckRegister)

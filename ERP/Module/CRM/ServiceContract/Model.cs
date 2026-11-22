@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.CRM.ServiceContract;
+namespace KamnttraApi.Modules.CRM.ServiceContract;
 
 public static class ServiceContractOptions
 {

@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using FarmingApi.Modules.Financials.JournalEntry;
-using Coa = FarmingApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
-using Gld = FarmingApi.Modules.Financials.GLAccountDetermination.GLAccountDetermination;
-using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Financials.JournalEntry;
+using Coa = KamnttraApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
+using Gld = KamnttraApi.Modules.Financials.GLAccountDetermination.GLAccountDetermination;
+using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
-namespace FarmingApi.Modules.Financials.OpeningBalance;
+namespace KamnttraApi.Modules.Financials.OpeningBalance;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // OPENING BALANCES

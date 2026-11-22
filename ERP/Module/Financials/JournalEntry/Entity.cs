@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.JournalEntry;
+namespace KamnttraApi.Modules.Financials.JournalEntry;
 
 // ═══════════════════════════════════════════════════════════════════
 // JOURNAL ENTRY HEADER (KJRN)

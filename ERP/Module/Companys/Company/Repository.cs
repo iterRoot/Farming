@@ -1,6 +1,6 @@
-﻿using FarmingApi.Core;
+﻿using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Company;
+namespace KamnttraApi.Modules.Company;
 
 public interface ICompanyRepository : IRepository<Company>
 {

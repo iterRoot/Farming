@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BudgetDoc     = FarmingApi.Modules.Financials.Budget.Budget;
-using BudgetLineDoc = FarmingApi.Modules.Financials.Budget.BudgetLine;
-using JournalEntryLine = FarmingApi.Modules.Financials.JournalEntry.JournalEntryLine;
+using BudgetDoc     = KamnttraApi.Modules.Financials.Budget.Budget;
+using BudgetLineDoc = KamnttraApi.Modules.Financials.Budget.BudgetLine;
+using JournalEntryLine = KamnttraApi.Modules.Financials.JournalEntry.JournalEntryLine;
 
-namespace FarmingApi.Modules.Financials.FinancialReports;
+namespace KamnttraApi.Modules.Financials.FinancialReports;
 
 // ═══════════════════════════════════════════════════════════════
 // FINANCIAL REPORTS  (route: /FinancialReport)

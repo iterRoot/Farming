@@ -1,13 +1,13 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi;
-using FarmingApi.Core;
-using FarmingApi.Modules.Administration.DocumentNumberRange;
-using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
-using GoodsReceiptPOEntity = FarmingApi.Modules.PurchaseAP.GoodsReceiptPO.GoodsReceiptPO;
+using KamnttraApi;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Administration.DocumentNumberRange;
+using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using GoodsReceiptPOEntity = KamnttraApi.Modules.PurchaseAP.GoodsReceiptPO.GoodsReceiptPO;
 
-namespace FarmingApi.Modules.PurchaseAP.LandingCost;
+namespace KamnttraApi.Modules.PurchaseAP.LandingCost;
 
 [ApiController]
 [Route("[controller]")]
@@ -157,8 +157,8 @@ public class LandingCostController : ControllerBase
         var totalValue = allLines.Sum(l => l.Quantity * l.Price);
         if (totalValue <= 0) return BadRequest("The selected receipts have no value to allocate against.");
 
-        var notAverage = allLines.Where(l => FarmingApi.Modules.InventoryManagement.InventoryJournal.Valuation.Of(l.Item.ValuationMethod)
-                                             != FarmingApi.Modules.InventoryManagement.InventoryJournal.Valuation.MovingAverage)
+        var notAverage = allLines.Where(l => KamnttraApi.Modules.InventoryManagement.InventoryJournal.Valuation.Of(l.Item.ValuationMethod)
+                                             != KamnttraApi.Modules.InventoryManagement.InventoryJournal.Valuation.MovingAverage)
                                  .Select(l => l.ItemCode ?? l.Item.ItemCode).Distinct().ToList();
         if (notAverage.Count > 0)
             return BadRequest($"Landed costs can only be applied to moving-average items; {string.Join(", ", notAverage)} {(notAverage.Count == 1 ? "uses" : "use")} standard or FIFO costing.");

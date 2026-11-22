@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
 // Model.cs
 // ═══════════════════════════════════════════════════════════════
-namespace FarmingApi.Modules.Inventory.PackageTypes;
+namespace KamnttraApi.Modules.Inventory.PackageTypes;
 
 public class PackageTypeResponse
 {

@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
 // Model.cs
 // ═══════════════════════════════════════════════════════════════
-namespace FarmingApi.Modules.Inventory.Manufacturers;
+namespace KamnttraApi.Modules.Inventory.Manufacturers;
 
 public class ManufacturerResponse
 {

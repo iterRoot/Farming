@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Financials.ConversionDifferences;
+namespace KamnttraApi.Modules.Financials.ConversionDifferences;
 
 public class ConversionDifferenceMapper : Profile
 {

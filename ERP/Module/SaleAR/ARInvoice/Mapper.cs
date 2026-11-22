@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.SaleAR.ARInvoice;
+namespace KamnttraApi.Modules.SaleAR.ARInvoice;
 
 public class ARInvoiceMapper : Profile
 {

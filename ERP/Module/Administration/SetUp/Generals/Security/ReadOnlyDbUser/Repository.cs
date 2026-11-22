@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.Security;
+namespace KamnttraApi.Modules.Administration.Security;
 
 public interface IReadOnlyDbUserRepository : IRepository<ReadOnlyDbUser> { }
 

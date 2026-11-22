@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.HumanResources.JobPosting;
+namespace KamnttraApi.Modules.HumanResources.JobPosting;
 
 public class JobPostingMapper : Profile
 {

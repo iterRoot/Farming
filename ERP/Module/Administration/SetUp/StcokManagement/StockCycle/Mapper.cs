@@ -5,7 +5,7 @@
 // ═══════════════════════════════════════════════════════════════
 using AutoMapper;
 
-namespace FarmingApi.Modules.Inventory.StockCycles;
+namespace KamnttraApi.Modules.Inventory.StockCycles;
 
 public class StockCycleMapper : Profile
 {

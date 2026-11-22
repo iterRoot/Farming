@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.HumanResources.EmployeeMaster;
+namespace KamnttraApi.Modules.HumanResources.EmployeeMaster;
 
 public class EmployeeMasterMapper : Profile
 {

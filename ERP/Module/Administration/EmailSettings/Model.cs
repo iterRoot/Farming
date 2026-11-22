@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.EmailSettings;
+namespace KamnttraApi.Modules.Administration.EmailSettings;
 
 // List rows never expose the password.
 public class EmailAccountListDto

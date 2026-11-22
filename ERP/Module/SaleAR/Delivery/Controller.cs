@@ -1,19 +1,19 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi;
-using FarmingApi.Core;
-using FarmingApi.Modules.Administration.ApprovalRequest;
-using FarmingApi.Modules.Inventory.ItemsMaster;  // ✅ your namespace
-using FarmingApi.Modules.Financials.JournalEntry;
-using FarmingApi.Modules.InventoryManagement.InventoryJournal;
-using FarmingApi.Services;
+using KamnttraApi;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Administration.ApprovalRequest;
+using KamnttraApi.Modules.Inventory.ItemsMaster;  // ✅ your namespace
+using KamnttraApi.Modules.Financials.JournalEntry;
+using KamnttraApi.Modules.InventoryManagement.InventoryJournal;
+using KamnttraApi.Services;
 using QuestPDF.Fluent;
 
-using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
-using CompanyEntity = FarmingApi.Modules.Company.Company;
+using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using CompanyEntity = KamnttraApi.Modules.Company.Company;
 
-namespace FarmingApi.Modules.SaleAR.Delivery;
+namespace KamnttraApi.Modules.SaleAR.Delivery;
 
 [ApiController]
 [Route("[controller]")]         // ✅ route = /Delivery
@@ -58,9 +58,11 @@ public class DeliveryController : ControllerBase  // ✅ DeliveryController
 
         // Attach the auto-created Journal Entry (KADV) to each delivery.
         var ids = list.Select(d => d.Id).ToList();
-        var jeMap = await _db.Set<JournalEntry>()
+        var jeMap = (await _db.Set<JournalEntry>()
             .Where(j => j.BaseDocType == "KADV" && j.BaseDocEntry != null && ids.Contains(j.BaseDocEntry.Value))
-            .ToDictionaryAsync(j => j.BaseDocEntry!.Value, j => new { j.Id, j.JrnlNo });
+            .Select(j => new { Entry = j.BaseDocEntry!.Value, j.Id, j.JrnlNo })
+            .ToListAsync())
+            .GroupBy(j => j.Entry).ToDictionary(g => g.Key, g => g.OrderBy(j => j.Id).First());
         foreach (var r in responses)
             if (jeMap.TryGetValue(r.Id, out var je)) { r.JournalEntryId = je.Id; r.JournalNo = je.JrnlNo; }
 

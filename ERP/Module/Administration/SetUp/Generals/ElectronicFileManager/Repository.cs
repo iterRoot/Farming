@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.ElectronicFileManager;
+namespace KamnttraApi.Modules.Administration.ElectronicFileManager;
 
 public interface IElectronicFileRepository
     : IRepository<ElectronicFile> { }

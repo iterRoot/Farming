@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.CRM.Campaign;
+namespace KamnttraApi.Modules.CRM.Campaign;
 
 public class CampaignMapper : Profile
 {

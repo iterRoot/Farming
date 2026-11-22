@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Sales.SaleEmployeeBuyer;
+namespace KamnttraApi.Modules.Sales.SaleEmployeeBuyer;
 
 // ═══════════════════════════════════════════════════════════════
 // SALES EMPLOYEE / BUYER  (KSEB)

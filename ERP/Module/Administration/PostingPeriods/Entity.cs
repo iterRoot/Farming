@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.PostingPeriods;
+namespace KamnttraApi.Modules.Administration.PostingPeriods;
 
 // One accounting period. Dates are DateOnly → Postgres `date`, so no
 // timezone shifting (a period boundary is a calendar date, not an instant).

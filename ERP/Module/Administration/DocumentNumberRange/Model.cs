@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.DocumentNumberRange;
+namespace KamnttraApi.Modules.Administration.DocumentNumberRange;
 
 // ═══════════════════════════════════════════════════════════════════
 // DOCUMENT TYPE CATALOG

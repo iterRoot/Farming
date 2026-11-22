@@ -1,15 +1,15 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi;
-using FarmingApi.Core;
-using FarmingApi.Modules.Administration.ApprovalRequest;
-using FarmingApi.Modules.Inventory.ItemsMaster;
+using KamnttraApi;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Administration.ApprovalRequest;
+using KamnttraApi.Modules.Inventory.ItemsMaster;
 using QuestPDF.Fluent;
-using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
-using CompanyEntity = FarmingApi.Modules.Company.Company;
+using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using CompanyEntity = KamnttraApi.Modules.Company.Company;
 
-namespace FarmingApi.Modules.PurchaseAP.PurchaseBlanketAgreement;
+namespace KamnttraApi.Modules.PurchaseAP.PurchaseBlanketAgreement;
 
 [ApiController]
 [Route("[controller]")]   // ✅ route = /PurchaseBlanketAgreement

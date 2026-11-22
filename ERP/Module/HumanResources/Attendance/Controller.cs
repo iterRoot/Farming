@@ -1,9 +1,9 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Modules.HumanResources.EmployeeMaster;
+using KamnttraApi.Modules.HumanResources.EmployeeMaster;
 
-namespace FarmingApi.Modules.HumanResources.Attendance;
+namespace KamnttraApi.Modules.HumanResources.Attendance;
 
 [ApiController]
 [Route("[controller]")]

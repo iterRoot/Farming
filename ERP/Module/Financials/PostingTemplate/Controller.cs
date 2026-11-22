@@ -1,10 +1,10 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using Coa = FarmingApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
+using KamnttraApi.Core;
+using Coa = KamnttraApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
 
-namespace FarmingApi.Modules.Financials.PostingTemplate;
+namespace KamnttraApi.Modules.Financials.PostingTemplate;
 
 // ═══════════════════════════════════════════════════════════════════
 // POSTING TEMPLATE  (route: /PostingTemplate)

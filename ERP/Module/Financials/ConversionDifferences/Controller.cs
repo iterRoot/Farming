@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FarmingApi.Modules.Financials.ConversionDifferences;
+namespace KamnttraApi.Modules.Financials.ConversionDifferences;
 
 // ═══════════════════════════════════════════════════════════════
 // GET    /ConversionDifferences            → run headers, newest first

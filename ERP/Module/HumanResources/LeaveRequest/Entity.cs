@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.HumanResources.LeaveRequest;
+namespace KamnttraApi.Modules.HumanResources.LeaveRequest;
 
 // ═══════════════════════════════════════════════════════════════
 // LEAVE REQUEST  (KLVR)

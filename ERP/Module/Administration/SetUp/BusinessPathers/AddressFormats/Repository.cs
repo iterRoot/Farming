@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.AddressFormats;
+namespace KamnttraApi.Modules.Administration.AddressFormats;
 
 public interface IAddressFormatRepository : IRepository<AddressFormat> { }
 

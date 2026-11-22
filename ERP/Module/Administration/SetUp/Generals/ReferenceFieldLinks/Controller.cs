@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
-namespace FarmingApi.Modules.Administration.ReferenceFieldLink;
+namespace KamnttraApi.Modules.Administration.ReferenceFieldLink;
 
 [ApiController]
 [Route("[controller]")]

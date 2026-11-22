@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace FarmingApi.Modules.Financials.GLAccountDetermination;
+namespace KamnttraApi.Modules.Financials.GLAccountDetermination;
 
 // ═══════════════════════════════════════════════════════════════
 // GL ACCOUNT RESOLUTION

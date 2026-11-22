@@ -1,8 +1,8 @@
 // using Microsoft.EntityFrameworkCore;
 // using Microsoft.EntityFrameworkCore.Metadata.Builders;
-// using FarmingApi.Core;
+// using KamnttraApi.Core;
 
-// namespace FarmingApi.Modules.BusinessPartner.Activity;
+// namespace KamnttraApi.Modules.BusinessPartner.Activity;
 
 // // ═══════════════════════════════════════════════════════════════════
 // // ACTIVITY (KACT) — matches SAP B1 Activity dialog

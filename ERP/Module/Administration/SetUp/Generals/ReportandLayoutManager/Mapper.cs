@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Administration.ReportLayoutManager;
+namespace KamnttraApi.Modules.Administration.ReportLayoutManager;
 
 public class ReportLayoutMapper : Profile
 {

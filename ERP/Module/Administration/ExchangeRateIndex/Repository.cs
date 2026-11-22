@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.ExchangeRate;
+namespace KamnttraApi.Modules.Financials.ExchangeRate;
 
 public interface IExchangeRateRepository : IRepository<ExchangeRate> { }
 public interface IPriceIndexRepository   : IRepository<PriceIndex>   { }

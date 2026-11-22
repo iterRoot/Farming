@@ -1,8 +1,8 @@
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.Attachment;
+namespace KamnttraApi.Modules.Administration.Attachment;
 
 // ═══════════════════════════════════════════════════════════════════
 // ATTACHMENT  (route: /Attachment)

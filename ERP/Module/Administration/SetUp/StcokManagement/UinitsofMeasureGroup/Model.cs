@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
 // Model.cs
 // ═══════════════════════════════════════════════════════════════
-namespace FarmingApi.Modules.Inventory.UomGroup;
+namespace KamnttraApi.Modules.Inventory.UomGroup;
 
 public class UomGroupResponse
 {

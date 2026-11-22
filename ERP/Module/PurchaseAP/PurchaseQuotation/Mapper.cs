@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.PurchaseAP.PurchaseQuotation;
+namespace KamnttraApi.Modules.PurchaseAP.PurchaseQuotation;
 
 public class PurchaseQuotationMapper : Profile
 {

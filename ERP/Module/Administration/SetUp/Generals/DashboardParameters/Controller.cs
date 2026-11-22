@@ -2,7 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FarmingApi.Modules.Administration.DashboardParameters;
+namespace KamnttraApi.Modules.Administration.DashboardParameters;
 
 [ApiController]
 [Route("[controller]")]

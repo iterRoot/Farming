@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.CRM.Activity;
+namespace KamnttraApi.Modules.CRM.Activity;
 
 // ══════════════════ RESPONSE ══════════════════
 public class ActivityResponse

@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.MenuAlias;
+namespace KamnttraApi.Modules.Administration.MenuAlias;
 
 // SAP B1 "Menu Alias for Searching": a user-defined keyword that resolves to a
 // menu item, so the item can be found in the search box under a familiar name.

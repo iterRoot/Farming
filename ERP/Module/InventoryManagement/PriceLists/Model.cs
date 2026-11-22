@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.InventoryManagement.PriceLists;
+namespace KamnttraApi.Modules.InventoryManagement.PriceLists;
 
 public static class PriceListOptions
 {

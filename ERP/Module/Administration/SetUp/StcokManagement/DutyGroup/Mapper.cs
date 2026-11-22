@@ -4,7 +4,7 @@
 // ═══════════════════════════════════════════════════════════════
 using AutoMapper;
 
-namespace FarmingApi.Modules.Inventory.DutyGroups;
+namespace KamnttraApi.Modules.Inventory.DutyGroups;
 
 public class DutyGroupMapper : Profile
 {

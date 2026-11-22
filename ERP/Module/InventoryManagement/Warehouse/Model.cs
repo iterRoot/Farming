@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Sale.Warehouse;
+namespace KamnttraApi.Modules.Sale.Warehouse;
 
 public class WarehouseListResponse
 {

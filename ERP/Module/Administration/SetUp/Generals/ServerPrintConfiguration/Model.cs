@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.ServerPrintConfig;
+namespace KamnttraApi.Modules.Administration.ServerPrintConfig;
 
 public class ServerPrintConfigResponse
 {

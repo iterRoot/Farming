@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.CrystalServer;
+namespace KamnttraApi.Modules.Administration.CrystalServer;
 
 public interface ICrystalServerConfigRepository
     : IRepository<CrystalServerConfig> { }

@@ -6,7 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FarmingApi.Modules.Inventory.Weight;
+namespace KamnttraApi.Modules.Inventory.Weight;
 
 [ApiController]
 [Route("[controller]")]

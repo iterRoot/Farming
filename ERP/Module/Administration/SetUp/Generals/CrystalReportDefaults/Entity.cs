@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Administration.CrystalReportDefaults;
+namespace KamnttraApi.Modules.Administration.CrystalReportDefaults;
 
 // ═══════════════════════════════════════════════════════════════
 // CRYSTAL REPORT DEFAULT  (KCRD)

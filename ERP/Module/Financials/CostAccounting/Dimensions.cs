@@ -1,9 +1,9 @@
-using FarmingApi.Core;
-using JournalEntryDoc  = FarmingApi.Modules.Financials.JournalEntry.JournalEntry;
-using JournalEntryLine = FarmingApi.Modules.Financials.JournalEntry.JournalEntryLine;
-using ProjectEntity    = FarmingApi.Modules.Financials.FinancialProjects.FinancialProject;
+using KamnttraApi.Core;
+using JournalEntryDoc  = KamnttraApi.Modules.Financials.JournalEntry.JournalEntry;
+using JournalEntryLine = KamnttraApi.Modules.Financials.JournalEntry.JournalEntryLine;
+using ProjectEntity    = KamnttraApi.Modules.Financials.FinancialProjects.FinancialProject;
 
-namespace FarmingApi.Modules.Financials.CostAccounting;
+namespace KamnttraApi.Modules.Financials.CostAccounting;
 
 // ═══════════════════════════════════════════════════════════════════
 // DIMENSIONS — the project and cost-centre tags on postings.

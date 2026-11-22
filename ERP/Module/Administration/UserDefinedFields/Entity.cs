@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.UserDefinedFields;
+namespace KamnttraApi.Modules.Administration.UserDefinedFields;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // USER-DEFINED FIELD DEFINITION (SAP-style UDF)

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FarmingApi.Modules.Administration.ElectronicDocuments;
+namespace KamnttraApi.Modules.Administration.ElectronicDocuments;
 
 [ApiController]
 [Route("[controller]")]

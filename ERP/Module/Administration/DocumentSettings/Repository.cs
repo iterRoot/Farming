@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.DocumentSettings;
+namespace KamnttraApi.Modules.Administration.DocumentSettings;
 
 public interface IDocumentGeneralSettingRepository : IRepository<DocumentGeneralSetting> { }
 public class DocumentGeneralSettingRepository : Repository<DocumentGeneralSetting>, IDocumentGeneralSettingRepository

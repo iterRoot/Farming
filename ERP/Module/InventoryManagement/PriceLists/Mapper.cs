@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.InventoryManagement.PriceLists;
+namespace KamnttraApi.Modules.InventoryManagement.PriceLists;
 
 public class PriceListMapper : Profile
 {

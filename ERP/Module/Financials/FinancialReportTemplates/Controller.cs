@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FarmingApi.Modules.Financials.FinancialReportTemplates;
+namespace KamnttraApi.Modules.Financials.FinancialReportTemplates;
 
 // ═══════════════════════════════════════════════════════════════
 // GET    /FinancialReportTemplates              → templates, by type then code
@@ -59,10 +59,10 @@ public class FinancialReportTemplatesController : ControllerBase
         if (req.From != null && req.To.Value.Date < req.From.Value.Date) return BadRequest("The end date is before the start date.");
         if (t.Rows.Count == 0) return BadRequest($"Template '{t.Code}' has no rows.");
 
-        var engine = new FarmingApi.Modules.Financials.FinancialReports.ReportEngine(_db);
+        var engine = new KamnttraApi.Modules.Financials.FinancialReports.ReportEngine(_db);
         var sums = cumulative ? engine.Sum(null, req.To) : engine.Sum(req.From, req.To);
         var net = sums.ToDictionary(k => k.Key, k => k.Value.Net);
-        var (lines, error) = FarmingApi.Modules.Financials.FinancialReports.TemplateRunner.Run(t, engine, net);
+        var (lines, error) = KamnttraApi.Modules.Financials.FinancialReports.TemplateRunner.Run(t, engine, net);
         if (error != null) return BadRequest(error);
         return Ok(new
         {

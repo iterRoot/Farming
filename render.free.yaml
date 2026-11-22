@@ -13,7 +13,7 @@
 
 services:
   - type: web
-    name: farming-api
+    name: Kamnttra-api
     runtime: docker
     plan: free
     dockerfilePath: ./Dockerfile

@@ -2,9 +2,9 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Modules.Administration.UserDefinedFields;
+using KamnttraApi.Modules.Administration.UserDefinedFields;
 
-namespace FarmingApi.Modules.Administration.UserTables;
+namespace KamnttraApi.Modules.Administration.UserTables;
 
 // ═══════════════════════════════════════════════════════════════
 // USER-DEFINED TABLES  (route: /UserTable)

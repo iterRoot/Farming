@@ -2,10 +2,10 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using SaleOrderEntity = FarmingApi.Modules.SaleAR.SaleOrder.SaleOrder;
+using KamnttraApi.Core;
+using SaleOrderEntity = KamnttraApi.Modules.SaleAR.SaleOrder.SaleOrder;
 
-namespace FarmingApi.Modules.InventoryManagement.PickList;
+namespace KamnttraApi.Modules.InventoryManagement.PickList;
 
 // ═══════════════════════════════════════════════════════════════════
 // PICK LIST  (route: /PickList, also reached as /picklist)

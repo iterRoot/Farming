@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.GeneralSettings;
+namespace KamnttraApi.Modules.Administration.GeneralSettings;
 
 public interface IGeneralSettingRepository : IRepository<GeneralSetting>
 {

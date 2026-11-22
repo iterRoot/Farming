@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.FixedAssets;
+namespace KamnttraApi.Modules.Financials.FixedAssets;
 
 public interface IAssetMasterRepository : IRepository<AssetMaster> { }
 public class AssetMasterRepository : Repository<AssetMaster>, IAssetMasterRepository

@@ -8,9 +8,9 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.GLAccountDetermination;
+namespace KamnttraApi.Modules.Financials.GLAccountDetermination;
 
 [ApiController]
 [Route("[controller]")]

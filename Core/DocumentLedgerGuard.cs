@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Je          = FarmingApi.Modules.Financials.JournalEntry.JournalEntry;
-using StockLedger = FarmingApi.Modules.InventoryManagement.InventoryJournal.InventoryJournal;
+using Je          = KamnttraApi.Modules.Financials.JournalEntry.JournalEntry;
+using StockLedger = KamnttraApi.Modules.InventoryManagement.InventoryJournal.InventoryJournal;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 // A rule a request broke. DocumentRuleFilter turns it into a plain 400 carrying the message —
 // as a filter rather than in the error middleware so it behaves the same in every environment

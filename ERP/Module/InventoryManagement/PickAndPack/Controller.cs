@@ -1,15 +1,15 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi;
-using FarmingApi.Core;
-using SO           = FarmingApi.Modules.SaleAR.SaleOrder.SaleOrder;
-using ReserveInv   = FarmingApi.Modules.SaleAR.ARReserveInvoice.ARReserveInvoice;
-using ProdOrder    = FarmingApi.Modules.InventoryManagement.ProductionOrder.ProductionOrder;
-using TransferReq  = FarmingApi.Modules.Inventory.StockTransferRequest.StockTransferRequest;
-using WarehouseEntity = FarmingApi.Modules.Sale.Warehouse.Warehouse;
+using KamnttraApi;
+using KamnttraApi.Core;
+using SO           = KamnttraApi.Modules.SaleAR.SaleOrder.SaleOrder;
+using ReserveInv   = KamnttraApi.Modules.SaleAR.ARReserveInvoice.ARReserveInvoice;
+using ProdOrder    = KamnttraApi.Modules.InventoryManagement.ProductionOrder.ProductionOrder;
+using TransferReq  = KamnttraApi.Modules.Inventory.StockTransferRequest.StockTransferRequest;
+using WarehouseEntity = KamnttraApi.Modules.Sale.Warehouse.Warehouse;
 
-namespace FarmingApi.Modules.InventoryManagement.PickAndPack;
+namespace KamnttraApi.Modules.InventoryManagement.PickAndPack;
 
 // ══════════════════════════════════════════════════════════════════
 // PICK & PACK  (route: /pickpack)

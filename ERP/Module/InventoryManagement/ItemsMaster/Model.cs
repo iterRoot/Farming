@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Inventory.ItemsMaster;
+namespace KamnttraApi.Modules.Inventory.ItemsMaster;
 
 // ══════════════════════════════════════════════════════════════════
 // Shared field set — mirrors the SAP B1 "Item Master Data" tabs.

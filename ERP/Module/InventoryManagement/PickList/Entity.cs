@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.InventoryManagement.PickList;
+namespace KamnttraApi.Modules.InventoryManagement.PickList;
 
 // Warehouse pick list — a picking sheet raised against open sales documents.
 // Header KPKL, lines PKL1. This module records the pick; it does not yet move

@@ -1,6 +1,6 @@
 // using AutoMapper;
 
-// namespace FarmingApi.Modules.BusinessPartner.Activity;
+// namespace KamnttraApi.Modules.BusinessPartner.Activity;
 
 // public class ActivityMapper : Profile
 // {

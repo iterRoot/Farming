@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.PurchaseAP.LandedCostType;
+namespace KamnttraApi.Modules.PurchaseAP.LandedCostType;
 
 public class LandedCostTypeController : MyController
 {

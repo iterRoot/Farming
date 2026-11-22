@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using FarmingApi.Modules.Financials.ChartOfAccounts;
-using FarmingApi.Modules.Financials.JournalEntry;
-using FarmingApi.Modules.Financials.CostAccounting;
+using KamnttraApi.Modules.Financials.ChartOfAccounts;
+using KamnttraApi.Modules.Financials.JournalEntry;
+using KamnttraApi.Modules.Financials.CostAccounting;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Keeps ChartOfAccounts.Balance/DebitBalance/CreditBalance, and (when a line

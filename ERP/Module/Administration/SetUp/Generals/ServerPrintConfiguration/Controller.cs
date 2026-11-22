@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Net.Sockets;
 
-namespace FarmingApi.Modules.Administration.ServerPrintConfig;
+namespace KamnttraApi.Modules.Administration.ServerPrintConfig;
 
 [ApiController]
 [Route("[controller]")]

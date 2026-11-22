@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Inventory.StockTransferRequest;
+namespace KamnttraApi.Modules.Inventory.StockTransferRequest;
 
 // ═══════════════════════════════════════════════════════════════════
 // RESPONSE

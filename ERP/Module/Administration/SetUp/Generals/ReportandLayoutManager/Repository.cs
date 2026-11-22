@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.ReportLayoutManager;
+namespace KamnttraApi.Modules.Administration.ReportLayoutManager;
 
 public interface IReportLayoutRepository : IRepository<ReportLayout> { }
 

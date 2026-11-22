@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.CRM.OpportunitySetup;
+namespace KamnttraApi.Modules.CRM.OpportunitySetup;
 
 public class OpportunityStageDto
 {

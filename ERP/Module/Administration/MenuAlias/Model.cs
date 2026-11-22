@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.MenuAlias;
+namespace KamnttraApi.Modules.Administration.MenuAlias;
 
 public class MenuAliasDto
 {

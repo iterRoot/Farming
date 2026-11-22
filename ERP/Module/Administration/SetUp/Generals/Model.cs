@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.UserGroups;
+namespace KamnttraApi.Modules.Administration.UserGroups;
 
 // ── Responses ─────────────────────────────────────────────────
 public class UserGroupResponse

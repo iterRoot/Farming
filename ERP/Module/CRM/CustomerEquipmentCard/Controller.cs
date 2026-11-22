@@ -1,11 +1,11 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using ItemEntity = FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster;
-using BPEntity   = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using KamnttraApi.Core;
+using ItemEntity = KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster;
+using BPEntity   = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
-namespace FarmingApi.Modules.CRM.CustomerEquipmentCard;
+namespace KamnttraApi.Modules.CRM.CustomerEquipmentCard;
 
 // ═══════════════════════════════════════════════════════════════════
 // CUSTOMER EQUIPMENT CARD  (route: /CustomerEquipmentCard)

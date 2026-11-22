@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.HumanResources.LeaveRequest;
+namespace KamnttraApi.Modules.HumanResources.LeaveRequest;
 
 public class LeaveRequestMapper : Profile
 {

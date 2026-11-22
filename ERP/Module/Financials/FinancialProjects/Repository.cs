@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.FinancialProjects;
+namespace KamnttraApi.Modules.Financials.FinancialProjects;
 
 public interface IFinancialProjectRepository : IRepository<FinancialProject> { }
 public class FinancialProjectRepository : Repository<FinancialProject>, IFinancialProjectRepository

@@ -1,9 +1,9 @@
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using CompanyEntity = FarmingApi.Modules.Company.Company;
+using CompanyEntity = KamnttraApi.Modules.Company.Company;
 
-namespace FarmingApi.Modules.SaleAR.SaleBlanketAgreement;
+namespace KamnttraApi.Modules.SaleAR.SaleBlanketAgreement;
 
 public class SaleBlanketAgreementPdfDocument : IDocument
 {

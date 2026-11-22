@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.CRM.ServiceContract;
+namespace KamnttraApi.Modules.CRM.ServiceContract;
 
 // ═══════════════════════════════════════════════════════════════
 // SERVICE CONTRACT  (KSCN)  ·  SAP B1 equivalent: OCTR

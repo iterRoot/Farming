@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FarmingApi.Modules.Inventory.UomGroup;
+namespace KamnttraApi.Modules.Inventory.UomGroup;
 
 [ApiController]
 [Route("[controller]")]

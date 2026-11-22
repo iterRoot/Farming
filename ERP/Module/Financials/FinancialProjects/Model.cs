@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Financials.FinancialProjects;
+namespace KamnttraApi.Modules.Financials.FinancialProjects;
 
 public class FinancialProjectDto
 {

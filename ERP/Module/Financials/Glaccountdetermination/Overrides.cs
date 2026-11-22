@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
-using JournalEntryDoc  = FarmingApi.Modules.Financials.JournalEntry.JournalEntry;
-using JournalEntryLine = FarmingApi.Modules.Financials.JournalEntry.JournalEntryLine;
-using CoaEntity        = FarmingApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
-using ItemEntity       = FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster;
-using BPEntity         = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using KamnttraApi.Core;
+using JournalEntryDoc  = KamnttraApi.Modules.Financials.JournalEntry.JournalEntry;
+using JournalEntryLine = KamnttraApi.Modules.Financials.JournalEntry.JournalEntryLine;
+using CoaEntity        = KamnttraApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
+using ItemEntity       = KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster;
+using BPEntity         = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
-namespace FarmingApi.Modules.Financials.GLAccountDetermination;
+namespace KamnttraApi.Modules.Financials.GLAccountDetermination;
 
 // ═══════════════════════════════════════════════════════════════
 // G/L ACCOUNT OVERRIDES (KGLO)

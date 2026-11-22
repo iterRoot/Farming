@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
-using UserEntity = FarmingApi.Modules.Administration.SetUp.User.User;
+using KamnttraApi.Core;
+using UserEntity = KamnttraApi.Modules.Administration.SetUp.User.User;
 
-namespace FarmingApi.Modules.Administration.AlertManagement;
+namespace KamnttraApi.Modules.Administration.AlertManagement;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // One row per notification in a user's inbox — either a person-to-person

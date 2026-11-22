@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
-using UserAuthEntity = FarmingApi.Modules.Administration.Authorisations.UserAuthorization;
+using UserAuthEntity = KamnttraApi.Modules.Administration.Authorisations.UserAuthorization;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Maps a request path to one of the subject keys the Authorisations screen

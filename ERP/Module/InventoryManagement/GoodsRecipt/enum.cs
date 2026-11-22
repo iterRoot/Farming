@@ -1,5 +1,5 @@
 
-namespace FarmingApi.Modules.Inventory.GoodsReceipt;
+namespace KamnttraApi.Modules.Inventory.GoodsReceipt;
 public enum DocStatus
 {
     Close,

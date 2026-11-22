@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.InventoryManagement.BillOfMaterial;
+namespace KamnttraApi.Modules.InventoryManagement.BillOfMaterial;
 
 public class BillOfMaterialLineResponse
 {

@@ -1,14 +1,14 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi;
-using FarmingApi.Core;
-using ItemEntity = FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster;
-using InventoryBalanceEntity = FarmingApi.Modules.Sale.Inventory.Inventory;
-using DocNumberRangeEntity = FarmingApi.Modules.Administration.DocumentNumberRange.DocumentNumberRange;
-using UserEntity = FarmingApi.Modules.Administration.SetUp.User.User;
+using KamnttraApi;
+using KamnttraApi.Core;
+using ItemEntity = KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster;
+using InventoryBalanceEntity = KamnttraApi.Modules.Sale.Inventory.Inventory;
+using DocNumberRangeEntity = KamnttraApi.Modules.Administration.DocumentNumberRange.DocumentNumberRange;
+using UserEntity = KamnttraApi.Modules.Administration.SetUp.User.User;
 
-namespace FarmingApi.Modules.Administration.AlertManagement;
+namespace KamnttraApi.Modules.Administration.AlertManagement;
 
 [ApiController]
 [Route("[controller]")]
@@ -171,7 +171,7 @@ public class AlertManagementController : ControllerBase
         }
 
         // ── Daily exchange-rate update overdue ──
-        var fx = await _db.Set<FarmingApi.Modules.Financials.ExchangeRate.ExchangeRateSettings>().AsNoTracking().OrderBy(s => s.Id).FirstOrDefaultAsync();
+        var fx = await _db.Set<KamnttraApi.Modules.Financials.ExchangeRate.ExchangeRateSettings>().AsNoTracking().OrderBy(s => s.Id).FirstOrDefaultAsync();
         var utcNow = DateTime.UtcNow;
         if (fx is { AutoFetchEnabled: true } && utcNow.Hour > fx.RunAtHourUtc
             && (fx.LastSuccessAt == null || fx.LastSuccessAt.Value.ToUniversalTime().Date < utcNow.Date))

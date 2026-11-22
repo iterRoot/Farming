@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace FarmingApi.Modules.Administration.SetUp.User;
+namespace KamnttraApi.Modules.Administration.SetUp.User;
 
 /// <summary>
 /// RFC 6238 TOTP (Time-based One-Time Password) — compatible with

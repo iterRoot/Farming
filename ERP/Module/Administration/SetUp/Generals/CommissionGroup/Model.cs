@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Sales.CommissionGroup;
+namespace KamnttraApi.Modules.Sales.CommissionGroup;
 
 // ── Commission Group ──────────────────────────────────────────
 public class CommissionGroupResponse

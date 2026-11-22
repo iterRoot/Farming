@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.ImplementationCentre;
+namespace KamnttraApi.Modules.Administration.ImplementationCentre;
 
 // A single task in the implementation project checklist (SAP B1 "Implementation
 // Center"). Tasks are grouped by phase and tracked to completion.

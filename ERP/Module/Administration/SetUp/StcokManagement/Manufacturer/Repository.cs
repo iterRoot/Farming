@@ -3,9 +3,9 @@
 // ═══════════════════════════════════════════════════════════════
 // Repository.cs
 // ═══════════════════════════════════════════════════════════════
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Inventory.Manufacturers;
+namespace KamnttraApi.Modules.Inventory.Manufacturers;
 
 public interface IManufacturerRepository : IRepository<Manufacturer> { }
 

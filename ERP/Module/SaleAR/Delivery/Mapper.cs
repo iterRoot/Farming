@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.SaleAR.Delivery;
+namespace KamnttraApi.Modules.SaleAR.Delivery;
 
 public class DeliveryMapper : Profile   // ✅ DeliveryMapper
 {

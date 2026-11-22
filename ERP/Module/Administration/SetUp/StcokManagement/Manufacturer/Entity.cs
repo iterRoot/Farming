@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Inventory.Manufacturers;
+namespace KamnttraApi.Modules.Inventory.Manufacturers;
 
 // ═══════════════════════════════════════════════════════════════
 // MANUFACTURER (OMRC)

@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.SaleAR.SaleQuotion;
+namespace KamnttraApi.Modules.SaleAR.SaleQuotion;
 
 public class SaleQuotionMapper : Profile
 {

@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.CRM.OpportunitySetup;
+namespace KamnttraApi.Modules.CRM.OpportunitySetup;
 
 public interface IOpportunityStageSetupRepository : IRepository<OpportunityStageSetup> { }
 public class OpportunityStageSetupRepository : Repository<OpportunityStageSetup>, IOpportunityStageSetupRepository

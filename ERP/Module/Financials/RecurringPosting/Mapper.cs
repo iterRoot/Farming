@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Financials.RecurringPosting;
+namespace KamnttraApi.Modules.Financials.RecurringPosting;
 
 public class RecurringPostingMapper : Profile
 {

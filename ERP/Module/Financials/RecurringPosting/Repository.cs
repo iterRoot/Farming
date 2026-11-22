@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.RecurringPosting;
+namespace KamnttraApi.Modules.Financials.RecurringPosting;
 
 public interface IRecurringPostingRepository : IRepository<RecurringPosting>
 {

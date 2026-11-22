@@ -1,9 +1,9 @@
-namespace FarmingApi.Modules.PurchaseAP.PurchaseRequest;
+namespace KamnttraApi.Modules.PurchaseAP.PurchaseRequest;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // REQUEST (UI → API)
 // ══════════════════════════════════════════════════════════════════════════════
-public class PurchaseRequestRequest : FarmingApi.Core.IHasBuyer
+public class PurchaseRequestRequest : KamnttraApi.Core.IHasBuyer
 {
     public string    DocNum       { get; set; } = "";
     public int?      VendorId     { get; set; }

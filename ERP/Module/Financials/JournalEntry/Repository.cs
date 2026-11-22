@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.JournalEntry;
+namespace KamnttraApi.Modules.Financials.JournalEntry;
 
 public interface IJournalEntryRepository : IRepository<JournalEntry>
 {

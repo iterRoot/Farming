@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FarmingApi.Modules.Administration.ElectronicCertificates;
+namespace KamnttraApi.Modules.Administration.ElectronicCertificates;
 
 [ApiController]
 [Route("[controller]")]
@@ -362,7 +362,7 @@ public class ElectronicCertificateController : ControllerBase
             {
                 CertNo="CRT-QTY-2025-0001", CertName="ISO 9001:2015 Quality Management",
                 CertType="Quality", CertStandard="ISO 9001:2015", SerialNumber="BV-KH-2025-001",
-                CertBody="Bureau Veritas", HolderType="Company", HolderName="Farming Corp Co., Ltd.",
+                CertBody="Bureau Veritas", HolderType="Company", HolderName="Kamnttra Corp Co., Ltd.",
                 IssuingAuthority="Bureau Veritas Cambodia", IssuingCountry="KH",
                 IssuedDate=today.AddYears(-1), ExpiryDate=today.AddYears(2),
                 RenewalDaysAlert=90, Status="Active", IsPublic=true,
@@ -380,7 +380,7 @@ public class ElectronicCertificateController : ControllerBase
             {
                 CertNo="CRT-QTY-2024-0002", CertName="HACCP Food Safety Certification",
                 CertType="Quality", CertStandard="HACCP", CertBody="SGS",
-                HolderType="Company", HolderName="Farming Corp Co., Ltd.",
+                HolderType="Company", HolderName="Kamnttra Corp Co., Ltd.",
                 IssuingAuthority="SGS Cambodia", IssuingCountry="KH",
                 IssuedDate=today.AddYears(-2), ExpiryDate=today.AddMonths(-3),
                 RenewalDaysAlert=90, Status="Expired",
@@ -392,7 +392,7 @@ public class ElectronicCertificateController : ControllerBase
             {
                 CertNo="CRT-CMP-2025-0001", CertName="Business Registration Certificate",
                 CertType="Compliance", CertBody="Ministry of Commerce",
-                HolderType="Company", HolderName="Farming Corp Co., Ltd.",
+                HolderType="Company", HolderName="Kamnttra Corp Co., Ltd.",
                 IssuingAuthority="Ministry of Commerce, Kingdom of Cambodia", IssuingCountry="KH",
                 IssuedDate=today.AddYears(-5), ExpiryDate=today.AddYears(1),
                 RenewalDaysAlert=60, Status="Active",
@@ -407,7 +407,7 @@ public class ElectronicCertificateController : ControllerBase
             {
                 CertNo="CRT-CMP-2025-0002", CertName="VAT Registration Certificate",
                 CertType="Compliance", CertBody="General Department of Taxation",
-                HolderType="Company", HolderName="Farming Corp Co., Ltd.",
+                HolderType="Company", HolderName="Kamnttra Corp Co., Ltd.",
                 IssuingAuthority="GDT Cambodia", IssuingCountry="KH",
                 IssuedDate=today.AddYears(-5), ExpiryDate=null,
                 Status="Active", Tags="vat,tax,gdt",
@@ -421,7 +421,7 @@ public class ElectronicCertificateController : ControllerBase
             {
                 CertNo="CRT-ORG-2026-0001", CertName="Certificate of Origin — Rice Export",
                 CertType="Origin", CertBody="Cambodia Chamber of Commerce",
-                HolderType="Company", HolderName="Farming Corp Co., Ltd.",
+                HolderType="Company", HolderName="Kamnttra Corp Co., Ltd.",
                 IssuingAuthority="Cambodia Chamber of Commerce", IssuingCountry="KH",
                 IssuedDate=today.AddDays(-15), ExpiryDate=today.AddDays(180),
                 RenewalDaysAlert=30, Status="Active",
@@ -439,7 +439,7 @@ public class ElectronicCertificateController : ControllerBase
             {
                 CertNo="CRT-SAF-2025-0001", CertName="Fire Safety Compliance Certificate",
                 CertType="Safety", CertBody="National Police - Fire Department",
-                HolderType="Company", HolderName="Farming Corp Co., Ltd.",
+                HolderType="Company", HolderName="Kamnttra Corp Co., Ltd.",
                 IssuingAuthority="Cambodia Fire Department", IssuingCountry="KH",
                 IssuedDate=today.AddYears(-1), ExpiryDate=today.AddYears(1),
                 RenewalDaysAlert=60, Status="Active",
@@ -461,9 +461,9 @@ public class ElectronicCertificateController : ControllerBase
             new()
             {
                 CertNo="CRT-PRD-2025-0002", CertName="Organic Certification — Farm Produce",
-                CertType="Product", CertBody="Organic Farming Association",
-                HolderType="Company", HolderName="Farming Corp Co., Ltd.",
-                IssuingAuthority="Organic Farming Association of Cambodia", IssuingCountry="KH",
+                CertType="Product", CertBody="Organic Kamnttra Association",
+                HolderType="Company", HolderName="Kamnttra Corp Co., Ltd.",
+                IssuingAuthority="Organic Kamnttra Association of Cambodia", IssuingCountry="KH",
                 IssuedDate=today.AddMonths(-6), ExpiryDate=today.AddMonths(18),
                 RenewalDaysAlert=90, Status="Active",
                 Tags="organic,farm,produce",
@@ -504,7 +504,7 @@ public class ElectronicCertificateController : ControllerBase
             {
                 CertNo="CRT-ENV-2025-0001", CertName="Environmental Impact Assessment",
                 CertType="Environmental", CertBody="Ministry of Environment",
-                HolderType="Company", HolderName="Farming Corp Co., Ltd.",
+                HolderType="Company", HolderName="Kamnttra Corp Co., Ltd.",
                 IssuingAuthority="Ministry of Environment and Natural Resources", IssuingCountry="KH",
                 IssuedDate=today.AddYears(-3), ExpiryDate=today.AddYears(2),
                 RenewalDaysAlert=120, Status="Active",
@@ -518,7 +518,7 @@ public class ElectronicCertificateController : ControllerBase
                 CertType="Vendor", CertBody="Internal Procurement",
                 HolderType="Vendor", HolderCode="V-001",
                 HolderName="Agri Supplies Ltd.",
-                IssuingAuthority="Farming Corp — Procurement Dept.", IssuingCountry="KH",
+                IssuingAuthority="Kamnttra Corp — Procurement Dept.", IssuingCountry="KH",
                 IssuedDate=today.AddYears(-1), ExpiryDate=today.AddYears(1),
                 RenewalDaysAlert=60, Status="Active",
                 LinkedModule="BusinessPartner", LinkedDocType="BusinessPartner",

@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Sales.Territories;
+namespace KamnttraApi.Modules.Sales.Territories;
 
 public class TerritoryResponse
 {

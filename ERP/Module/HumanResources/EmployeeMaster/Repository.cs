@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.HumanResources.EmployeeMaster;
+namespace KamnttraApi.Modules.HumanResources.EmployeeMaster;
 
 public interface IEmployeeMasterRepository
     : IRepository<EmployeeMaster> { }

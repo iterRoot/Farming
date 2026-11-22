@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Financials.PeriodEndClosing;
+namespace KamnttraApi.Modules.Financials.PeriodEndClosing;
 
 public class PeriodEndClosingResponse
 {

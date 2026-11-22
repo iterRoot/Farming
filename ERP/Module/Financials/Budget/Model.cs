@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Financials.Budget;
+namespace KamnttraApi.Modules.Financials.Budget;
 
 // ═══════════════════════════════════════════════════════════════════
 // RESPONSE

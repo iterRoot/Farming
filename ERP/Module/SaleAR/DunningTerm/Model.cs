@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.SaleAR.DunningTerm;
+namespace KamnttraApi.Modules.SaleAR.DunningTerm;
 
 public class DunningTermLevelRequest
 {

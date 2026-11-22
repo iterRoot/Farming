@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace FarmingApi.Modules.Administration.DocumentSettings;
+namespace KamnttraApi.Modules.Administration.DocumentSettings;
 
 public class DocumentTypeSettingDto
 {

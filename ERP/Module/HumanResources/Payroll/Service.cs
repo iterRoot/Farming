@@ -1,9 +1,9 @@
 using AutoMapper;
-using FarmingApi.Modules.HumanResources.Attendance;
-using FarmingApi.Modules.HumanResources.EmployeeMaster;
-using FarmingApi.Modules.Financials.ExchangeRate;
+using KamnttraApi.Modules.HumanResources.Attendance;
+using KamnttraApi.Modules.HumanResources.EmployeeMaster;
+using KamnttraApi.Modules.Financials.ExchangeRate;
 
-namespace FarmingApi.Modules.HumanResources.Payroll;
+namespace KamnttraApi.Modules.HumanResources.Payroll;
 
 // ═══════════════════════════════════════════════════════════════
 // PAYROLL SERVICE

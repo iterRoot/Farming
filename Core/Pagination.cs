@@ -1,4 +1,4 @@
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 public class PaginationRequest
 {

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.InventoryManagement.InventoryJournal;
+namespace KamnttraApi.Modules.InventoryManagement.InventoryJournal;
 
 // ═══════════════════════════════════════════════════════════════
 // BATCH / SERIAL NUMBERS

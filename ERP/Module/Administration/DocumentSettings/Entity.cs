@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.DocumentSettings;
+namespace KamnttraApi.Modules.Administration.DocumentSettings;
 
 // SAP B1 "Document Settings" splits into a company-wide General tab (singleton)
 // and Per-Document settings (one row per document type). Both are read/written

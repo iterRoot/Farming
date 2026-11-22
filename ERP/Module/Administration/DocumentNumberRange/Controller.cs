@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.DocumentNumberRange;
+namespace KamnttraApi.Modules.Administration.DocumentNumberRange;
 
 public class DocumentNumberRangeController : MyController
 {

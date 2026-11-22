@@ -1,9 +1,9 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Sale.Warehouse;
+namespace KamnttraApi.Modules.Sale.Warehouse;
 
 // ═══════════════════════════════════════════════════════════════
 // WAREHOUSE  (route: /Warehouse)

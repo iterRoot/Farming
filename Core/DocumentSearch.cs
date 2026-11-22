@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 // ═════════════════════════════════════════════════════════════════════
 // DOCUMENTS A STOCK REVALUATION CAN NAME AS ITS REASON

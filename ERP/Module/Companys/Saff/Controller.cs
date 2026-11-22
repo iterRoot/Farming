@@ -1,8 +1,8 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
-namespace FarmingApi.Modules.Company.Staff;
+using KamnttraApi.Core;
+namespace KamnttraApi.Modules.Company.Staff;
 
 public class StaffController : MyController
 {

@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.ElectronicDocuments;
+namespace KamnttraApi.Modules.Administration.ElectronicDocuments;
 
 // ── Response ──────────────────────────────────────────────────
 public class ElectronicDocumentResponse

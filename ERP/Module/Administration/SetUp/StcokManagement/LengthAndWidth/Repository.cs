@@ -3,9 +3,9 @@
 // ═══════════════════════════════════════════════════════════════
 // Repository.cs
 // ═══════════════════════════════════════════════════════════════
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Inventory.LengthWidth;
+namespace KamnttraApi.Modules.Inventory.LengthWidth;
 
 public interface ILengthWidthUomRepository : IRepository<LengthWidthUom> { }
 

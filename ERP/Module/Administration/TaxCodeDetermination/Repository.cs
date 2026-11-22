@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.TaxCodeDetermination;
+namespace KamnttraApi.Modules.Administration.TaxCodeDetermination;
 
 public interface ITaxDeterminationRuleRepository : IRepository<TaxDeterminationRule> { }
 public class TaxDeterminationRuleRepository : Repository<TaxDeterminationRule>, ITaxDeterminationRuleRepository

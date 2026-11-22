@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.CRM.KnowledgeBase;
+namespace KamnttraApi.Modules.CRM.KnowledgeBase;
 
 // ═══════════════════════════════════════════════════════════════════
 // KNOWLEDGE BASE SOLUTION  (KKBA)

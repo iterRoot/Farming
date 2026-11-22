@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Sale.Warehouse;
+namespace KamnttraApi.Modules.Sale.Warehouse;
 
 // Warehouse master. `Code`/`Name` keep the original WhsCode/WhsName columns;
 // the remaining fields are added on top. `InActive` (from AuditableEntity) is

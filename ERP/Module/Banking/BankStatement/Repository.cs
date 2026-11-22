@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Banking.BankStatement;
+namespace KamnttraApi.Modules.Banking.BankStatement;
 
 public interface IBankStatementRepository : IRepository<BankStatement>
 {

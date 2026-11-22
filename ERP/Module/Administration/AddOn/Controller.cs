@@ -1,13 +1,13 @@
 //
 //
 // using AutoMapper;
-// using FarmingApi.Core;
-// using FarmingApi.Modules.Banking.IncomingPayment;
+// using KamnttraApi.Core;
+// using KamnttraApi.Modules.Banking.IncomingPayment;
 // using Microsoft.AspNetCore.Authorization;
 // using Microsoft.AspNetCore.Mvc;
 // using Microsoft.EntityFrameworkCore;
 //
-// namespace FarmingApi.Modules.Administration.AddOn;
+// namespace KamnttraApi.Modules.Administration.AddOn;
 //
 // public class AddOnController : MyController
 // {

@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.DataImportAndExport;
+namespace KamnttraApi.Modules.Administration.DataImportAndExport;
 
 // ═══════════════════════════════════════════════════════════════════
 // COLUMN DEFINITION

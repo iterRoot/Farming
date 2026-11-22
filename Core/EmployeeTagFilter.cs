@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
-using Employee = FarmingApi.Modules.Sales.SaleEmployeeBuyer.SaleEmployeeBuyer;
+using Employee = KamnttraApi.Modules.Sales.SaleEmployeeBuyer.SaleEmployeeBuyer;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 // Request bodies that carry a sales employee (sales documents) or a buyer (purchase documents).
 public interface IHasSalesEmployee { string? SalesEmployeeCode { get; set; } }

@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.InventoryManagement.IssueForProduction;
+namespace KamnttraApi.Modules.InventoryManagement.IssueForProduction;
 
 // ═══════════════════════════════════════════════════════════════════
 // ISSUE FOR PRODUCTION  (KIGE / IGE1)

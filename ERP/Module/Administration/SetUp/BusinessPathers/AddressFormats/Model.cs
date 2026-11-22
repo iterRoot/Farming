@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.AddressFormats;
+namespace KamnttraApi.Modules.Administration.AddressFormats;
 
 // ── Responses ─────────────────────────────────────────────────
 public class AddressFormatResponse

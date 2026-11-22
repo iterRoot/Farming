@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
 // Model.cs
 // ═══════════════════════════════════════════════════════════════
-namespace FarmingApi.Modules.Inventory.DutyGroups;
+namespace KamnttraApi.Modules.Inventory.DutyGroups;
 
 public class DutyGroupResponse
 {

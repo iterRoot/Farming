@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.InventoryManagement.ProductionOrder;
+namespace KamnttraApi.Modules.InventoryManagement.ProductionOrder;
 
 public class ProductionOrderLineResponse
 {
@@ -56,11 +56,11 @@ public class ShortageLine
 public class ProductionCloseRequest
 {
     public List<ProductionComponentBatches>? Components { get; set; }
-    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Finished { get; set; }
+    public List<KamnttraApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Finished { get; set; }
 }
 
 public class ProductionComponentBatches
 {
     public string ItemCode { get; set; } = null!;
-    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine> Batches { get; set; } = new();
+    public List<KamnttraApi.Modules.InventoryManagement.InventoryJournal.BatchLine> Batches { get; set; } = new();
 }

@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Company.Staff;
+namespace KamnttraApi.Modules.Company.Staff;
 
 public class Staff : AuditableEntity
 {

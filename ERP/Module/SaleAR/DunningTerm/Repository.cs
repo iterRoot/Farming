@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.SaleAR.DunningTerm;
+namespace KamnttraApi.Modules.SaleAR.DunningTerm;
 
 public interface IDunningTermRepository : IRepository<DunningTerm> { }
 

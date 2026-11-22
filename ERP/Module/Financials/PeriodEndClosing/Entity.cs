@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.PeriodEndClosing;
+namespace KamnttraApi.Modules.Financials.PeriodEndClosing;
 
 // ═══════════════════════════════════════════════════════════════════
 // PERIOD-END / YEAR-END CLOSING (KPEC / PEC1)

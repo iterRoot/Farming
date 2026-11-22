@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Administration.UserTables;
+namespace KamnttraApi.Modules.Administration.UserTables;
 
 // ═══════════════════════════════════════════════════════════════
 // USER-DEFINED TABLES (SAP B1 "UDT")

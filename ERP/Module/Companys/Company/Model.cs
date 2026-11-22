@@ -1,6 +1,6 @@
-﻿// using FarmingApi.Modules.Position;
+﻿// using KamnttraApi.Modules.Position;
 
-namespace FarmingApi.Modules.Company;
+namespace KamnttraApi.Modules.Company;
 
 public class CompanyListResponse
 {

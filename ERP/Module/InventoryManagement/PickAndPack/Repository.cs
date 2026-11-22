@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.InventoryManagement.PickAndPack;
+namespace KamnttraApi.Modules.InventoryManagement.PickAndPack;
 
 public interface IPickPackRepository : IRepository<PickPackCriteria> { }
 

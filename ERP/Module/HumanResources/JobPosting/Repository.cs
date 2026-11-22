@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.HumanResources.JobPosting;
+namespace KamnttraApi.Modules.HumanResources.JobPosting;
 
 public interface IJobPostingRepository : IRepository<JobPosting> { }
 

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FarmingApi.Modules.Sales.CommissionGroup;
+namespace KamnttraApi.Modules.Sales.CommissionGroup;
 
 [ApiController]
 [Route("[controller]")]

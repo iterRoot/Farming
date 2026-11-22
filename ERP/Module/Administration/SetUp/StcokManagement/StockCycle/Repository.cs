@@ -3,9 +3,9 @@
 // ═══════════════════════════════════════════════════════════════
 // Repository.cs
 // ═══════════════════════════════════════════════════════════════
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Inventory.StockCycles;
+namespace KamnttraApi.Modules.Inventory.StockCycles;
 
 public interface IStockCycleRepository : IRepository<StockCycle> { }
 

@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.SaleAR.Dunning;
+namespace KamnttraApi.Modules.SaleAR.Dunning;
 
 public class DunningMapper : Profile
 {

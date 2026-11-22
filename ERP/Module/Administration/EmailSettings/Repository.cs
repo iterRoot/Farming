@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.EmailSettings;
+namespace KamnttraApi.Modules.Administration.EmailSettings;
 
 public interface IEmailAccountRepository : IRepository<EmailAccount> { }
 public class EmailAccountRepository : Repository<EmailAccount>, IEmailAccountRepository

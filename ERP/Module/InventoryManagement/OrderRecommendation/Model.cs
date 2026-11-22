@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.InventoryManagement.OrderRecommendation;
+namespace KamnttraApi.Modules.InventoryManagement.OrderRecommendation;
 
 public class OrderRecommendationLine
 {

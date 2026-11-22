@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
-// using FarmingApi.Services;
+using KamnttraApi.Core;
+// using KamnttraApi.Services;
 
-namespace FarmingApi.Modules.Company;
+namespace KamnttraApi.Modules.Company;
 
 public class CompanyController : MyController
 {

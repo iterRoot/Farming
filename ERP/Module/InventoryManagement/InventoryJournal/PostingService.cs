@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Modules.Inventory.ItemsMaster;
-using WarehouseEntity  = FarmingApi.Modules.Sale.Warehouse.Warehouse;
-using InventoryBalance = FarmingApi.Modules.Sale.Inventory.Inventory;
+using KamnttraApi.Modules.Inventory.ItemsMaster;
+using WarehouseEntity  = KamnttraApi.Modules.Sale.Warehouse.Warehouse;
+using InventoryBalance = KamnttraApi.Modules.Sale.Inventory.Inventory;
 
-namespace FarmingApi.Modules.InventoryManagement.InventoryJournal;
+namespace KamnttraApi.Modules.InventoryManagement.InventoryJournal;
 
 // ═══════════════════════════════════════════════════════════════
 // Shared stock-posting logic called from every document that moves

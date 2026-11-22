@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.InventoryManagement.StockRevaluation;
+namespace KamnttraApi.Modules.InventoryManagement.StockRevaluation;
 
 public class StockRevaluationLineDto
 {

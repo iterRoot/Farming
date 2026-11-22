@@ -1,17 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using BPEntity        = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
-using ARInvoiceEntity = FarmingApi.Modules.SaleAR.ARInvoice.ARInvoice;
-using APInvoiceEntity = FarmingApi.Modules.PurchaseAP.APInvoice.APInvoice;
-using IPay             = FarmingApi.Modules.Banking.IncomingPayment.IncomingPayment;
-using IPayInvoice       = FarmingApi.Modules.Banking.IncomingPayment.IncomingPaymentInvoice;
-using IIncomingPaymentJournalService = FarmingApi.Modules.Banking.IncomingPayment.IIncomingPaymentJournalService;
-using OPay              = FarmingApi.Modules.Banking.OutgoingPayment.OutgoingPayment;
-using OPayInvoice       = FarmingApi.Modules.Banking.OutgoingPayment.OutgoingPaymentInvoice;
-using IOutgoingPaymentJournalService = FarmingApi.Modules.Banking.OutgoingPayment.IOutgoingPaymentJournalService;
+using KamnttraApi.Core;
+using BPEntity        = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using ARInvoiceEntity = KamnttraApi.Modules.SaleAR.ARInvoice.ARInvoice;
+using APInvoiceEntity = KamnttraApi.Modules.PurchaseAP.APInvoice.APInvoice;
+using IPay             = KamnttraApi.Modules.Banking.IncomingPayment.IncomingPayment;
+using IPayInvoice       = KamnttraApi.Modules.Banking.IncomingPayment.IncomingPaymentInvoice;
+using IIncomingPaymentJournalService = KamnttraApi.Modules.Banking.IncomingPayment.IIncomingPaymentJournalService;
+using OPay              = KamnttraApi.Modules.Banking.OutgoingPayment.OutgoingPayment;
+using OPayInvoice       = KamnttraApi.Modules.Banking.OutgoingPayment.OutgoingPaymentInvoice;
+using IOutgoingPaymentJournalService = KamnttraApi.Modules.Banking.OutgoingPayment.IOutgoingPaymentJournalService;
 
-namespace FarmingApi.Modules.Banking.PaymentRun;
+namespace KamnttraApi.Modules.Banking.PaymentRun;
 
 // ═══════════════════════════════════════════════════════════════════
 // PAYMENT RUN  (route: /PaymentRun)

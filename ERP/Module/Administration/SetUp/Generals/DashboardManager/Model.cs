@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.DashboardManager;
+namespace KamnttraApi.Modules.Administration.DashboardManager;
 
 // ── Responses ─────────────────────────────────────────────────
 public class DashboardConfigResponse

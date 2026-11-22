@@ -1,9 +1,9 @@
-// using FarmingApi.Core;
+// using KamnttraApi.Core;
 // using Microsoft.EntityFrameworkCore;
 // using Microsoft.EntityFrameworkCore.Metadata.Builders;
 //
 //
-// namespace FarmingApi.Modules.Administration.AddOn;
+// namespace KamnttraApi.Modules.Administration.AddOn;
 //
 // public class AddOn : AuditableEntity
 // {

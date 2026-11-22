@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.Authorisations;
+namespace KamnttraApi.Modules.Administration.Authorisations;
 
 public interface IUserAuthorizationRepository : IRepository<UserAuthorization> { }
 

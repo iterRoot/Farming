@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Administration.ElectronicDocuments;
+namespace KamnttraApi.Modules.Administration.ElectronicDocuments;
 
 public class ElectronicDocumentMapper : Profile
 {

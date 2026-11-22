@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.PurchaseAP.APDownPaymentRequest;
+namespace KamnttraApi.Modules.PurchaseAP.APDownPaymentRequest;
 
 public class APDownPaymentRequestMapper : Profile
 {

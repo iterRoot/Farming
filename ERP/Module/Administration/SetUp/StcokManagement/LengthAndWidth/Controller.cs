@@ -6,7 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FarmingApi.Modules.Inventory.LengthWidth;
+namespace KamnttraApi.Modules.Inventory.LengthWidth;
 
 [ApiController]
 [Route("[controller]")]

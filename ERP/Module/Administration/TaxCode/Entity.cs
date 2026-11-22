@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.TaxCode;
+namespace KamnttraApi.Modules.Administration.TaxCode;
 
 // SAP B1 "Tax Codes - Setup" — a VAT/tax code with its rate, category and the
 // G/L accounts postings are directed to. `InActive` (from AuditableEntity) is

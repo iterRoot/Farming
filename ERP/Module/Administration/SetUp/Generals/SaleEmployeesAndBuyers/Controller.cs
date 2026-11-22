@@ -2,13 +2,13 @@ using System.Text.RegularExpressions;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using CommissionGroupEntity = FarmingApi.Modules.Sales.CommissionGroup.CommissionGroup;
-using CommissionCalc = FarmingApi.Modules.Sales.CommissionGroup.CommissionCalc;
-using BPEntity   = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
-using ARInvoice  = FarmingApi.Modules.SaleAR.ARInvoice.ARInvoice;
-using ARCredit   = FarmingApi.Modules.SaleAR.ARCreditNote.ARCreditNote;
+using CommissionGroupEntity = KamnttraApi.Modules.Sales.CommissionGroup.CommissionGroup;
+using CommissionCalc = KamnttraApi.Modules.Sales.CommissionGroup.CommissionCalc;
+using BPEntity   = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using ARInvoice  = KamnttraApi.Modules.SaleAR.ARInvoice.ARInvoice;
+using ARCredit   = KamnttraApi.Modules.SaleAR.ARCreditNote.ARCreditNote;
 
-namespace FarmingApi.Modules.Sales.SaleEmployeeBuyer;
+namespace KamnttraApi.Modules.Sales.SaleEmployeeBuyer;
 
 // ═══════════════════════════════════════════════════════════════
 // SALES EMPLOYEES / BUYERS

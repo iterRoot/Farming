@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.SaleAR.ARInvoice;
+namespace KamnttraApi.Modules.SaleAR.ARInvoice;
 
 public interface IARInvoiceRepository : IRepository<ARInvoice>
 {

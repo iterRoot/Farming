@@ -2,11 +2,11 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using ARInvoiceEntity = FarmingApi.Modules.SaleAR.ARInvoice.ARInvoice;
-using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using KamnttraApi.Core;
+using ARInvoiceEntity = KamnttraApi.Modules.SaleAR.ARInvoice.ARInvoice;
+using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
-namespace FarmingApi.Modules.Banking.IncomingPayment;
+namespace KamnttraApi.Modules.Banking.IncomingPayment;
 
 public class IncomingPaymentController : MyController
 {

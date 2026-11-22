@@ -1,6 +1,6 @@
-using FarmingApi;
+using KamnttraApi;
 
-namespace FarmingApi.Modules.Inventory.ItemsMaster;
+namespace KamnttraApi.Modules.Inventory.ItemsMaster;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // Automatic item barcodes. An item saved without a barcode gets an EAN-13 in the

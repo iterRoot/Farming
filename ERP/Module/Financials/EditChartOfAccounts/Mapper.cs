@@ -1,7 +1,7 @@
 using AutoMapper;
-using FarmingApi.Modules.Financials.ChartOfAccounts;
+using KamnttraApi.Modules.Financials.ChartOfAccounts;
 
-namespace FarmingApi.Modules.Financials.EditChartOfAccounts;
+namespace KamnttraApi.Modules.Financials.EditChartOfAccounts;
 
 public class ChartOfAccountsEditMapper : Profile
 {

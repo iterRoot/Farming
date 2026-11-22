@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.PurchaseAP.APInvoice;
+namespace KamnttraApi.Modules.PurchaseAP.APInvoice;
 
 public class APInvoiceMapper : Profile
 {

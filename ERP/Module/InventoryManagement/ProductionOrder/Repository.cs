@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.InventoryManagement.ProductionOrder;
+namespace KamnttraApi.Modules.InventoryManagement.ProductionOrder;
 
 public interface IProductionOrderRepository : IRepository<ProductionOrder> { }
 

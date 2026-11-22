@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.CRM.ServiceCall;
+namespace KamnttraApi.Modules.CRM.ServiceCall;
 
 public class ServiceCallMapper : Profile
 {

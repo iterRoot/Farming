@@ -1,16 +1,16 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi;
-using FarmingApi.Core;
-using FarmingApi.Modules.Administration.ApprovalRequest;
-using FarmingApi.Modules.Inventory.ItemsMaster;  // ✅ your namespace
-using FarmingApi.Modules.InventoryManagement.InventoryJournal;
-using FarmingApi.Services;
+using KamnttraApi;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Administration.ApprovalRequest;
+using KamnttraApi.Modules.Inventory.ItemsMaster;  // ✅ your namespace
+using KamnttraApi.Modules.InventoryManagement.InventoryJournal;
+using KamnttraApi.Services;
 
-using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
-namespace FarmingApi.Modules.SaleAR.Return;
+namespace KamnttraApi.Modules.SaleAR.Return;
 
 [ApiController]
 [Route("[controller]")]         // ✅ route = /Return

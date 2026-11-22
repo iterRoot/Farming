@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Inventory.GoodsReceipt;
+namespace KamnttraApi.Modules.Inventory.GoodsReceipt;
 
 public class GoodsReceiptMapper : Profile
 {

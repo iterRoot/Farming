@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.InventoryManagement.Forecast;
+namespace KamnttraApi.Modules.InventoryManagement.Forecast;
 
 public interface IForecastRepository : IRepository<Forecast> { }
 

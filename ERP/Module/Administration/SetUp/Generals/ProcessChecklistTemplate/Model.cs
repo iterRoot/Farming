@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.SetUp.ProcessChecklistTemplate;
+namespace KamnttraApi.Modules.Administration.SetUp.ProcessChecklistTemplate;
 
 // ── Requests ─────────────────────────────────────────────────────
 public class ChecklistStepRequest

@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Company.Staff;
+namespace KamnttraApi.Modules.Company.Staff;
 
 public interface IStaffRepository : IRepository<Staff>
 {

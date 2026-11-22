@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Banking.IncomingPayment;
+namespace KamnttraApi.Modules.Banking.IncomingPayment;
 
 public interface IIncomingPaymentRepository : IRepository<IncomingPayment>
 {

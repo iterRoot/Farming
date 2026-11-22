@@ -1,10 +1,10 @@
 
-using FarmingApi.Modules.Administration.DocumentNumberRange;
-using FarmingApi.Modules.Financials.GLAccountDetermination;
-using FarmingApi.Modules.Financials.JournalEntry;
-using FarmingApi.Modules.SaleAR.ARInvoice;
-using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
-namespace FarmingApi.Services;
+using KamnttraApi.Modules.Administration.DocumentNumberRange;
+using KamnttraApi.Modules.Financials.GLAccountDetermination;
+using KamnttraApi.Modules.Financials.JournalEntry;
+using KamnttraApi.Modules.SaleAR.ARInvoice;
+using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+namespace KamnttraApi.Services;
 
 // ═══════════════════════════════════════════════════════════════════
 // Place this file at:  /ERP/Services/DocumentNumberService.cs

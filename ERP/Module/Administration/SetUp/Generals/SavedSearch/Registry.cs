@@ -1,8 +1,8 @@
-using FarmingApi.Core;
-using ItemEntity = FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster;
-using BPEntity   = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using KamnttraApi.Core;
+using ItemEntity = KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster;
+using BPEntity   = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
-namespace FarmingApi.Modules.Administration.SetUp.Generals.SavedSearch;
+namespace KamnttraApi.Modules.Administration.SetUp.Generals.SavedSearch;
 
 // ═══════════════════════════════════════════════════════════════════
 // SEARCHABLE-ENTITY REGISTRY

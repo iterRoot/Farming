@@ -1,17 +1,17 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi;
-using FarmingApi.Core;
-using ARInvoiceEntity     = FarmingApi.Modules.SaleAR.ARInvoice.ARInvoice;
-using ARCreditNoteEntity  = FarmingApi.Modules.SaleAR.ARCreditNote.ARCreditNote;
-using APInvoiceEntity     = FarmingApi.Modules.PurchaseAP.APInvoice.APInvoice;
-using APCreditNoteEntity  = FarmingApi.Modules.PurchaseAP.APCreditNote.APCreditNote;
-using IncomingPaymentEntity = FarmingApi.Modules.Banking.IncomingPayment.IncomingPayment;
-using OutgoingPaymentEntity = FarmingApi.Modules.Banking.OutgoingPayment.OutgoingPayment;
-using BPEntity            = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using KamnttraApi;
+using KamnttraApi.Core;
+using ARInvoiceEntity     = KamnttraApi.Modules.SaleAR.ARInvoice.ARInvoice;
+using ARCreditNoteEntity  = KamnttraApi.Modules.SaleAR.ARCreditNote.ARCreditNote;
+using APInvoiceEntity     = KamnttraApi.Modules.PurchaseAP.APInvoice.APInvoice;
+using APCreditNoteEntity  = KamnttraApi.Modules.PurchaseAP.APCreditNote.APCreditNote;
+using IncomingPaymentEntity = KamnttraApi.Modules.Banking.IncomingPayment.IncomingPayment;
+using OutgoingPaymentEntity = KamnttraApi.Modules.Banking.OutgoingPayment.OutgoingPayment;
+using BPEntity            = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
-namespace FarmingApi.Modules.Financials.IternalReconciliations;
+namespace KamnttraApi.Modules.Financials.IternalReconciliations;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // Same mechanics as BankReconciliationController — this reconciles a business

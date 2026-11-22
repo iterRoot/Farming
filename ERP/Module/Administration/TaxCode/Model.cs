@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.TaxCode;
+namespace KamnttraApi.Modules.Administration.TaxCode;
 
 public class TaxCodeDto
 {

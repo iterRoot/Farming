@@ -2,9 +2,9 @@
 // ═══════════════════════════════════════════════════════════════
 // Repository.cs
 // ═══════════════════════════════════════════════════════════════
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Inventory.ItemGroup;
+namespace KamnttraApi.Modules.Inventory.ItemGroup;
 
 public interface IItemGroupRepository : IRepository<ItemGroup> { }
 

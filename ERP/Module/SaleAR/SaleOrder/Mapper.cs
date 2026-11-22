@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.SaleAR.SaleOrder;
+namespace KamnttraApi.Modules.SaleAR.SaleOrder;
 
 public class SaleOrderMapper : Profile
 {

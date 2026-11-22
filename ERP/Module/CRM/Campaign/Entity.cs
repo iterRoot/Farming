@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.CRM.Campaign;
+namespace KamnttraApi.Modules.CRM.Campaign;
 
 // ═══════════════════════════════════════════════════════════════
 // CAMPAIGN  (KCMP / CMP1)  ·  SAP B1 equivalent: OCPR / CPR1

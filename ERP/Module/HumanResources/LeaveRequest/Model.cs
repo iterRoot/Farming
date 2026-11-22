@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.HumanResources.LeaveRequest;
+namespace KamnttraApi.Modules.HumanResources.LeaveRequest;
 
 public class LeaveRequestResponse
 {

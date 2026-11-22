@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.DashboardManager;
+namespace KamnttraApi.Modules.Administration.DashboardManager;
 
 public interface IDashboardManagerRepository : IRepository<DashboardConfig> { }
 

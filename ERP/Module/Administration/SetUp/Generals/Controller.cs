@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FarmingApi.Modules.Administration.UserGroups;
+namespace KamnttraApi.Modules.Administration.UserGroups;
 
 // ⚠️ Route was "[controller]" (/UserGroup), which collided with
-// FarmingApi.Modules.Administration.SetUp.UserGroup.UserGroupController
+// KamnttraApi.Modules.Administration.SetUp.UserGroup.UserGroupController
 // (also /UserGroup) and threw AmbiguousMatchException on every call.
 // This is the richer RBAC groups feature (members/permissions); it now
 // lives at /SecurityUserGroup. The SetUp controller keeps /UserGroup,

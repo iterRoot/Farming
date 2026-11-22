@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FarmingApi.Modules.Financials.ExchangeRateDifferences;
+namespace KamnttraApi.Modules.Financials.ExchangeRateDifferences;
 
 // ═══════════════════════════════════════════════════════════════
 // GET    /ExchangeRateDifferences          → run headers, newest first

@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.InventoryManagement.MRP;
+namespace KamnttraApi.Modules.InventoryManagement.MRP;
 
 public class MrpLine
 {

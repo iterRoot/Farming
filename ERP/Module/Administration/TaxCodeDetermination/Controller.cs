@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.TaxCodeDetermination;
+namespace KamnttraApi.Modules.Administration.TaxCodeDetermination;
 
 // ═══════════════════════════════════════════════════════════════
 // TAX CODE DETERMINATION  (route: /TaxDeterminationRule)

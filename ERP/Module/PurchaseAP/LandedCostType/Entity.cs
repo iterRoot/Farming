@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.PurchaseAP.LandedCostType;
+namespace KamnttraApi.Modules.PurchaseAP.LandedCostType;
 
 // The Landed Cost document (Modules.PurchaseAP.LandingCost.LandedCostLine)
 // stores CostType as free text, with only a code-comment listing the five

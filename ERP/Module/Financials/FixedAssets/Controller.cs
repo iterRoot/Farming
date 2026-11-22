@@ -1,10 +1,10 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
-using RunEntity     = FarmingApi.Modules.Financials.FixedAssets.DepreciationRun.DepreciationRun;
-using RunLineEntity = FarmingApi.Modules.Financials.FixedAssets.DepreciationRun.DepreciationRunLine;
+using KamnttraApi.Core;
+using RunEntity     = KamnttraApi.Modules.Financials.FixedAssets.DepreciationRun.DepreciationRun;
+using RunLineEntity = KamnttraApi.Modules.Financials.FixedAssets.DepreciationRun.DepreciationRunLine;
 
-namespace FarmingApi.Modules.Financials.FixedAssets;
+namespace KamnttraApi.Modules.Financials.FixedAssets;
 
 // ═══════════════════════════════════════════════════════════════
 // ASSET MASTER DATA  (route: /AssetsMaster)

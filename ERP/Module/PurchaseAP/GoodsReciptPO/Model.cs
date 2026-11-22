@@ -1,9 +1,9 @@
-namespace FarmingApi.Modules.PurchaseAP.GoodsReceiptPO;
+namespace KamnttraApi.Modules.PurchaseAP.GoodsReceiptPO;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // REQUEST
 // ══════════════════════════════════════════════════════════════════════════════
-public class GoodsReceiptPORequest : FarmingApi.Core.IHasBuyer
+public class GoodsReceiptPORequest : KamnttraApi.Core.IHasBuyer
 {
     public string? BuyerCode { get; set; }
     public string    DocNum      { get; set; } = "";
@@ -22,7 +22,7 @@ public class GoodsReceiptPORequest : FarmingApi.Core.IHasBuyer
 public class GoodsReceiptPOLineRequest
 {
     /// <summary>Batch / serial numbers for this line — required when the item is managed by them.</summary>
-    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
+    public List<KamnttraApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
 
     public int     ItemId    { get; set; }
     public decimal Quantity  { get; set; }

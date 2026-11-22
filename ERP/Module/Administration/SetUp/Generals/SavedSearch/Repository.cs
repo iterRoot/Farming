@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.SetUp.Generals.SavedSearch;
+namespace KamnttraApi.Modules.Administration.SetUp.Generals.SavedSearch;
 
 public interface ISavedSearchRepository : IRepository<SavedSearch> { }
 

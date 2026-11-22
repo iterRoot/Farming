@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.InventoryManagement.ReceiptFromProduction;
+namespace KamnttraApi.Modules.InventoryManagement.ReceiptFromProduction;
 
 // ═══════════════════════════════════════════════════════════════════
 // RECEIPT FROM PRODUCTION  (KIGN / IGN1)

@@ -1,9 +1,9 @@
-namespace FarmingApi.Modules.PurchaseAP.PurchaseOrder;
+namespace KamnttraApi.Modules.PurchaseAP.PurchaseOrder;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // REQUEST
 // ══════════════════════════════════════════════════════════════════════════════
-public class PurchaseOrderRequest : FarmingApi.Core.IHasBuyer
+public class PurchaseOrderRequest : KamnttraApi.Core.IHasBuyer
 {
     public string? BuyerCode { get; set; }
     public string    DocNum      { get; set; } = "";

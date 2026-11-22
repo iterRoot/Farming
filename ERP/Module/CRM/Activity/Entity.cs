@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.CRM.Activity;
+namespace KamnttraApi.Modules.CRM.Activity;
 
 // ═══════════════════════════════════════════════════════════════
 // ACTIVITY  (KACT)  ·  SAP B1 equivalent: OCLG / CLG1

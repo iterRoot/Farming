@@ -1,16 +1,16 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using FarmingApi.Modules.Financials.JournalEntry;
-using FarmingApi.Modules.InventoryManagement.InventoryJournal;
-using ItemEntity      = FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster;
-using WarehouseEntity = FarmingApi.Modules.Sale.Warehouse.Warehouse;
-using InventoryBal    = FarmingApi.Modules.Sale.Inventory.Inventory;
-using Bom             = FarmingApi.Modules.InventoryManagement.BillOfMaterial.BillOfMaterial;
-using FarmingApi.Modules.Financials.GLAccountDetermination;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Financials.JournalEntry;
+using KamnttraApi.Modules.InventoryManagement.InventoryJournal;
+using ItemEntity      = KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster;
+using WarehouseEntity = KamnttraApi.Modules.Sale.Warehouse.Warehouse;
+using InventoryBal    = KamnttraApi.Modules.Sale.Inventory.Inventory;
+using Bom             = KamnttraApi.Modules.InventoryManagement.BillOfMaterial.BillOfMaterial;
+using KamnttraApi.Modules.Financials.GLAccountDetermination;
 
-namespace FarmingApi.Modules.InventoryManagement.ProductionOrder;
+namespace KamnttraApi.Modules.InventoryManagement.ProductionOrder;
 
 // ═══════════════════════════════════════════════════════════════════
 // PRODUCTION ORDER  (route: /ProductionOrder)

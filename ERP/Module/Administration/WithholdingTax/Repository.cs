@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.WithholdingTax;
+namespace KamnttraApi.Modules.Administration.WithholdingTax;
 
 public interface IWithholdingTaxCodeRepository : IRepository<WithholdingTaxCode> { }
 public class WithholdingTaxCodeRepository : Repository<WithholdingTaxCode>, IWithholdingTaxCodeRepository

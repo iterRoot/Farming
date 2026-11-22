@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Administration.CrystalServer;
+namespace KamnttraApi.Modules.Administration.CrystalServer;
 
 // ═══════════════════════════════════════════════════════════════
 // CRYSTAL SERVER CONFIGURATION  (KCRS)

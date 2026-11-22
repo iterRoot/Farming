@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.InventoryManagement.BillOfMaterial;
+namespace KamnttraApi.Modules.InventoryManagement.BillOfMaterial;
 
 // ═══════════════════════════════════════════════════════════════════
 // BILL OF MATERIAL  (KBOM / BOM1)

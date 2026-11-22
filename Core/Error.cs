@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Diagnostics;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 internal static class ErrorException
 {

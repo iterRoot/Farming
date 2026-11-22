@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.ProjectManagement.Project;
+namespace KamnttraApi.Modules.ProjectManagement.Project;
 
 public interface IProjectRepository : IRepository<Project> { }
 

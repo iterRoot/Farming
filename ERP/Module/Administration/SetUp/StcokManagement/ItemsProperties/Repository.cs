@@ -3,9 +3,9 @@
 // ═══════════════════════════════════════════════════════════════
 // Repository.cs
 // ═══════════════════════════════════════════════════════════════
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Inventory.ItemProperties;
+namespace KamnttraApi.Modules.Inventory.ItemProperties;
 
 public interface IItemPropertyRepository : IRepository<ItemProperty> { }
 

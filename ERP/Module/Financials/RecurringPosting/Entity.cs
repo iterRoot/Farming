@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.RecurringPosting;
+namespace KamnttraApi.Modules.Financials.RecurringPosting;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // RECURRING POSTING — a Journal Entry template that repeats on a schedule.

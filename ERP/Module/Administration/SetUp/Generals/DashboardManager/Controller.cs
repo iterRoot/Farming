@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FarmingApi.Modules.Administration.DashboardManager;
+namespace KamnttraApi.Modules.Administration.DashboardManager;
 
 [ApiController]
 [Route("[controller]")]

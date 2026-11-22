@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.PurchaseAP.GoodsReturn;
+namespace KamnttraApi.Modules.PurchaseAP.GoodsReturn;
 
 public interface IGoodsReturnRepository : IRepository<GoodsReturn>
 {

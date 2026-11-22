@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Inventory.StockCycles;
+namespace KamnttraApi.Modules.Inventory.StockCycles;
 
 // ═══════════════════════════════════════════════════════════════
 // STOCK CYCLE (KSTC)

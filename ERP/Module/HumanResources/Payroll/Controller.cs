@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
-using FarmingApi.Modules.HumanResources.EmployeeMaster;
-using CompanyEntity = FarmingApi.Modules.Company.Company;
+using KamnttraApi.Modules.HumanResources.EmployeeMaster;
+using CompanyEntity = KamnttraApi.Modules.Company.Company;
 
-namespace FarmingApi.Modules.HumanResources.Payroll;
+namespace KamnttraApi.Modules.HumanResources.Payroll;
 
 [ApiController]
 [Route("[controller]")]

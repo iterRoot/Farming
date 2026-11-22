@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Financials.PostingTemplate;
+namespace KamnttraApi.Modules.Financials.PostingTemplate;
 
 // ═══════════════════════════════════════════════════════════════════
 // POSTING TEMPLATE  (KBTT / BTT1)

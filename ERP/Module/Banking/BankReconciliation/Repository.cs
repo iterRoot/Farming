@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Banking.BankReconciliation;
+namespace KamnttraApi.Modules.Banking.BankReconciliation;
 
 public interface IBankReconciliationRepository : IRepository<BankReconciliation>
 {

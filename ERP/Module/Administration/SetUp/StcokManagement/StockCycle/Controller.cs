@@ -1,18 +1,18 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using FarmingApi.Modules.InventoryManagement.InventoryJournal;
-using JournalEntryDoc  = FarmingApi.Modules.Financials.JournalEntry.JournalEntry;
-using JournalEntryLine = FarmingApi.Modules.Financials.JournalEntry.JournalEntryLine;
-using JournalEntryNumberService = FarmingApi.Modules.Financials.JournalEntry.JournalEntryNumberService;
-using ItemEntity       = FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster;
-using InventoryBalance = FarmingApi.Modules.Sale.Inventory.Inventory;
-using WarehouseEntity  = FarmingApi.Modules.Sale.Warehouse.Warehouse;
-using GLDetermination  = FarmingApi.Modules.Financials.GLAccountDetermination.GLAccountDetermination;
-using CoaEntity        = FarmingApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.InventoryManagement.InventoryJournal;
+using JournalEntryDoc  = KamnttraApi.Modules.Financials.JournalEntry.JournalEntry;
+using JournalEntryLine = KamnttraApi.Modules.Financials.JournalEntry.JournalEntryLine;
+using JournalEntryNumberService = KamnttraApi.Modules.Financials.JournalEntry.JournalEntryNumberService;
+using ItemEntity       = KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster;
+using InventoryBalance = KamnttraApi.Modules.Sale.Inventory.Inventory;
+using WarehouseEntity  = KamnttraApi.Modules.Sale.Warehouse.Warehouse;
+using GLDetermination  = KamnttraApi.Modules.Financials.GLAccountDetermination.GLAccountDetermination;
+using CoaEntity        = KamnttraApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
 
-namespace FarmingApi.Modules.Inventory.StockCycles;
+namespace KamnttraApi.Modules.Inventory.StockCycles;
 
 // ═══════════════════════════════════════════════════════════════════
 // STOCK CYCLE / INVENTORY COUNTING  (route: /StockCycle)
@@ -240,7 +240,7 @@ public class StockCycleController : ControllerBase
             if (item == null) return BadRequest($"Item {l.ItemCode} no longer exists.");
             var book = _db.Set<InventoryBalance>().FirstOrDefault(b => b.ItemsCode == l.ItemCode && b.WhsCode == l.WhsCode)?.Balance ?? 0m;
             var diff = l.CountedQty!.Value - book;
-            if (diff != 0 && FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchTracker.KindOf(item) != null)
+            if (diff != 0 && KamnttraApi.Modules.InventoryManagement.InventoryJournal.BatchTracker.KindOf(item) != null)
                 return BadRequest($"{item.ItemCode} is managed by batch/serial numbers, so a count difference ({diff:+0.####;-0.####}) can't be posted here. Correct it with a Goods Receipt or Goods Issue so the numbers are recorded.");
             // A shortage leaves stock at what the item's valuation method says it costs
             // (average, standard, or the FIFO layers it would consume); a find enters at its cost.

@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.GeneralSettings;
+namespace KamnttraApi.Modules.Administration.GeneralSettings;
 
 // ═══════════════════════════════════════════════════════════════
 // GENERAL SETTINGS — singleton

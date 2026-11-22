@@ -1,10 +1,10 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
-using JobPostingEntity = FarmingApi.Modules.HumanResources.JobPosting.JobPosting;
-using EmployeeEntity   = FarmingApi.Modules.HumanResources.EmployeeMaster.EmployeeMaster;
+using KamnttraApi.Core;
+using JobPostingEntity = KamnttraApi.Modules.HumanResources.JobPosting.JobPosting;
+using EmployeeEntity   = KamnttraApi.Modules.HumanResources.EmployeeMaster.EmployeeMaster;
 
-namespace FarmingApi.Modules.HumanResources.Candidate;
+namespace KamnttraApi.Modules.HumanResources.Candidate;
 
 // ═══════════════════════════════════════════════════════════════════
 // CANDIDATE  (route: /Candidate)

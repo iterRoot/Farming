@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
 // Model.cs
 // ═══════════════════════════════════════════════════════════════
-namespace FarmingApi.Modules.Inventory.LengthWidth;
+namespace KamnttraApi.Modules.Inventory.LengthWidth;
 
 public class LengthWidthUomResponse
 {

@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Financials.ExchangeRateDifferences;
+namespace KamnttraApi.Modules.Financials.ExchangeRateDifferences;
 
 public class ExchangeRateDifferenceLineResponse
 {

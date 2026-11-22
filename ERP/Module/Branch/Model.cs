@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Branch;
+namespace KamnttraApi.Modules.Branch;
 
 public class BranchListResponse
 {

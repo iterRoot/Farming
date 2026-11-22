@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
-using FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster;
-using FarmingApi.Modules.Inventory.ItemsMaster;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster;
+using KamnttraApi.Modules.Inventory.ItemsMaster;
 
-namespace FarmingApi.Modules.SaleAR.SaleOrder;
+namespace KamnttraApi.Modules.SaleAR.SaleOrder;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // HEADER

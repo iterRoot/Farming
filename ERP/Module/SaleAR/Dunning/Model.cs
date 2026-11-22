@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.SaleAR.Dunning;
+namespace KamnttraApi.Modules.SaleAR.Dunning;
 
 // ── Wizard: candidates ──────────────────────────────────────────
 public class DunningCandidateInvoice

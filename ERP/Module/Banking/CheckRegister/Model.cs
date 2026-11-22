@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Banking.CheckRegister;
+namespace KamnttraApi.Modules.Banking.CheckRegister;
 
 public class CheckRegisterRow
 {

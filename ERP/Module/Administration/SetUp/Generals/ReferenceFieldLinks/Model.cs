@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.ReferenceFieldLink;
+namespace KamnttraApi.Modules.Administration.ReferenceFieldLink;
 
 public class ReferenceFieldLinkResponse
 {

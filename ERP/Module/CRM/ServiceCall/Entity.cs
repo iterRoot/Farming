@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.CRM.ServiceCall;
+namespace KamnttraApi.Modules.CRM.ServiceCall;
 
 // ═══════════════════════════════════════════════════════════════
 // SERVICE CALL  (KSVC)  ·  SAP B1 equivalent: OSCL

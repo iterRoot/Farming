@@ -1,11 +1,11 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-using FarmingApi;
+using KamnttraApi;
 
-namespace FarmingApi.Modules.Branch;
+namespace KamnttraApi.Modules.Branch;
 
 public class BranchController : MyController
 {

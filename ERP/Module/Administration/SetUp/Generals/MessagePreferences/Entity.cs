@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Administration.MessagePreferences;
+namespace KamnttraApi.Modules.Administration.MessagePreferences;
 
 // ═══════════════════════════════════════════════════════════════
 // MESSAGE PREFERENCE  (KMSP)

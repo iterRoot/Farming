@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.HumanResources.Payroll;
+namespace KamnttraApi.Modules.HumanResources.Payroll;
 
 // ═══════════════════════════════════════════════════════════════
 // PAYROLL AUTO-RUN WORKER

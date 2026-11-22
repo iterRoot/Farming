@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.CostAccounting;
+namespace KamnttraApi.Modules.Financials.CostAccounting;
 
 public interface ICostCenterRepository : IRepository<CostCenter> { }
 public class CostCenterRepository : Repository<CostCenter>, ICostCenterRepository

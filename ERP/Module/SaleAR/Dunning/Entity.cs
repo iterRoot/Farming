@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.SaleAR.Dunning;
+namespace KamnttraApi.Modules.SaleAR.Dunning;
 
 // ═══════════════════════════════════════════════════════════════
 // DUNNING LETTER  (KDUN / DUN1)  ·  SAP B1 equivalent: OCDN wizard output

@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.SAPLinks;
+namespace KamnttraApi.Modules.Administration.SAPLinks;
 
 // ── Response ──────────────────────────────────────────────────
 public class SAPLinkResponse

@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.HumanResources.Payroll;
+namespace KamnttraApi.Modules.HumanResources.Payroll;
 
 public interface IPayrollRepository : IRepository<Payroll> { }
 

@@ -2,16 +2,16 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using FarmingApi.Services;
-using FarmingApi;
-using FarmingApi.Modules.InventoryManagement.InventoryJournal;
+using KamnttraApi.Core;
+using KamnttraApi.Services;
+using KamnttraApi;
+using KamnttraApi.Modules.InventoryManagement.InventoryJournal;
 
 // ✅ Aliases — avoids namespace/class name conflict
-using ItemsMasterEntity = FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster;
-using BPEntity          = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using ItemsMasterEntity = KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster;
+using BPEntity          = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
-namespace FarmingApi.Modules.Inventory.GoodsIssue;
+namespace KamnttraApi.Modules.Inventory.GoodsIssue;
 
 public class GoodsIssueController : MyController
 {
@@ -105,11 +105,11 @@ public class GoodsIssueController : MyController
         // Check batch / serial numbers for every line before anything is saved.
         var whs = await _inventoryPosting.ResolveWarehouseCodeAsync(null);
         var postDate = entity.PostingDate == default ? DateTime.UtcNow : entity.PostingDate;
-        var tally = new FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchTally();
+        var tally = new KamnttraApi.Modules.InventoryManagement.InventoryJournal.BatchTally();
         foreach (var line in entity.Lines)
         {
             var batchError = await _inventoryPosting.CheckBatchesAsync(tally, line.ItemCode, whs, line.Qty, line.Batches,
-                FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchFlow.WriteOff, postDate);
+                KamnttraApi.Modules.InventoryManagement.InventoryJournal.BatchFlow.WriteOff, postDate);
             if (batchError != null) return BadRequest(batchError);
         }
 

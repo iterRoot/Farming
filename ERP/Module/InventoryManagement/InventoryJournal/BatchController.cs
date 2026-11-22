@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FarmingApi.Modules.InventoryManagement.InventoryJournal;
+namespace KamnttraApi.Modules.InventoryManagement.InventoryJournal;
 
 // ═══════════════════════════════════════════════════════════════
 // STOCK BATCHES / SERIAL NUMBERS — read-only.

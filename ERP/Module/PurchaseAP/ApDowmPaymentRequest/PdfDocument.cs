@@ -1,9 +1,9 @@
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using CompanyEntity = FarmingApi.Modules.Company.Company;
+using CompanyEntity = KamnttraApi.Modules.Company.Company;
 
-namespace FarmingApi.Modules.PurchaseAP.APDownPaymentRequest;
+namespace KamnttraApi.Modules.PurchaseAP.APDownPaymentRequest;
 
 public class APDownPaymentRequestPdfDocument : IDocument
 {

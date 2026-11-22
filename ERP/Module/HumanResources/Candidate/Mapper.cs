@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.HumanResources.Candidate;
+namespace KamnttraApi.Modules.HumanResources.Candidate;
 
 public class CandidateMapper : Profile
 {

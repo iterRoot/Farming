@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Sales.CommissionGroup;
+namespace KamnttraApi.Modules.Sales.CommissionGroup;
 
 // Commission on one sale amount under a group's rule.
 //   Percentage — amount × rate

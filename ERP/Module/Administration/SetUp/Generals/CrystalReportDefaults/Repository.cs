@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.CrystalReportDefaults;
+namespace KamnttraApi.Modules.Administration.CrystalReportDefaults;
 
 public interface ICrystalReportDefaultRepository
     : IRepository<CrystalReportDefault> { }

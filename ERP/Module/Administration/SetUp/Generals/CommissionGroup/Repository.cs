@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Sales.CommissionGroup;
+namespace KamnttraApi.Modules.Sales.CommissionGroup;
 
 public interface ICommissionGroupRepository : IRepository<CommissionGroup> { }
 

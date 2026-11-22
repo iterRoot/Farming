@@ -1,1 +1,1 @@
-// namespace FarmingApi.Modules.Administration.AddOn;
+// namespace KamnttraApi.Modules.Administration.AddOn;

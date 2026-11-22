@@ -1,4 +1,4 @@
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 internal static class CorsExtension
 {

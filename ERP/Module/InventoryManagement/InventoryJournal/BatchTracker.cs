@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Modules.Inventory.ItemsMaster;
+using KamnttraApi.Modules.Inventory.ItemsMaster;
 
-namespace FarmingApi.Modules.InventoryManagement.InventoryJournal;
+namespace KamnttraApi.Modules.InventoryManagement.InventoryJournal;
 
 // WriteOff is an issue that may take expired batches (scrapping stock, returning it to the vendor).
 public enum BatchFlow { In, ReturnIn, Out, WriteOff }

@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.InventoryManagement.ProductionOrder;
+namespace KamnttraApi.Modules.InventoryManagement.ProductionOrder;
 
 public class ProductionOrderMapper : Profile
 {

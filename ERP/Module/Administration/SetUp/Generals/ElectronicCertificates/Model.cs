@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.ElectronicCertificates;
+namespace KamnttraApi.Modules.Administration.ElectronicCertificates;
 
 // ── Response ──────────────────────────────────────────────────
 public class ElectronicCertificateResponse

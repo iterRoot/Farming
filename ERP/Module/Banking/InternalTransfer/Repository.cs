@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Banking.InternalTransfer;
+namespace KamnttraApi.Modules.Banking.InternalTransfer;
 
 public interface IInternalTransferRepository : IRepository<InternalTransfer>
 {

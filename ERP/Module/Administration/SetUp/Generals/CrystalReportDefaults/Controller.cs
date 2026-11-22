@@ -2,7 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FarmingApi.Modules.Administration.CrystalReportDefaults;
+namespace KamnttraApi.Modules.Administration.CrystalReportDefaults;
 
 [ApiController]
 [Route("[controller]")]
@@ -221,12 +221,12 @@ public class CrystalReportDefaultController : ControllerBase
     private static List<CrystalReportDefault> GetSeedData() => new()
     {
         // ── Company Information ──────────────────────────────
-        new(){ ElementKey="COMPANY_NAME",        ElementName="Company Legal Name",          ElementType="CompanyInfo", Category="Company",  DocumentType="All",DataType="Text",    Value="Farming Corp Co., Ltd.",          DefaultValue="Farming Corp Co., Ltd.",          IsSystemElement=true,  SortOrder=1,  HelpText="Full registered company name",     PreviewHint="Appears in report header" },
+        new(){ ElementKey="COMPANY_NAME",        ElementName="Company Legal Name",          ElementType="CompanyInfo", Category="Company",  DocumentType="All",DataType="Text",    Value="Kamnttra Corp Co., Ltd.",          DefaultValue="Kamnttra Corp Co., Ltd.",          IsSystemElement=true,  SortOrder=1,  HelpText="Full registered company name",     PreviewHint="Appears in report header" },
         new(){ ElementKey="COMPANY_NAME_KH",     ElementName="Company Name (Khmer)",        ElementType="CompanyInfo", Category="Company",  DocumentType="All",DataType="Text",    Language="km", Value="ក្រុមហ៊ុន ហ្វាមីង ខបស.",     DefaultValue="ក្រុមហ៊ុន ហ្វាមីង ខបស.",     IsSystemElement=true,  SortOrder=2  },
         new(){ ElementKey="COMPANY_ADDRESS",     ElementName="Company Address",             ElementType="CompanyInfo", Category="Company",  DocumentType="All",DataType="Text",    Value="No. 12, Street 271, Phnom Penh, Cambodia", DefaultValue="",       IsSystemElement=true,  SortOrder=3  },
         new(){ ElementKey="COMPANY_PHONE",       ElementName="Company Phone",               ElementType="CompanyInfo", Category="Company",  DocumentType="All",DataType="Text",    Value="+855 23 000 000",                 DefaultValue="",                                IsSystemElement=true,  SortOrder=4  },
-        new(){ ElementKey="COMPANY_EMAIL",       ElementName="Company Email",               ElementType="CompanyInfo", Category="Company",  DocumentType="All",DataType="Text",    Value="info@farmingcorp.com.kh",         DefaultValue="",                                IsSystemElement=false, SortOrder=5  },
-        new(){ ElementKey="COMPANY_WEBSITE",     ElementName="Company Website",             ElementType="CompanyInfo", Category="Company",  DocumentType="All",DataType="Text",    Value="www.farmingcorp.com.kh",          DefaultValue="",                                IsSystemElement=false, SortOrder=6  },
+        new(){ ElementKey="COMPANY_EMAIL",       ElementName="Company Email",               ElementType="CompanyInfo", Category="Company",  DocumentType="All",DataType="Text",    Value="info@Kamnttracorp.com.kh",         DefaultValue="",                                IsSystemElement=false, SortOrder=5  },
+        new(){ ElementKey="COMPANY_WEBSITE",     ElementName="Company Website",             ElementType="CompanyInfo", Category="Company",  DocumentType="All",DataType="Text",    Value="www.Kamnttracorp.com.kh",          DefaultValue="",                                IsSystemElement=false, SortOrder=6  },
         new(){ ElementKey="COMPANY_TIN",         ElementName="Tax Identification Number",   ElementType="CompanyInfo", Category="Company",  DocumentType="All",DataType="Text",    Value="K001-1234567",                    DefaultValue="",                                IsSystemElement=true,  SortOrder=7,  HelpText="VAT/TIN printed on invoices" },
         new(){ ElementKey="COMPANY_REG_NO",      ElementName="Company Registration No.",   ElementType="CompanyInfo", Category="Company",  DocumentType="All",DataType="Text",    Value="Co. 12345/2019",                  DefaultValue="",                                IsSystemElement=false, SortOrder=8  },
         new(){ ElementKey="COMPANY_BANK",        ElementName="Bank Account Details",        ElementType="CompanyInfo", Category="Company",  DocumentType="All",DataType="HTML",    Value="ABA Bank | Acc: 123-456-789 | USD",DefaultValue="",                               IsSystemElement=false, SortOrder=9,  HelpText="Shown on invoices and POs" },

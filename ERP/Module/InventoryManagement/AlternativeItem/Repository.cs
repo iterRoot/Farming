@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.InventoryManagement.AlternativeItem;
+namespace KamnttraApi.Modules.InventoryManagement.AlternativeItem;
 
 public interface IAlternativeItemRepository : IRepository<AlternativeItem> { }
 

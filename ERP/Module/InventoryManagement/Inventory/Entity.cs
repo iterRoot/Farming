@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
-using FarmingApi.Modules.Inventory.ItemsMaster;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Inventory.ItemsMaster;
 
-namespace FarmingApi.Modules.Sale.Inventory;
+namespace KamnttraApi.Modules.Sale.Inventory;
 
 public class Inventory : AuditableEntity
 {

@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.InventoryManagement.BinLocation;
+namespace KamnttraApi.Modules.InventoryManagement.BinLocation;
 
 // ═══════════════════════════════════════════════════════════════════
 // BIN LOCATION  (KBIN)

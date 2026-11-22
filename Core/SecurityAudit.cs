@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Security.Claims;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // SECURITY EVENT LOG

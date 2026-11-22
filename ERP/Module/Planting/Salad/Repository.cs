@@ -1,6 +1,6 @@
-// using FarmingApi.Core;
+// using KamnttraApi.Core;
 
-// namespace FarmingApi.Modules.Salad;
+// namespace KamnttraApi.Modules.Salad;
 
 // public interface ISaladRepository : IRepository<Salad>
 // {

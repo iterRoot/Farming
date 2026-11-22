@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
 // Model.cs
 // ═══════════════════════════════════════════════════════════════
-namespace FarmingApi.Modules.Inventory.ItemGroup;
+namespace KamnttraApi.Modules.Inventory.ItemGroup;
 
 public class ItemGroupResponse
 {

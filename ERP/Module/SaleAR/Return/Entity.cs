@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
-using FarmingApi.Modules.Inventory.ItemsMaster;
-using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Inventory.ItemsMaster;
+using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
-namespace FarmingApi.Modules.SaleAR.Return;   // ✅ not "Return" — reserved keyword
+namespace KamnttraApi.Modules.SaleAR.Return;   // ✅ not "Return" — reserved keyword
 
 // ══════════════════════════════════════════════════════════════════════════════
 // HEADER
@@ -41,7 +41,7 @@ public class ReturnLine : AuditableEntity
 
     // Batch / serial numbers entered for this line — used when the document posts stock; not stored on the line.
     [System.ComponentModel.DataAnnotations.Schema.NotMapped]
-    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
+    public List<KamnttraApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
 
     public int         ReturnId { get; set; }   // ✅ FK matches class name
     public Return Return   { get; set; } = null!;

@@ -1,6 +1,6 @@
-namespace FarmingApi.Modules.PurchaseAP.APCreditNote;
+namespace KamnttraApi.Modules.PurchaseAP.APCreditNote;
 
-public class APCreditNoteRequest : FarmingApi.Core.IHasBuyer
+public class APCreditNoteRequest : KamnttraApi.Core.IHasBuyer
 {
     public string?   BuyerCode   { get; set; }
     public string    DocNum      { get; set; } = "";

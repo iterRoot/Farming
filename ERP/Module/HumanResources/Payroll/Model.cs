@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.HumanResources.Payroll;
+namespace KamnttraApi.Modules.HumanResources.Payroll;
 
 public class PayrollResponse
 {

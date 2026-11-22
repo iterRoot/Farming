@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.CRM.Activity;
+namespace KamnttraApi.Modules.CRM.Activity;
 
 public class ActivityMapper : Profile
 {

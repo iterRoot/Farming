@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Financials.Budget;
+namespace KamnttraApi.Modules.Financials.Budget;
 
 public class BudgetMapper : Profile
 {

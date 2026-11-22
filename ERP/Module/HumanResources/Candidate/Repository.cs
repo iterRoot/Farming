@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.HumanResources.Candidate;
+namespace KamnttraApi.Modules.HumanResources.Candidate;
 
 public interface ICandidateRepository : IRepository<Candidate> { }
 

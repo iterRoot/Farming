@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using Je = FarmingApi.Modules.Financials.JournalEntry.JournalEntry;
-using JeLineEntity = FarmingApi.Modules.Financials.JournalEntry.JournalEntryLine;
-using JeNumber = FarmingApi.Modules.Financials.JournalEntry.JournalEntryNumberService;
-using Coa = FarmingApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
-using Gld = FarmingApi.Modules.Financials.GLAccountDetermination.GLAccountDetermination;
+using KamnttraApi.Core;
+using Je = KamnttraApi.Modules.Financials.JournalEntry.JournalEntry;
+using JeLineEntity = KamnttraApi.Modules.Financials.JournalEntry.JournalEntryLine;
+using JeNumber = KamnttraApi.Modules.Financials.JournalEntry.JournalEntryNumberService;
+using Coa = KamnttraApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
+using Gld = KamnttraApi.Modules.Financials.GLAccountDetermination.GLAccountDetermination;
 
-namespace FarmingApi.Modules.Financials.PeriodEndClosing;
+namespace KamnttraApi.Modules.Financials.PeriodEndClosing;
 
 // ═══════════════════════════════════════════════════════════════════
 // PERIOD-END / YEAR-END CLOSING  (route: /PeriodEndClosing)

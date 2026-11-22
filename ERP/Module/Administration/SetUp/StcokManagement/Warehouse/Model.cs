@@ -1,4 +1,4 @@
-// namespace FarmingApi.Modules.Financials.BankReconciliation;
+// namespace KamnttraApi.Modules.Financials.BankReconciliation;
 
 // // ═══════════════════════════════════════════════════════════════════
 // // RESPONSE

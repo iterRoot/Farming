@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Inventory.GoodsIssue;
+namespace KamnttraApi.Modules.Inventory.GoodsIssue;
 
 // ── LIST RESPONSE ─────────────────────────────────────────────
 public class GoodsIssueListResponse
@@ -50,7 +50,7 @@ public class GoodsIssueInsertRequest
 public class GoodsIssueLineRequest
 {
     /// <summary>Batch / serial numbers for this line — required when the item is managed by them.</summary>
-    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
+    public List<KamnttraApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
 
     public int     ItemId   { get; set; }
     public string? ItemCode { get; set; }

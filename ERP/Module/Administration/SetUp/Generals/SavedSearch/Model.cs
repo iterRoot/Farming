@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.SetUp.Generals.SavedSearch;
+namespace KamnttraApi.Modules.Administration.SetUp.Generals.SavedSearch;
 
 public class SearchFieldOption
 {

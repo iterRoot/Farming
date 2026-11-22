@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.PurchaseAP.APInvoice;
+namespace KamnttraApi.Modules.PurchaseAP.APInvoice;
 
 public interface IAPInvoiceRepository : IRepository<APInvoice>
 {

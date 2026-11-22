@@ -2,11 +2,11 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-using FarmingApi;
+using KamnttraApi;
 
-namespace FarmingApi.Modules.Administration.SetUp.UserGroup;
+namespace KamnttraApi.Modules.Administration.SetUp.UserGroup;
 public class UserGroupController : MyController
 
 {

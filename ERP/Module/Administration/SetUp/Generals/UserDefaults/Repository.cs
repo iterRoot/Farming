@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.UserDefaults;
+namespace KamnttraApi.Modules.Administration.UserDefaults;
 
 public interface IUserDefaultRepository : IRepository<UserDefault> { }
 

@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Inventory.BarCode;
+namespace KamnttraApi.Modules.Inventory.BarCode;
 
 // ═══════════════════════════════════════════════════════════════════
 // RESPONSE

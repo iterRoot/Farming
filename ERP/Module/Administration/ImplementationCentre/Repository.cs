@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.ImplementationCentre;
+namespace KamnttraApi.Modules.Administration.ImplementationCentre;
 
 public interface IImplementationTaskRepository : IRepository<ImplementationTask> { }
 public class ImplementationTaskRepository : Repository<ImplementationTask>, IImplementationTaskRepository

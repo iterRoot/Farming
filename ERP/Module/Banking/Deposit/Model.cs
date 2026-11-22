@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Banking.Deposit;
+namespace KamnttraApi.Modules.Banking.Deposit;
 
 public class DepositCandidateResponse
 {

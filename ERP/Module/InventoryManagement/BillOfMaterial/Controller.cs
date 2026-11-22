@@ -1,12 +1,12 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using ItemEntity = FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster;
-using WarehouseEntity = FarmingApi.Modules.Sale.Warehouse.Warehouse;
-using ProdOrder = FarmingApi.Modules.InventoryManagement.ProductionOrder.ProductionOrder;
+using KamnttraApi.Core;
+using ItemEntity = KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster;
+using WarehouseEntity = KamnttraApi.Modules.Sale.Warehouse.Warehouse;
+using ProdOrder = KamnttraApi.Modules.InventoryManagement.ProductionOrder.ProductionOrder;
 
-namespace FarmingApi.Modules.InventoryManagement.BillOfMaterial;
+namespace KamnttraApi.Modules.InventoryManagement.BillOfMaterial;
 
 // ═══════════════════════════════════════════════════════════════════
 // BILL OF MATERIAL  (route: /BillOfMaterial)

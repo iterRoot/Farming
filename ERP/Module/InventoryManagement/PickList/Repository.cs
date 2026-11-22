@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.InventoryManagement.PickList;
+namespace KamnttraApi.Modules.InventoryManagement.PickList;
 
 public interface IPickListRepository : IRepository<PickList> { }
 

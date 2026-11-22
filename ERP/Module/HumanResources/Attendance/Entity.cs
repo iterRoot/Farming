@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.HumanResources.Attendance;
+namespace KamnttraApi.Modules.HumanResources.Attendance;
 
 // ═══════════════════════════════════════════════════════════════
 // ATTENDANCE  (KATT)

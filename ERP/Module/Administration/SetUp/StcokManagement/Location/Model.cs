@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
 // Model.cs
 // ═══════════════════════════════════════════════════════════════
-namespace FarmingApi.Modules.Inventory.Locations;
+namespace KamnttraApi.Modules.Inventory.Locations;
 
 public class LocationResponse
 {

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FarmingApi.Modules.Administration.AddressFormats;
+namespace KamnttraApi.Modules.Administration.AddressFormats;
 
 [ApiController]
 [Route("[controller]")]

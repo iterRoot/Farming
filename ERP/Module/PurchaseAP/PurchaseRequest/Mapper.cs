@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.PurchaseAP.PurchaseRequest;
+namespace KamnttraApi.Modules.PurchaseAP.PurchaseRequest;
 
 public class PurchaseRequestMapper : Profile
 {

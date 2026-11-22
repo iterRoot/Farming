@@ -1,6 +1,6 @@
-using FarmingApi.Modules.Financials.FinancialReportTemplates;
+using KamnttraApi.Modules.Financials.FinancialReportTemplates;
 
-namespace FarmingApi.Modules.Financials.FinancialReports;
+namespace KamnttraApi.Modules.Financials.FinancialReports;
 
 public class RunLine
 {

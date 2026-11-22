@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using UserEntity = FarmingApi.Modules.Administration.SetUp.User.User;
+using KamnttraApi.Core;
+using UserEntity = KamnttraApi.Modules.Administration.SetUp.User.User;
 
-namespace FarmingApi.Modules.Administration.SetUp.ProcessChecklistTemplate;
+namespace KamnttraApi.Modules.Administration.SetUp.ProcessChecklistTemplate;
 
 // ═══════════════════════════════════════════════════════════════════
 // PROCESS CHECKLISTS  (route: /ChecklistTemplate)

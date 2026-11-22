@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.PurchaseAP.LandingCost;
+namespace KamnttraApi.Modules.PurchaseAP.LandingCost;
 
 public static class LandedCostTypes
 {

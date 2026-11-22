@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.InventoryManagement.BinLocation;
+namespace KamnttraApi.Modules.InventoryManagement.BinLocation;
 
 public class BinLocationMapper : Profile
 {

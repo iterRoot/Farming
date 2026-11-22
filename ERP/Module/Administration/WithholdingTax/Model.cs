@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.WithholdingTax;
+namespace KamnttraApi.Modules.Administration.WithholdingTax;
 
 public class WithholdingTaxCodeDto
 {

@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Financials.FinancialReportTemplates;
+namespace KamnttraApi.Modules.Financials.FinancialReportTemplates;
 
 public class FinancialReportTemplateRowResponse
 {

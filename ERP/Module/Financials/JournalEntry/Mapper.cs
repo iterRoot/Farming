@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Financials.JournalEntry;
+namespace KamnttraApi.Modules.Financials.JournalEntry;
 
 public class JournalEntryMapper : Profile
 {

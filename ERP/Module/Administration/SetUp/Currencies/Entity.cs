@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.SetUp.Currencies;
+namespace KamnttraApi.Modules.Administration.SetUp.Currencies;
 
 // ══════════════════════════════════════════════════════════════════
 // CURRENCIES — SETUP  (SAP B1: Administration → Setup → Financials → Currencies)

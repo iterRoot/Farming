@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.PostingPeriods;
+namespace KamnttraApi.Modules.Administration.PostingPeriods;
 
 // ═══════════════════════════════════════════════════════════════
 // POSTING PERIODS

@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.InventoryManagement.BinLocation;
+namespace KamnttraApi.Modules.InventoryManagement.BinLocation;
 
 public interface IBinLocationRepository : IRepository<BinLocation> { }
 

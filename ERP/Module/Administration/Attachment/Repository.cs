@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.Attachment;
+namespace KamnttraApi.Modules.Administration.Attachment;
 
 public interface IAttachmentRepository : IRepository<Attachment> { }
 

@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Administration.UserDefaults;
+namespace KamnttraApi.Modules.Administration.UserDefaults;
 
 public class UserDefaultMapper : Profile
 {

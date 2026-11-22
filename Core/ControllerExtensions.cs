@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 public static class ControllerExtensions
 {

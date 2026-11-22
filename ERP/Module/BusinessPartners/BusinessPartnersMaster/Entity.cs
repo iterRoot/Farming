@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster;
+namespace KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster;
 
 // ══════════════════════════════════════════════════════════════════
 // TABLE MAP

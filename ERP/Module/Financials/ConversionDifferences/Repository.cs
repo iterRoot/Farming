@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.ConversionDifferences;
+namespace KamnttraApi.Modules.Financials.ConversionDifferences;
 
 public interface IConversionDifferenceRepository : IRepository<ConversionDifference> { }
 

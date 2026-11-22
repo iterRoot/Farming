@@ -1,6 +1,6 @@
-namespace FarmingApi.Modules.SaleAR.ARCreditNote;
+namespace KamnttraApi.Modules.SaleAR.ARCreditNote;
 
-public class ARCreditNoteListRequest : FarmingApi.Core.IHasSalesEmployee  // ✅ renamed
+public class ARCreditNoteListRequest : KamnttraApi.Core.IHasSalesEmployee  // ✅ renamed
 {
     public string? SalesEmployeeCode { get; set; }
     public string    DocNum      { get; set; } = "";
@@ -21,7 +21,7 @@ public class ARCreditNoteListRequest : FarmingApi.Core.IHasSalesEmployee  // ✅
 public class ARCreditNoteLineRequest  // ✅ renamed
 {
     /// <summary>Batch / serial numbers for this line — required when the item is managed by them.</summary>
-    public List<FarmingApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
+    public List<KamnttraApi.Modules.InventoryManagement.InventoryJournal.BatchLine>? Batches { get; set; }
 
     public int     ItemId   { get; set; }
     /// <summary>Optional — falls back to the default warehouse when omitted.</summary>

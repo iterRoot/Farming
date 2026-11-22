@@ -2,9 +2,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using UserEntity = FarmingApi.Modules.Administration.SetUp.User.User;
+using UserEntity = KamnttraApi.Modules.Administration.SetUp.User.User;
 
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 // ═══════════════════════════════════════════════════════════════
 // Issues and configures validation for the app's bearer tokens.
@@ -39,8 +39,8 @@ public class JwtTokenService : IJwtTokenService
 
     public (string Token, DateTime ExpiresAt) IssueToken(UserEntity user, string? groupName)
     {
-        var issuer   = _config["Jwt:Issuer"]   ?? "FarmingApi";
-        var audience = _config["Jwt:Audience"] ?? "FarmingApiClients";
+        var issuer   = _config["Jwt:Issuer"]   ?? "KamnttraApi";
+        var audience = _config["Jwt:Audience"] ?? "KamnttraApiClients";
         var minutes  = ExpiryMinutes(_config);
         var expires  = DateTime.UtcNow.AddMinutes(minutes);
 
@@ -56,8 +56,8 @@ public class JwtTokenService : IJwtTokenService
 
     public (string Token, DateTime ExpiresAt) Refresh(ClaimsPrincipal principal)
     {
-        var issuer   = _config["Jwt:Issuer"]   ?? "FarmingApi";
-        var audience = _config["Jwt:Audience"] ?? "FarmingApiClients";
+        var issuer   = _config["Jwt:Issuer"]   ?? "KamnttraApi";
+        var audience = _config["Jwt:Audience"] ?? "KamnttraApiClients";
         var expires  = DateTime.UtcNow.AddMinutes(ExpiryMinutes(_config));
         var claims = new List<Claim>
         {

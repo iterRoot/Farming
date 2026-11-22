@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.SetUp.Currencies;
+namespace KamnttraApi.Modules.Administration.SetUp.Currencies;
 
 public interface ICurrenciesRepository : IRepository<Currencies>
 {

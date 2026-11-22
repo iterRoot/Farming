@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.SaleAR.ArDownPaymentRequest;
+namespace KamnttraApi.Modules.SaleAR.ArDownPaymentRequest;
 
 public class ArDownPaymentRequestMapper : Profile
 {

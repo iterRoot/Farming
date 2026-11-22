@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Financials.IternalReconciliations;
+namespace KamnttraApi.Modules.Financials.IternalReconciliations;
 
 public class BPReconciliationMapper : Profile
 {

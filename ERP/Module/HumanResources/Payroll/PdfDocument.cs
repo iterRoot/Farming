@@ -2,10 +2,10 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using System.Globalization;
-using CompanyEntity = FarmingApi.Modules.Company.Company;
-using EmployeeEntity = FarmingApi.Modules.HumanResources.EmployeeMaster.EmployeeMaster;
+using CompanyEntity = KamnttraApi.Modules.Company.Company;
+using EmployeeEntity = KamnttraApi.Modules.HumanResources.EmployeeMaster.EmployeeMaster;
 
-namespace FarmingApi.Modules.HumanResources.Payroll;
+namespace KamnttraApi.Modules.HumanResources.Payroll;
 
 // ═══════════════════════════════════════════════════════════════
 // PAYSLIP  (ប័ណ្ណបៀវត្សរ៍)

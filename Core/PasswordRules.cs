@@ -1,4 +1,4 @@
-namespace FarmingApi.Core;
+namespace KamnttraApi.Core;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // WHAT MAKES A NEW PASSWORD ACCEPTABLE
@@ -25,7 +25,7 @@ public static class PasswordRules
         "harley", "ranger", "hunter", "buster", "soccer", "hockey", "killer", "george", "computer", "internet", "windows", "google",
         "facebook", "summer", "winter", "spring", "autumn", "january", "february", "march", "april", "august", "september", "october",
         "november", "december", "cambodia", "phnompenh", "khmer", "kamnttra", "komnaktra", "manager", "default", "guest", "temp",
-        "company", "chicken", "cattle", "farming", "qazwsx", "1q2w3e", "pa55word", "p4ssw0rd",
+        "company", "chicken", "cattle", "Kamnttra", "qazwsx", "1q2w3e", "pa55word", "p4ssw0rd",
     };
 
     /// <summary>Null when the password is acceptable, otherwise a plain explanation.</summary>

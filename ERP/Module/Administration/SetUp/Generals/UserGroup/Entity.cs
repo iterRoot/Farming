@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.SetUp.UserGroup;
+namespace KamnttraApi.Modules.Administration.SetUp.UserGroup;
 
 public class UserGroup : AuditableEntity
 {

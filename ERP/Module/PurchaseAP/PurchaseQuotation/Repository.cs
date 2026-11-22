@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.PurchaseAP.PurchaseQuotation;
+namespace KamnttraApi.Modules.PurchaseAP.PurchaseQuotation;
 
 public interface IPurchaseQuotationRepository : IRepository<PurchaseQuotation>
 {

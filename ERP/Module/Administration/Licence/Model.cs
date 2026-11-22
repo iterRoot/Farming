@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.Licence;
+namespace KamnttraApi.Modules.Administration.Licence;
 
 public class LicensePackageResponse
 {

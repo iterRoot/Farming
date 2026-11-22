@@ -1,6 +1,6 @@
-namespace FarmingApi.Modules.PurchaseAP.GoodsReturnRequest;
+namespace KamnttraApi.Modules.PurchaseAP.GoodsReturnRequest;
 
-public class GoodsReturnRequestRequest : FarmingApi.Core.IHasBuyer
+public class GoodsReturnRequestRequest : KamnttraApi.Core.IHasBuyer
 {
     public string?   BuyerCode   { get; set; }
     public string    DocNum      { get; set; } = "";

@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Inventory.BarCode;
+namespace KamnttraApi.Modules.Inventory.BarCode;
 
 public class BarCodeMapper : Profile
 {

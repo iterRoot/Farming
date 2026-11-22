@@ -1,15 +1,15 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using FarmingApi.Modules.Financials.JournalEntry;
-using ItemEntity       = FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster;
-using InventoryBalance = FarmingApi.Modules.Sale.Inventory.Inventory;
-using StockLedger      = FarmingApi.Modules.InventoryManagement.InventoryJournal.InventoryJournal;
-using GLDetermination  = FarmingApi.Modules.Financials.GLAccountDetermination.GLAccountDetermination;
-using CoaEntity        = FarmingApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.Financials.JournalEntry;
+using ItemEntity       = KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster;
+using InventoryBalance = KamnttraApi.Modules.Sale.Inventory.Inventory;
+using StockLedger      = KamnttraApi.Modules.InventoryManagement.InventoryJournal.InventoryJournal;
+using GLDetermination  = KamnttraApi.Modules.Financials.GLAccountDetermination.GLAccountDetermination;
+using CoaEntity        = KamnttraApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
 
-namespace FarmingApi.Modules.InventoryManagement.StockRevaluation;
+namespace KamnttraApi.Modules.InventoryManagement.StockRevaluation;
 
 // ═══════════════════════════════════════════════════════════════════
 // STOCK REVALUATION  (route: /StockRevaluation, also /stockrevaluation)
@@ -38,10 +38,10 @@ public class StockRevaluationController : MyController
     private readonly IMapper                      _mapper;
     private readonly IStockRevaluationRepository  _repository;
     private readonly MyDbContext                  _db;
-    private readonly FarmingApi.Modules.InventoryManagement.InventoryJournal.IInventoryPostingService _posting;
+    private readonly KamnttraApi.Modules.InventoryManagement.InventoryJournal.IInventoryPostingService _posting;
 
     public StockRevaluationController(IStockRevaluationRepository repository, IMapper mapper, MyDbContext db,
-        FarmingApi.Modules.InventoryManagement.InventoryJournal.IInventoryPostingService posting)
+        KamnttraApi.Modules.InventoryManagement.InventoryJournal.IInventoryPostingService posting)
     {
         _mapper     = mapper;
         _repository = repository;
@@ -156,7 +156,7 @@ public class StockRevaluationController : MyController
                 return BadRequest($"New cost for {item.ItemCode} equals its current cost ({item.ItemCost:0.####}).");
 
             // FIFO stock is worth what its open layers cost, not qty × the next-issue cost.
-            var oldValue = FarmingApi.Modules.InventoryManagement.InventoryJournal.Valuation.Of(item.ValuationMethod) == FarmingApi.Modules.InventoryManagement.InventoryJournal.Valuation.Fifo
+            var oldValue = KamnttraApi.Modules.InventoryManagement.InventoryJournal.Valuation.Of(item.ValuationMethod) == KamnttraApi.Modules.InventoryManagement.InventoryJournal.Valuation.Fifo
                 ? _posting.OpenLayers(item.ItemCode).Sum(l => l.RemainingQty * l.UnitCost)
                 : item.ItemCost * qty;
             var variance = Math.Round(lr.NewCost * qty - oldValue, 2);
@@ -230,7 +230,7 @@ public class StockRevaluationController : MyController
             {
                 p.Item.ItemCost  = p.NewCost;
                 p.Item.UpdatedAt = DateTime.UtcNow;
-                if (FarmingApi.Modules.InventoryManagement.InventoryJournal.Valuation.Of(p.Item.ValuationMethod) == FarmingApi.Modules.InventoryManagement.InventoryJournal.Valuation.Fifo)
+                if (KamnttraApi.Modules.InventoryManagement.InventoryJournal.Valuation.Of(p.Item.ValuationMethod) == KamnttraApi.Modules.InventoryManagement.InventoryJournal.Valuation.Fifo)
                     _posting.RevalueLayers(p.Item.ItemCode, p.NewCost);
 
                 // One zero-quantity ledger row per warehouse holding stock, so the

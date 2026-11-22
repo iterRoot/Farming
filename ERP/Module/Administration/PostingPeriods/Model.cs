@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.PostingPeriods;
+namespace KamnttraApi.Modules.Administration.PostingPeriods;
 
 public class PostingPeriodDto
 {

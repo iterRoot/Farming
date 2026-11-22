@@ -3,7 +3,7 @@
 // ═══════════════════════════════════════════════════════════════
 using AutoMapper;
 
-namespace FarmingApi.Modules.Inventory.ItemGroup;
+namespace KamnttraApi.Modules.Inventory.ItemGroup;
 
 public class ItemGroupMapper : Profile
 {

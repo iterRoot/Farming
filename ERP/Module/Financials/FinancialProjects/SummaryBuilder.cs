@@ -1,10 +1,10 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
-using JournalEntryDoc  = FarmingApi.Modules.Financials.JournalEntry.JournalEntry;
-using BudgetLineDoc    = FarmingApi.Modules.Financials.Budget.BudgetLine;
-using CoaEntity        = FarmingApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
+using JournalEntryDoc  = KamnttraApi.Modules.Financials.JournalEntry.JournalEntry;
+using BudgetLineDoc    = KamnttraApi.Modules.Financials.Budget.BudgetLine;
+using CoaEntity        = KamnttraApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
 
-namespace FarmingApi.Modules.Financials.FinancialProjects;
+namespace KamnttraApi.Modules.Financials.FinancialProjects;
 
 // Budget vs actual for one financial project — shared by the project setup
 // screen and Project Management.

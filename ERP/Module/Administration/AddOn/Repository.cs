@@ -1,5 +1,5 @@
-// using FarmingApi.Core;
-// namespace FarmingApi.Modules.Administration.AddOn;
+// using KamnttraApi.Core;
+// namespace KamnttraApi.Modules.Administration.AddOn;
 //
 // public interface IIAddOnRepository : IRepository<AddOn>
 // {

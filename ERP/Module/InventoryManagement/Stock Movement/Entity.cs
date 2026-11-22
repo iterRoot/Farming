@@ -1,10 +1,10 @@
 // using Microsoft.EntityFrameworkCore;
 // using Microsoft.EntityFrameworkCore.Metadata.Builders;
-// using FarmingApi.Core;
+// using KamnttraApi.Core;
 // using System.ComponentModel.DataAnnotations.Schema;
-// using FarmingApi.Modules.Inventory.ItemsMaster;
+// using KamnttraApi.Modules.Inventory.ItemsMaster;
 
-// namespace FarmingApi.Modules.Sale.StockMovement;
+// namespace KamnttraApi.Modules.Sale.StockMovement;
 
 // public class StockMovement : AuditableEntity
 // {

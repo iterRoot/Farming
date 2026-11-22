@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.SaleAR.ARCreditNote;
+namespace KamnttraApi.Modules.SaleAR.ARCreditNote;
 
 public class ARCreditNoteMapper : Profile  // ✅ renamed
 {

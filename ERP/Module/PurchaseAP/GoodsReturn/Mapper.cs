@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.PurchaseAP.GoodsReturn;
+namespace KamnttraApi.Modules.PurchaseAP.GoodsReturn;
 
 public class GoodsReturnMapper : Profile
 {

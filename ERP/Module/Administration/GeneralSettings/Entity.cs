@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.GeneralSettings;
+namespace KamnttraApi.Modules.Administration.GeneralSettings;
 
 // Singleton settings record for the SAP-style "General Settings" screen.
 //

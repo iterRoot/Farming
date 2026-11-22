@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
 // Model.cs
 // ═══════════════════════════════════════════════════════════════
-namespace FarmingApi.Modules.Inventory.CycleCount;
+namespace KamnttraApi.Modules.Inventory.CycleCount;
 
 public class CycleCountResponse
 {

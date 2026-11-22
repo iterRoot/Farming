@@ -1,9 +1,9 @@
 // using Microsoft.EntityFrameworkCore;
 // using Microsoft.EntityFrameworkCore.Metadata.Builders;
-// using FarmingApi.Core;
+// using KamnttraApi.Core;
 
 
-// namespace FarmingApi.Modules.Trakuons;
+// namespace KamnttraApi.Modules.Trakuons;
 
 // public class Trakuons : AuditableEntity
 // {

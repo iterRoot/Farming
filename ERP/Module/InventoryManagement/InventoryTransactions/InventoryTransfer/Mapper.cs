@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Inventory.StockTransfer;
+namespace KamnttraApi.Modules.Inventory.StockTransfer;
 
 public class StockTransferMapper : Profile
 {

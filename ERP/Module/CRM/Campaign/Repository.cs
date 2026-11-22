@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.CRM.Campaign;
+namespace KamnttraApi.Modules.CRM.Campaign;
 
 public interface ICampaignRepository : IRepository<Campaign> { }
 

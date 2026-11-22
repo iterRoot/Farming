@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.PurchaseAP.GoodsReceiptPO;
+namespace KamnttraApi.Modules.PurchaseAP.GoodsReceiptPO;
 
 public interface IGoodsReceiptPORepository : IRepository<GoodsReceiptPO>
 {

@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.ChartOfAccounts;
+namespace KamnttraApi.Modules.Financials.ChartOfAccounts;
 
 public interface IChartOfAccountsRepository : IRepository<ChartOfAccounts>
 {

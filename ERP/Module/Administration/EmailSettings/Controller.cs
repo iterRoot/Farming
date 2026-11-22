@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.EmailSettings;
+namespace KamnttraApi.Modules.Administration.EmailSettings;
 
 // ═══════════════════════════════════════════════════════════════
 // EMAIL SETTINGS  (route: /EmailAccount)  — SMTP profiles

@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.BusinessPartners.BPProperties;
+namespace KamnttraApi.Modules.BusinessPartners.BPProperties;
 
 public interface IBPPropertyRepository : IRepository<BPProperty> { }
 

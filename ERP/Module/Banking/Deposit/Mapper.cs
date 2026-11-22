@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Banking.Deposit;
+namespace KamnttraApi.Modules.Banking.Deposit;
 
 public class DepositMapper : Profile
 {

@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Financials.PostingTemplate;
+namespace KamnttraApi.Modules.Financials.PostingTemplate;
 
 public class PostingTemplateLineRequest
 {

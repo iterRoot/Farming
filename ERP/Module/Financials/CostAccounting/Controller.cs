@@ -2,9 +2,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.CostAccounting;
+namespace KamnttraApi.Modules.Financials.CostAccounting;
 
 // ═══════════════════════════════════════════════════════════════════
 // COST CENTRE  (route: /CostCenter)
@@ -120,9 +120,9 @@ public class CostCenterController : MyController
             return BadRequest("Cannot delete a cost centre that still has child centres");
         var usedBy = _db.Set<DistributionRuleLine>().Count(l => l.CostCenterCode == cc.CostCenterCode);
         if (usedBy > 0) return BadRequest($"Cannot delete a cost centre that {usedBy} distribution rule line(s) split into");
-        var jl = _db.Set<FarmingApi.Modules.Financials.JournalEntry.JournalEntryLine>().Count(l => l.CostCenter == cc.CostCenterCode);
+        var jl = _db.Set<KamnttraApi.Modules.Financials.JournalEntry.JournalEntryLine>().Count(l => l.CostCenter == cc.CostCenterCode);
         if (jl > 0) return BadRequest($"Cannot delete a cost centre used on {jl} journal line(s). Mark it inactive instead");
-        var bl = _db.Set<FarmingApi.Modules.Financials.Budget.BudgetLine>().Count(l => l.CostCenter == cc.CostCenterCode);
+        var bl = _db.Set<KamnttraApi.Modules.Financials.Budget.BudgetLine>().Count(l => l.CostCenter == cc.CostCenterCode);
         if (bl > 0) return BadRequest($"Cannot delete a cost centre used on {bl} budget line(s). Mark it inactive instead");
 
         cc.DeletedAt = DateTime.UtcNow;

@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.AlertManagement;
+namespace KamnttraApi.Modules.Administration.AlertManagement;
 
 public class AlertResponse
 {

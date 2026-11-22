@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.SetUp.Currencies;
+namespace KamnttraApi.Modules.Administration.SetUp.Currencies;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // REQUEST (UI → API)

@@ -1,18 +1,18 @@
 
 using Microsoft.EntityFrameworkCore;
-using FarmingApi;
+using KamnttraApi;
 using AutoMapper;
-using FarmingApi.Core;
-using FarmingApi.Modules.SaleAR.ARInvoice;
-using FarmingApi.Modules.Financials.JournalEntry;
-using FarmingApi.Modules.Financials.GLAccountDetermination;
+using KamnttraApi.Core;
+using KamnttraApi.Modules.SaleAR.ARInvoice;
+using KamnttraApi.Modules.Financials.JournalEntry;
+using KamnttraApi.Modules.Financials.GLAccountDetermination;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using QuestPDF.Infrastructure;
 
-// using FarmingApi.Modules.Items;
+// using KamnttraApi.Modules.Items;
 QuestPDF.Settings.License = LicenseType.Community;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,15 +23,15 @@ builder.Services.AddControllers(options =>
     // already edits (KUAU) — see Core/SubjectAuthorizationFilter.cs. Runs
     // after authentication, so it only ever narrows what an already-logged-in
     // user can do.
-    options.Filters.Add<FarmingApi.Core.SubjectAuthorizationFilter>();
+    options.Filters.Add<KamnttraApi.Core.SubjectAuthorizationFilter>();
     // Wires the PostingPeriods status dropdown to actual enforcement — see
     // Core/PostingPeriodGuardFilter.cs. Runs after the auth filters above,
     // so it only ever narrows what an already-permitted user can post.
-    options.Filters.Add<FarmingApi.Core.PostingPeriodGuardFilter>();
-    options.Filters.Add<FarmingApi.Core.EmployeeTagFilter>();
-    options.Filters.Add<FarmingApi.Core.DocLinkFilter>();
-    options.Filters.Add<FarmingApi.Core.DocumentRuleFilter>();   // DocumentRuleException → 400 with its message
-    options.Filters.Add<FarmingApi.Modules.Administration.UserDefinedFields.UdfCleanupFilter>();
+    options.Filters.Add<KamnttraApi.Core.PostingPeriodGuardFilter>();
+    options.Filters.Add<KamnttraApi.Core.EmployeeTagFilter>();
+    options.Filters.Add<KamnttraApi.Core.DocLinkFilter>();
+    options.Filters.Add<KamnttraApi.Core.DocumentRuleFilter>();   // DocumentRuleException → 400 with its message
+    options.Filters.Add<KamnttraApi.Modules.Administration.UserDefinedFields.UdfCleanupFilter>();
 });
 // Deployed front-end origins (comma-separated), e.g. Cors__AllowedOrigins=https://kamnttra.vercel.app
 var allowedOrigins = (builder.Configuration["Cors:AllowedOrigins"] ?? "")
@@ -97,12 +97,12 @@ builder.Services.AddScoped<IJournalEntryRepository, JournalEntryRepository>();
 builder.Services.AddScoped<IGLAccountDeterminationRepository, GLAccountDeterminationRepository>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSingleton<FarmingApi.Core.SecurityAudit>();   // security event log + alerts (Core/SecurityAudit.cs)
-builder.Services.AddScoped<FarmingApi.Modules.Administration.Attachment.AttachmentStorage>();
-builder.Services.AddScoped<FarmingApi.Modules.Financials.GLAccountDetermination.GLAccountResolver>();
+builder.Services.AddSingleton<KamnttraApi.Core.SecurityAudit>();   // security event log + alerts (Core/SecurityAudit.cs)
+builder.Services.AddScoped<KamnttraApi.Modules.Administration.Attachment.AttachmentStorage>();
+builder.Services.AddScoped<KamnttraApi.Modules.Financials.GLAccountDetermination.GLAccountResolver>();
 builder.Services.AddHttpClient().ConfigureHttpClientDefaults(b => b.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { UseProxy = builder.Configuration.GetValue("ExchangeRates:UseProxy", true) }));
-builder.Services.AddScoped<FarmingApi.Modules.Financials.ExchangeRate.ExchangeRateFetcher>();
-builder.Services.AddHostedService<FarmingApi.Modules.Financials.ExchangeRate.ExchangeRateDailyJob>();
+builder.Services.AddScoped<KamnttraApi.Modules.Financials.ExchangeRate.ExchangeRateFetcher>();
+builder.Services.AddHostedService<KamnttraApi.Modules.Financials.ExchangeRate.ExchangeRateDailyJob>();
 builder.Services.AddInjection();
 builder.Services.AddDatabase();
 
@@ -112,8 +112,8 @@ builder.Services.AddDatabase();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        var jwtIssuer   = builder.Configuration["Jwt:Issuer"]   ?? "FarmingApi";
-        var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "FarmingApiClients";
+        var jwtIssuer   = builder.Configuration["Jwt:Issuer"]   ?? "KamnttraApi";
+        var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "KamnttraApiClients";
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer           = true,
@@ -131,7 +131,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             OnAuthenticationFailed = ctx =>
             {
-                ctx.HttpContext.RequestServices.GetRequiredService<FarmingApi.Core.SecurityAudit>()
+                ctx.HttpContext.RequestServices.GetRequiredService<KamnttraApi.Core.SecurityAudit>()
                     .TokenRejected($"{ctx.Exception.GetType().Name} on {ctx.Request.Method} {ctx.Request.Path}");
                 return Task.CompletedTask;
             },
@@ -139,9 +139,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             // must have been issued after their last sign-out / password change / lock / deactivation.
             OnTokenValidated = async ctx =>
             {
-                var db = ctx.HttpContext.RequestServices.GetRequiredService<FarmingApi.MyDbContext>();
+                var db = ctx.HttpContext.RequestServices.GetRequiredService<KamnttraApi.MyDbContext>();
                 var id = int.TryParse(ctx.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var i) ? i : 0;
-                var u = await db.Set<FarmingApi.Modules.Administration.SetUp.User.User>().AsNoTracking()
+                var u = await db.Set<KamnttraApi.Modules.Administration.SetUp.User.User>().AsNoTracking()
                     .Where(x => x.Id == id)
                     .Select(x => new { x.ActiveStatus, x.IsLocked, x.LockedUntil, x.SessionsValidFrom })
                     .FirstOrDefaultAsync();
@@ -155,13 +155,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 // The session as a whole has a ceiling, however active the user is.
                 var startedMs = long.TryParse(ctx.Principal?.FindFirst("authms")?.Value, out var st) ? st : 0;
                 if (why == null && startedMs > 0 &&
-                    DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - startedMs > TimeSpan.FromHours(FarmingApi.Core.JwtTokenService.MaxSessionHours(ctx.HttpContext.RequestServices.GetRequiredService<IConfiguration>())).TotalMilliseconds)
+                    DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - startedMs > TimeSpan.FromHours(KamnttraApi.Core.JwtTokenService.MaxSessionHours(ctx.HttpContext.RequestServices.GetRequiredService<IConfiguration>())).TotalMilliseconds)
                     why = "session reached its maximum length";
                 if (why == null && ctx.Principal != null && issuedMs > 0 &&
-                    DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - issuedMs > TimeSpan.FromMinutes(FarmingApi.Core.JwtTokenService.RefreshAfterMinutes(ctx.HttpContext.RequestServices.GetRequiredService<IConfiguration>())).TotalMilliseconds)
+                    DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - issuedMs > TimeSpan.FromMinutes(KamnttraApi.Core.JwtTokenService.RefreshAfterMinutes(ctx.HttpContext.RequestServices.GetRequiredService<IConfiguration>())).TotalMilliseconds)
                 {
                     // Active user, token getting old: hand back a fresh one (same session) in a response header.
-                    var (fresh, freshExpires) = ctx.HttpContext.RequestServices.GetRequiredService<FarmingApi.Core.IJwtTokenService>().Refresh(ctx.Principal);
+                    var (fresh, freshExpires) = ctx.HttpContext.RequestServices.GetRequiredService<KamnttraApi.Core.IJwtTokenService>().Refresh(ctx.Principal);
                     ctx.Response.OnStarting(() =>
                     {
                         ctx.Response.Headers["X-Access-Token"] = fresh;
@@ -171,7 +171,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 }
                 if (why != null)
                 {
-                    ctx.HttpContext.RequestServices.GetRequiredService<FarmingApi.Core.SecurityAudit>()
+                    ctx.HttpContext.RequestServices.GetRequiredService<KamnttraApi.Core.SecurityAudit>()
                         .TokenRejected($"{why} ({ctx.Request.Method} {ctx.Request.Path})");
                     ctx.Fail(why);
                 }
@@ -181,7 +181,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 // Monthly payroll run. Creates DRAFT payslips only; never touches a Paid one.
 // Schedule + on/off live under "Payroll:AutoRun" in appsettings.json.
-builder.Services.AddHostedService<FarmingApi.Modules.HumanResources.Payroll.PayrollAutoRunWorker>();
+builder.Services.AddHostedService<KamnttraApi.Modules.HumanResources.Payroll.PayrollAutoRunWorker>();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Admin.Numbering", p =>
@@ -207,7 +207,7 @@ builder.Services.AddRateLimiter(o =>
     o.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
     o.OnRejected = (ctx, _) =>
     {
-        ctx.HttpContext.RequestServices.GetRequiredService<FarmingApi.Core.SecurityAudit>()
+        ctx.HttpContext.RequestServices.GetRequiredService<KamnttraApi.Core.SecurityAudit>()
             .RateLimited($"{ctx.HttpContext.Request.Method} {ctx.HttpContext.Request.Path}");
         if (ctx.Lease.TryGetMetadata(System.Threading.RateLimiting.MetadataName.RetryAfter, out var retry))
             ctx.HttpContext.Response.Headers.RetryAfter = ((int)retry.TotalSeconds).ToString();
@@ -234,7 +234,7 @@ if (builder.Configuration.GetValue<bool>("RunMigrationsOnStartup"))
 
 // Guarantee a "Manager" login always exists — idempotent, safe to run
 // on every startup (fresh database, restore, or accidental deletion).
-FarmingApi.Core.DefaultUserSeeder.Seed(app.Services);
+KamnttraApi.Core.DefaultUserSeeder.Seed(app.Services);
 
 if (app.Environment.IsDevelopment())
 {
@@ -247,7 +247,7 @@ if (app.Environment.IsDevelopment())
     // Note: It's 'UseSwaggerUI' (capital UI) and 'SwaggerEndpoint'
     app.UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("/openapi/v1.json", "Farming API v1");
+        options.SwaggerEndpoint("/openapi/v1.json", "Kamnttra API v1");
         options.RoutePrefix = "swagger"; // Serves the UI at localhost:5181/swagger
         options.EnablePersistAuthorization(); // keep the pasted token across page reloads
     });

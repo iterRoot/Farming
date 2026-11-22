@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Branch;
+namespace KamnttraApi.Modules.Branch;
 
 public class BranchMapper : Profile
 {

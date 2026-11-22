@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Banking.PaymentRun;
+namespace KamnttraApi.Modules.Banking.PaymentRun;
 
 public class PaymentRunCriteria
 {

@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.SaleAR.ARCreditNote;
+namespace KamnttraApi.Modules.SaleAR.ARCreditNote;
 
 public interface IARCreditNoteRepository : IRepository<ARCreditNote>
 {

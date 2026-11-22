@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Administration.Security;
+namespace KamnttraApi.Modules.Administration.Security;
 
 public class PasswordPolicyDto
 {

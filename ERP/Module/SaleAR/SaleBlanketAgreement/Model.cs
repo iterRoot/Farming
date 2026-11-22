@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.SaleAR.SaleBlanketAgreement;
+namespace KamnttraApi.Modules.SaleAR.SaleBlanketAgreement;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // REQUEST (UI → API)  — YOUR EXISTING CODE (unchanged)

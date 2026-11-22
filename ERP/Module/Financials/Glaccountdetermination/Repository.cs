@@ -1,9 +1,9 @@
 // ═══════════════════════════════════════════════════════════════
 // FILE: Repository.cs
 // ═══════════════════════════════════════════════════════════════
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Financials.GLAccountDetermination;
+namespace KamnttraApi.Modules.Financials.GLAccountDetermination;
 
 public interface IGLAccountDeterminationRepository
     : IRepository<GLAccountDetermination> { }

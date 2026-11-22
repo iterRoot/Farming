@@ -1,6 +1,6 @@
-// using FarmingApi.Core;
+// using KamnttraApi.Core;
 
-// namespace FarmingApi.Modules.Trakuons;
+// namespace KamnttraApi.Modules.Trakuons;
 
 // public interface ITrakuonsRepository : IRepository<Trakuons>
 // {

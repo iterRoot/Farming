@@ -1,4 +1,4 @@
-namespace FarmingApi.Modules.Banking.BankStatement;
+namespace KamnttraApi.Modules.Banking.BankStatement;
 
 // ═══════════════════════════════════════════════════════════════════
 // RESPONSE

@@ -3,7 +3,7 @@
 // ═══════════════════════════════════════════════════════════════
 using AutoMapper;
 
-namespace FarmingApi.Modules.Inventory.ShippingTypes;
+namespace KamnttraApi.Modules.Inventory.ShippingTypes;
 
 public class ShippingTypeMapper : Profile
 {

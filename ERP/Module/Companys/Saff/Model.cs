@@ -1,6 +1,6 @@
-// using FarmingApi.Modules.Position;
+// using KamnttraApi.Modules.Position;
 
-namespace FarmingApi.Modules.Company.Staff;
+namespace KamnttraApi.Modules.Company.Staff;
 
 public class StaffListResponse
 {

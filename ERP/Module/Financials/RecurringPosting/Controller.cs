@@ -2,14 +2,14 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi;
-using FarmingApi.Core;
-using JE = FarmingApi.Modules.Financials.JournalEntry.JournalEntry;
-using JELine = FarmingApi.Modules.Financials.JournalEntry.JournalEntryLine;
-using COA = FarmingApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
-using JENumbers = FarmingApi.Modules.Financials.JournalEntry.JournalEntryNumberService;
+using KamnttraApi;
+using KamnttraApi.Core;
+using JE = KamnttraApi.Modules.Financials.JournalEntry.JournalEntry;
+using JELine = KamnttraApi.Modules.Financials.JournalEntry.JournalEntryLine;
+using COA = KamnttraApi.Modules.Financials.ChartOfAccounts.ChartOfAccounts;
+using JENumbers = KamnttraApi.Modules.Financials.JournalEntry.JournalEntryNumberService;
 
-namespace FarmingApi.Modules.Financials.RecurringPosting;
+namespace KamnttraApi.Modules.Financials.RecurringPosting;
 
 // ══════════════════════════════════════════════════════════════════
 // RECURRING POSTINGS  (route: /RecurringPosting)

@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Sales.SaleEmployeeBuyer;
+namespace KamnttraApi.Modules.Sales.SaleEmployeeBuyer;
 
 public class SaleEmployeeBuyerMapper : Profile
 {

@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Banking.IncomingPayment;
+namespace KamnttraApi.Modules.Banking.IncomingPayment;
 
 public class IncomingPaymentMapper : Profile
 {

@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Branch;
+namespace KamnttraApi.Modules.Branch;
 
 public interface IBranchRepository : IRepository<Branch>
 {

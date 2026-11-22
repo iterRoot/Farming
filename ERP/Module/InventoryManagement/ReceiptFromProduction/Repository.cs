@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.InventoryManagement.ReceiptFromProduction;
+namespace KamnttraApi.Modules.InventoryManagement.ReceiptFromProduction;
 
 public interface IReceiptFromProductionRepository : IRepository<ReceiptFromProduction> { }
 

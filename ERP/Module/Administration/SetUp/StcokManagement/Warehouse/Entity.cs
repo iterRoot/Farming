@@ -1,8 +1,8 @@
 // using Microsoft.EntityFrameworkCore;
 // using Microsoft.EntityFrameworkCore.Metadata.Builders;
-// using FarmingApi.Core;
+// using KamnttraApi.Core;
 
-// namespace FarmingApi.Modules.Financials.BankReconciliation;
+// namespace KamnttraApi.Modules.Financials.BankReconciliation;
 
 // // ═══════════════════════════════════════════════════════════════════
 // // BANK RECONCILIATION HEADER (KBNR)

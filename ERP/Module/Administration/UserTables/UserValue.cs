@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace FarmingApi.Modules.Administration.UserTables;
+namespace KamnttraApi.Modules.Administration.UserTables;
 
 // One rulebook for a user-defined value, shared by user-defined fields (values on documents
 // and master data) and user-defined tables (values in their rows).

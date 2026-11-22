@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Banking.CreditCard;
+namespace KamnttraApi.Modules.Banking.CreditCard;
 
 // ═══════════════════════════════════════════════════════════════════
 // CREDIT CARD MANAGEMENT

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using BPEntity = FarmingApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
+using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
-namespace FarmingApi.Modules.Administration.Attachment;
+namespace KamnttraApi.Modules.Administration.Attachment;
 
 // Where files go, what's allowed, and who can own one. Everything a stored
 // name or path can be is decided here — request text never reaches storage.

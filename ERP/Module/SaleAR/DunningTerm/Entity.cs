@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.SaleAR.DunningTerm;
+namespace KamnttraApi.Modules.SaleAR.DunningTerm;
 
 // ═══════════════════════════════════════════════════════════════
 // DUNNING TERM  (KDNT / DNT1)  ·  SAP B1 equivalent: OCDN/CDN1

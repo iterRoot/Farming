@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Administration.ElectronicCertificates;
+namespace KamnttraApi.Modules.Administration.ElectronicCertificates;
 
 public class ElectronicCertificateMapper : Profile
 {

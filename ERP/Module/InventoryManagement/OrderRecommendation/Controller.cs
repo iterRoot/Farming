@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FarmingApi.Core;
-using ItemEntity      = FarmingApi.Modules.Inventory.ItemsMaster.ItemsMaster;
-using InventoryBal    = FarmingApi.Modules.Sale.Inventory.Inventory;
-using SaleOrderEntity = FarmingApi.Modules.SaleAR.SaleOrder.SaleOrder;
-using Bom             = FarmingApi.Modules.InventoryManagement.BillOfMaterial.BillOfMaterial;
+using KamnttraApi.Core;
+using ItemEntity      = KamnttraApi.Modules.Inventory.ItemsMaster.ItemsMaster;
+using InventoryBal    = KamnttraApi.Modules.Sale.Inventory.Inventory;
+using SaleOrderEntity = KamnttraApi.Modules.SaleAR.SaleOrder.SaleOrder;
+using Bom             = KamnttraApi.Modules.InventoryManagement.BillOfMaterial.BillOfMaterial;
 
-namespace FarmingApi.Modules.InventoryManagement.OrderRecommendation;
+namespace KamnttraApi.Modules.InventoryManagement.OrderRecommendation;
 
 // ═══════════════════════════════════════════════════════════════════
 // ORDER RECOMMENDATION  (route: /OrderRecommendation)

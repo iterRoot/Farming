@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Company;
+namespace KamnttraApi.Modules.Company;
 
 // SAP B1 style "Company Details" — General (local + foreign address blocks),
 // Accounting Data and Basic Initialisation.

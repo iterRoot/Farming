@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.CRM.KnowledgeBase;
+namespace KamnttraApi.Modules.CRM.KnowledgeBase;
 
 public class KnowledgeBaseArticleMapper : Profile
 {

@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.PurchaseAP.LandingCost;
+namespace KamnttraApi.Modules.PurchaseAP.LandingCost;
 
 public class LandedCostMapper : Profile
 {

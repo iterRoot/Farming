@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.InventoryManagement.StockRevaluation;
+namespace KamnttraApi.Modules.InventoryManagement.StockRevaluation;
 
 public interface IStockRevaluationRepository : IRepository<StockRevaluation> { }
 

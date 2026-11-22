@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.PurchaseAP.APDownPaymentRequest;
+namespace KamnttraApi.Modules.PurchaseAP.APDownPaymentRequest;
 
 public interface IAPDownPaymentInvoiceRepository : IRepository<APDownPaymentRequest>
 {

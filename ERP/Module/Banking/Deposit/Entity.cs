@@ -1,8 +1,8 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmingApi.Modules.Banking.Deposit;
+namespace KamnttraApi.Modules.Banking.Deposit;
 
 // ═══════════════════════════════════════════════════════════════════
 // DEPOSIT  (KDEP / DEP1)

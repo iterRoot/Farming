@@ -1,6 +1,6 @@
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Administration.MenuAlias;
+namespace KamnttraApi.Modules.Administration.MenuAlias;
 
 public interface IMenuAliasRepository : IRepository<MenuAliasEntry> { }
 public class MenuAliasRepository : Repository<MenuAliasEntry>, IMenuAliasRepository

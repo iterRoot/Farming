@@ -2,7 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FarmingApi.Modules.Administration.PredefinedText;
+namespace KamnttraApi.Modules.Administration.PredefinedText;
 
 [ApiController]
 [Route("[controller]")]
@@ -206,7 +206,7 @@ public class PredefinedTextController : ControllerBase
         new(){ Code="TXT-FORCE",      Name="Force Majeure Clause",      Category="Legal",     Module="All",          Language="en", SortOrder=31, TextContent="Neither party shall be liable for failure to perform obligations due to circumstances beyond reasonable control, including natural disasters, government actions, or other force majeure events.", Tags="force majeure,legal,clause" },
         new(){ Code="TXT-DISPUTE",    Name="Dispute Resolution",        Category="Legal",     Module="All",          Language="en", SortOrder=32, TextContent="Any disputes arising from this agreement shall be resolved through mutual negotiation. If unresolved, the matter shall be referred to the competent courts of the Kingdom of Cambodia.", Tags="dispute,legal,Cambodia" },
 
-        // Farming-specific
+        // Kamnttra-specific
         new(){ Code="TXT-HARVEST",    Name="Harvest Season Note",       Category="General",   Module="All",          Language="en", SortOrder=40, TextContent="Please note that prices may fluctuate during the main harvest season (November–February). Orders placed during peak season are subject to availability.", Tags="harvest,season,price" },
         new(){ Code="TXT-ORGANIC",    Name="Organic Certification",     Category="General",   Module="ARInvoice",    Language="en", SortOrder=41, TextContent="All products marked as organic have been certified under applicable standards. Certificates are available upon request.", Tags="organic,certificate,certified" },
         new(){ Code="TXT-STORAGE",    Name="Storage Instructions",      Category="General",   Module="GoodsReceipt", Language="en", SortOrder=42, TextContent="Store in a cool, dry place away from direct sunlight. Maintain temperature between 15°C and 25°C. Keep away from moisture.", Tags="storage,temperature,conditions" },

@@ -3,9 +3,9 @@
 // ═══════════════════════════════════════════════════════════════
 // Repository.cs
 // ═══════════════════════════════════════════════════════════════
-using FarmingApi.Core;
+using KamnttraApi.Core;
 
-namespace FarmingApi.Modules.Inventory.Weight;
+namespace KamnttraApi.Modules.Inventory.Weight;
 
 public interface IWeightUomRepository : IRepository<WeightUom> { }
 

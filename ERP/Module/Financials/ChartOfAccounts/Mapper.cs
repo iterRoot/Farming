@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace FarmingApi.Modules.Financials.ChartOfAccounts;
+namespace KamnttraApi.Modules.Financials.ChartOfAccounts;
 
 public class ChartOfAccountsMapper : Profile
 {
