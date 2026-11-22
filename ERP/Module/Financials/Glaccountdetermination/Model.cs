@@ -13,6 +13,7 @@ public class GLAccountDeterminationResponse
     public string? PurchaseDiscount   { get; set; }
     public string? PurchaseTax        { get; set; }
     public string? VendorDeposit      { get; set; }
+    public string? WithholdingTaxPayable { get; set; }
     public string? InventoryAccount   { get; set; }
     public string? CostOfGoodsSold    { get; set; }
     public string? InventoryOffset    { get; set; }
@@ -42,6 +43,7 @@ public class GLAccountDeterminationRequest
     public string? PurchaseDiscount   { get; set; }
     public string? PurchaseTax        { get; set; }
     public string? VendorDeposit      { get; set; }
+    public string? WithholdingTaxPayable { get; set; }
     public string? InventoryAccount   { get; set; }
     public string? CostOfGoodsSold    { get; set; }
     public string? InventoryOffset    { get; set; }
