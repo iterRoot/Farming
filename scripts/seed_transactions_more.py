@@ -5,7 +5,7 @@ recurring postings, bank statements, reconciliations, depreciation, payment runs
 
 Run seed_transactions.py first (it creates the chart of accounts, items, partners and sample stock), then:
     SEED_PASSWORD=<Manager password> python3 seed_transactions_more.py [stage ...]
-API address: SEED_BASE (default http://localhost:5181).
+API address: SEED_BASE (default http://localhost:5182).
 """
 import os, sys, datetime
 import seed_transactions as st

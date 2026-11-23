@@ -44,7 +44,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReact",
         policy =>
         {
-            // Vite picks the next free port when 5173 is already taken
+            // Vite picks the next free port when 5179 is already taken
             // (5174, 5175, ...) — accept any localhost/127.0.0.1 port
             // instead of hardcoding one, so a stray dev server doesn't
             // get silently CORS-blocked.
@@ -248,7 +248,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/openapi/v1.json", "Kamnttra API v1");
-        options.RoutePrefix = "swagger"; // Serves the UI at localhost:5181/swagger
+        options.RoutePrefix = "swagger"; // Serves the UI at localhost:5182/swagger
         options.EnablePersistAuthorization(); // keep the pasted token across page reloads
     });
 }

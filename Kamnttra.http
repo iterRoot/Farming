@@ -1,4 +1,4 @@
-@Kamnttra_HostAddress = http://localhost:5181
+@Kamnttra_HostAddress = http://localhost:5182
 
 GET {{Kamnttra_HostAddress}}/weatherforecast/
 Accept: application/json

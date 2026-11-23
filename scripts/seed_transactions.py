@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Seed sample master data and one transaction per document controller by
-calling the running API (default http://localhost:5181) as the dev Manager
+calling the running API (default http://localhost:5182) as the dev Manager
 login. Master data is idempotent; the transaction stages are NOT - running
 them twice creates a second set of documents.
 
@@ -10,7 +10,7 @@ Stages: master, purchasing, stock, sales, finance, misc
 """
 import datetime, json, os, sys, urllib.request, urllib.error
 
-BASE = "http://localhost:5181"
+BASE = "http://localhost:5182"
 USER = "Manager"
 # The Manager password is no longer in the source (see DefaultUserSeeder): pass the one you set,
 # e.g.  SEED_PASSWORD='...' python scripts/seed_transactions.py

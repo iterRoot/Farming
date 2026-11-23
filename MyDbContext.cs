@@ -129,7 +129,7 @@ namespace KamnttraApi
         public static void AddDatabase(this IServiceCollection service)
         {
             var dbConnection = Environment.GetEnvironmentVariable("DB_CONNECTION");
-            dbConnection ??= "Host=localhost;Port=5432;Database=Kamnttra;Username=postgres;Password=mypassword;";
+            dbConnection ??= "Host=localhost;Port=5432;Database=SBOKAndD;Username=postgres;Password=mypassword;";
             service.AddDbContext<MyDbContext>(options =>
             {
                 options.UseNpgsql(dbConnection);
