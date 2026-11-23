@@ -26,9 +26,8 @@ public class ARInvoiceJournalService : IARInvoiceJournalService
         // ── 1. Load KGLD row ──────────────────────────────────────
         var gl = _db.Set<GLAccountDetermination>().FirstOrDefault()
             ?? throw new InvalidOperationException(
-                "GL Account Determination (KGLD) not configured. " +
-                "Go to Administration → GL Account Determination and add " +
-                "ARControlAccount, RevenueAccount, TaxOutputAccount.");
+                "G/L Account Determination (KGLD) is not set up. " +
+                "On the G/L Account Determination screen, Sale-AR tab, set Accounts Receivable, Sales Revenue and Output Tax / VAT.");
 
         // ── 2. Resolve account codes (BP override → KGLD new field → KGLD legacy field) ─
         // The GL Account Determination screen only exposes the legacy fields
@@ -40,10 +39,10 @@ public class ARInvoiceJournalService : IARInvoiceJournalService
 
         if (string.IsNullOrWhiteSpace(arCode))
             throw new InvalidOperationException(
-                "AR Control Account not set — configure it in KGLD or on the Business Partner.");
+                "Accounts Receivable account not set (KGLD). Set it on the G/L Account Determination screen (Sale-AR tab), or on the customer's Accounting tab under Control Accounts.");
         if (string.IsNullOrWhiteSpace(revenueCode))
             throw new InvalidOperationException(
-                "Revenue Account not set in GL Account Determination (KGLD).");
+                "Sales Revenue account not set (KGLD). Set it on the G/L Account Determination screen (Sale-AR tab).");
 
         // ── 3. Amounts ────────────────────────────────────────────
         var grandTotal = invoice.Total;
@@ -128,7 +127,7 @@ public class ARInvoiceJournalService : IARInvoiceJournalService
         {
             if (string.IsNullOrWhiteSpace(taxCode))
                 throw new InvalidOperationException(
-                    "Invoice has tax but Tax Output Account is not set in KGLD.");
+                    "Invoice has tax but the Output Tax / VAT account is not set (KGLD). Set it on the G/L Account Determination screen (Sale-AR tab).");
 
             je.Lines.Add(new JournalEntryLine
             {

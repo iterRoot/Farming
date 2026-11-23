@@ -210,7 +210,7 @@ public class ARInvoiceController : ControllerBase
                 error   = "AR Invoice creation failed — transaction rolled back",
                 details = ex.Message,
                 hint    = ex.Message.Contains("KGLD")
-                    ? "Go to Administration → GL Account Determination and configure ARControlAccount, RevenueAccount, TaxOutputAccount."
+                    ? "On the G/L Account Determination screen, Sale-AR tab, set Accounts Receivable, Sales Revenue and Output Tax / VAT."
                     : null,
             });
         }
@@ -267,7 +267,7 @@ public class ARInvoiceController : ControllerBase
                 error   = "AR Invoice posting failed — transaction rolled back",
                 details = ex.Message,
                 hint    = ex.Message.Contains("KGLD")
-                    ? "Go to Administration → GL Account Determination and configure ARControlAccount, RevenueAccount, TaxOutputAccount."
+                    ? "On the G/L Account Determination screen, Sale-AR tab, set Accounts Receivable, Sales Revenue and Output Tax / VAT."
                     : null,
             });
         }
@@ -315,7 +315,7 @@ public class ARInvoiceController : ControllerBase
                 error   = "AR Invoice posting failed — transaction rolled back",
                 details = ex.Message,
                 hint    = ex.Message.Contains("KGLD")
-                    ? "Go to Administration → GL Account Determination and configure ARControlAccount, RevenueAccount, TaxOutputAccount."
+                    ? "On the G/L Account Determination screen, Sale-AR tab, set Accounts Receivable, Sales Revenue and Output Tax / VAT."
                     : null,
             });
         }
