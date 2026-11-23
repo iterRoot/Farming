@@ -238,7 +238,12 @@ public class APInvoiceController : ControllerBase
         je.BaseDocEntry = inv.Id;
 
         var stockDate = inv.PostingDate ?? DateTime.UtcNow;
-        foreach (var line in inv.Items.Where(l => !IsBasedOnGoodsReceipt(l)))
+        // Services and non-stock items are an expense, not stock (the journal posts them to
+        // Purchase Expense), so only stock items not already received move into stock here.
+        var codes = inv.Items.Select(l => l.ItemCode).Distinct().ToList();
+        var stocked = await _db.Set<ItemsMaster>().Where(i => codes.Contains(i.ItemCode)).ToListAsync();
+        foreach (var line in inv.Items.Where(l => !IsBasedOnGoodsReceipt(l)
+                     && PurchaseLineAccounts.IsStocked(stocked.FirstOrDefault(i => i.ItemCode == l.ItemCode))))
         {
             await _inventoryPosting.PostInAsync(
                 line.ItemCode!, line.WhsCode!, line.Quantity, line.Price,
@@ -287,8 +292,7 @@ public class APInvoiceController : ControllerBase
     /// again — otherwise the same goods enter inventory twice.
     /// </summary>
     private static bool IsBasedOnGoodsReceipt(APInvoiceLine line) =>
-        line.BaseEntry.HasValue
-        && string.Equals(line.BaseType, "GoodsReceiptPO", StringComparison.OrdinalIgnoreCase);
+        APInvoiceJournalService.IsBasedOnGoodsReceipt(line);
 
     // ── GET /APInvoice/{id}/Pdf ─────────────────────────────────────────
     [HttpGet("{id:int}/Pdf")]

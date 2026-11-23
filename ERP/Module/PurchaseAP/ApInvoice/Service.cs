@@ -30,15 +30,11 @@ public class APInvoiceJournalService : IAPInvoiceJournalService
                      "AccountsPayable, PurchaseExpense, PurchaseTax.");
 
         var payableCode = _resolver.ForBpGroup("AccountsPayable", vendor.GroupCode, gl.AccountsPayable);
-        var expenseCode = gl.PurchaseExpense;
         var taxCode     = gl.PurchaseTax;
 
         if (string.IsNullOrWhiteSpace(payableCode))
             throw new InvalidOperationException(
                 "Accounts Payable account not set in GL Account Determination (KGLD).");
-        if (string.IsNullOrWhiteSpace(expenseCode))
-            throw new InvalidOperationException(
-                "Purchase Expense account not set in GL Account Determination (KGLD).");
 
         var grandTotal = invoice.Total;
         var taxAmount  = invoice.TaxAmount;
@@ -77,25 +73,15 @@ public class APInvoiceJournalService : IAPInvoiceJournalService
         int lineNum = 1;
 
         // An AP invoice records a purchase and the payable owed to the vendor.
-        // Dr Purchase Expense — net of tax
-        je.Lines.Add(new JournalEntryLine
-        {
-            LineNum     = lineNum++,
-            AccountCode = expenseCode,
-            AccountName = "Purchase Expense",
-            CardCode    = null,
-            CardName    = null,
-            Debit       = netExpense,
-            Credit      = 0,
-            DebitLC     = netExpense,
-            CreditLC    = 0,
-            DebitFC     = 0,
-            CreditFC    = 0,
-            LineMemo    = $"Purchase — {invoice.DocNum}",
-            TaxAmount   = 0,
-            CreatedAt   = DateTime.UtcNow,
-            InActive    = false,
-        });
+        // Dr, net of tax, per line: GR/IR clearing for lines already received on a Goods
+        // Receipt PO, Inventory for stock items this invoice brings into stock, and
+        // Purchase Expense for services and non-stock items.
+        var accounts = new PurchaseLineAccounts(_db, _resolver);
+        var items    = accounts.Items(invoice.Items.Select(l => l.ItemCode));
+        var lines    = invoice.Items.Select(l => new PurchaseLine(l.ItemCode, l.Quantity, l.Price, l.Total,
+            PurchaseLineAccounts.RoleOf(l.ItemCode != null && items.TryGetValue(l.ItemCode, out var it) ? it : null,
+                IsBasedOnGoodsReceipt(l), PurchaseLineRole.Inventory))).ToList();
+        PurchaseLineAccounts.AddLines(je, accounts.Split(gl, netExpense, lines), debit: true, ref lineNum, invoice.DocNum);
 
         // Dr Input VAT — recoverable tax, only when there is tax
         if (taxAmount > 0)
@@ -144,10 +130,6 @@ public class APInvoiceJournalService : IAPInvoiceJournalService
             InActive    = false,
         });
 
-        // Expense follows each line's item group when an override is set.
-        GLAccountResolver.SplitLine(je, l => l.AccountName == "Purchase Expense",
-            _resolver.SplitByItemGroup("PurchaseExpense", expenseCode, netExpense, invoice.Items.Select(l => (l.ItemCode, l.Total))));
-
         var totalDr = je.Lines.Sum(l => l.Debit);
         var totalCr = je.Lines.Sum(l => l.Credit);
         if (Math.Abs(totalDr - totalCr) > 0.01m)
@@ -163,4 +145,9 @@ public class APInvoiceJournalService : IAPInvoiceJournalService
         _db.Set<JournalEntry>().Add(je);
         return je;
     }
+
+    /// <summary>True when the line was copied from a Goods Receipt PO, whose receipt already moved the stock.</summary>
+    public static bool IsBasedOnGoodsReceipt(APInvoiceLine line) =>
+        line.BaseEntry.HasValue
+        && string.Equals(line.BaseType, "GoodsReceiptPO", StringComparison.OrdinalIgnoreCase);
 }

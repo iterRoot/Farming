@@ -12,10 +12,12 @@ public interface IAPReserveInvoiceJournalService
 public class APReserveInvoiceJournalService : IAPReserveInvoiceJournalService
 {
     private readonly MyDbContext _db;
+    private readonly GLAccountResolver _resolver;
 
-    public APReserveInvoiceJournalService(MyDbContext db)
+    public APReserveInvoiceJournalService(MyDbContext db, GLAccountResolver resolver)
     {
         _db = db;
+        _resolver = resolver;
     }
 
     public JournalEntry CreateJournalEntry(APReserveInvoice reserveInvoice, BPEntity vendor)
@@ -27,15 +29,11 @@ public class APReserveInvoiceJournalService : IAPReserveInvoiceJournalService
                      "AccountsPayable, PurchaseExpense, PurchaseTax.");
 
         var payableCode = gl.AccountsPayable;
-        var expenseCode = gl.PurchaseExpense;
         var taxCode     = gl.PurchaseTax;
 
         if (string.IsNullOrWhiteSpace(payableCode))
             throw new InvalidOperationException(
                 "Accounts Payable account not set in GL Account Determination (KGLD).");
-        if (string.IsNullOrWhiteSpace(expenseCode))
-            throw new InvalidOperationException(
-                "Purchase Expense account not set in GL Account Determination (KGLD).");
 
         var grandTotal = reserveInvoice.Total;
         var taxAmount  = reserveInvoice.TaxAmount;
@@ -73,26 +71,16 @@ public class APReserveInvoiceJournalService : IAPReserveInvoiceJournalService
 
         int lineNum = 1;
 
-        // An AP reserve invoice records a purchase and the payable owed to the vendor.
-        // Dr Purchase Expense — net of tax
-        je.Lines.Add(new JournalEntryLine
-        {
-            LineNum     = lineNum++,
-            AccountCode = expenseCode,
-            AccountName = "Purchase Expense",
-            CardCode    = null,
-            CardName    = null,
-            Debit       = netExpense,
-            Credit      = 0,
-            DebitLC     = netExpense,
-            CreditLC    = 0,
-            DebitFC     = 0,
-            CreditFC    = 0,
-            LineMemo    = $"Purchase — {reserveInvoice.DocNum}",
-            TaxAmount   = 0,
-            CreatedAt   = DateTime.UtcNow,
-            InActive    = false,
-        });
+        // An AP reserve invoice records a purchase and the payable owed to the vendor before the
+        // goods arrive. Dr, net of tax, per line: GR/IR clearing for stock items (the Goods
+        // Receipt PO that delivers them credits clearing), Purchase Expense for services and
+        // non-stock items.
+        var accounts = new PurchaseLineAccounts(_db, _resolver);
+        var items    = accounts.Items(reserveInvoice.Items.Select(l => l.ItemCode));
+        var lines    = reserveInvoice.Items.Select(l => new PurchaseLine(l.ItemCode, l.Quantity, l.Price, l.Total,
+            PurchaseLineAccounts.RoleOf(l.ItemCode != null && items.TryGetValue(l.ItemCode, out var it) ? it : null,
+                false, PurchaseLineRole.Clearing))).ToList();
+        PurchaseLineAccounts.AddLines(je, accounts.Split(gl, netExpense, lines), debit: true, ref lineNum, reserveInvoice.DocNum);
 
         // Dr Input VAT — recoverable tax, only when there is tax
         if (taxAmount > 0)

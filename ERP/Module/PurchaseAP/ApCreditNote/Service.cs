@@ -12,10 +12,12 @@ public interface IAPCreditNoteJournalService
 public class APCreditNoteJournalService : IAPCreditNoteJournalService
 {
     private readonly MyDbContext _db;
+    private readonly GLAccountResolver _resolver;
 
-    public APCreditNoteJournalService(MyDbContext db)
+    public APCreditNoteJournalService(MyDbContext db, GLAccountResolver resolver)
     {
         _db = db;
+        _resolver = resolver;
     }
 
     public JournalEntry CreateJournalEntry(APCreditNote creditNote, BPEntity vendor)
@@ -27,15 +29,11 @@ public class APCreditNoteJournalService : IAPCreditNoteJournalService
                      "AccountsPayable, PurchaseExpense, PurchaseTax.");
 
         var payableCode = gl.AccountsPayable;
-        var expenseCode = gl.PurchaseExpense;
         var taxCode     = gl.PurchaseTax;
 
         if (string.IsNullOrWhiteSpace(payableCode))
             throw new InvalidOperationException(
                 "Accounts Payable account not set in GL Account Determination (KGLD).");
-        if (string.IsNullOrWhiteSpace(expenseCode))
-            throw new InvalidOperationException(
-                "Purchase Expense account not set in GL Account Determination (KGLD).");
 
         var grandTotal = creditNote.Total;
         var taxAmount  = creditNote.TaxAmount;
@@ -94,25 +92,16 @@ public class APCreditNoteJournalService : IAPCreditNoteJournalService
             InActive    = false,
         });
 
-        // Cr Purchase Expense — net of tax
-        je.Lines.Add(new JournalEntryLine
-        {
-            LineNum     = lineNum++,
-            AccountCode = expenseCode,
-            AccountName = "Purchase Expense",
-            CardCode    = null,
-            CardName    = null,
-            Debit       = 0,
-            Credit      = netExpense,
-            DebitLC     = 0,
-            CreditLC    = netExpense,
-            DebitFC     = 0,
-            CreditFC    = 0,
-            LineMemo    = $"Purchase return — {creditNote.DocNum}",
-            TaxAmount   = 0,
-            CreatedAt   = DateTime.UtcNow,
-            InActive    = false,
-        });
+        // Cr, net of tax, per line: GR/IR clearing for lines copied from a Goods Return (the
+        // return already took the stock out and debited clearing); Purchase Expense otherwise,
+        // since a credit note moves no stock.
+        var accounts = new PurchaseLineAccounts(_db, _resolver);
+        var items    = accounts.Items(creditNote.Items.Select(l => l.ItemCode));
+        var lines    = creditNote.Items.Select(l => new PurchaseLine(l.ItemCode, l.Quantity, l.Price, l.Total,
+            PurchaseLineAccounts.RoleOf(l.ItemCode != null && items.TryGetValue(l.ItemCode, out var it) ? it : null,
+                l.BaseEntry.HasValue && string.Equals(l.BaseType, "GoodsReturn", StringComparison.OrdinalIgnoreCase),
+                PurchaseLineRole.Expense))).ToList();
+        PurchaseLineAccounts.AddLines(je, accounts.Split(gl, netExpense, lines), debit: false, ref lineNum, creditNote.DocNum);
 
         // Cr Input VAT — reverse the tax, only when there is tax
         if (taxAmount > 0)
