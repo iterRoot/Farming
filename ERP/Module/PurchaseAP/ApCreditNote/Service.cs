@@ -95,12 +95,16 @@ public class APCreditNoteJournalService : IAPCreditNoteJournalService
         // Cr, net of tax, per line: GR/IR clearing for lines copied from a Goods Return (the
         // return already took the stock out and debited clearing); Purchase Expense otherwise,
         // since a credit note moves no stock.
+        // Returned lines clear GR/IR at the return's value; a different credit price goes to Price Difference.
+        static bool FromReturn(APCreditNoteLine l) =>
+            l.BaseEntry.HasValue && string.Equals(l.BaseType, "GoodsReturn", StringComparison.OrdinalIgnoreCase);
         var accounts = new PurchaseLineAccounts(_db, _resolver);
         var items    = accounts.Items(creditNote.Items.Select(l => l.ItemCode));
+        var returned = accounts.ReturnUnitValues(creditNote.Items.Where(FromReturn).Select(l => l.BaseEntry));
         var lines    = creditNote.Items.Select(l => new PurchaseLine(l.ItemCode, l.Quantity, l.Price, l.Total,
             PurchaseLineAccounts.RoleOf(l.ItemCode != null && items.TryGetValue(l.ItemCode, out var it) ? it : null,
-                l.BaseEntry.HasValue && string.Equals(l.BaseType, "GoodsReturn", StringComparison.OrdinalIgnoreCase),
-                PurchaseLineRole.Expense))).ToList();
+                FromReturn(l), PurchaseLineRole.Expense),
+            FromReturn(l) ? PurchaseLineAccounts.ClearingValueOf(returned, l.BaseEntry, l.ItemCode, l.Quantity) : null)).ToList();
         PurchaseLineAccounts.AddLines(je, accounts.Split(gl, netExpense, lines), debit: false, ref lineNum, creditNote.DocNum);
 
         // Cr Input VAT — reverse the tax, only when there is tax

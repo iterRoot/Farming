@@ -2,6 +2,8 @@ using KamnttraApi.Modules.Financials.GLAccountDetermination;
 using KamnttraApi.Modules.Financials.JournalEntry;
 using KamnttraApi.Modules.Inventory.ItemsMaster;
 using KamnttraApi.Modules.InventoryManagement.InventoryJournal;
+using GRPOEntity   = KamnttraApi.Modules.PurchaseAP.GoodsReceiptPO.GoodsReceiptPO;
+using ReturnEntity = KamnttraApi.Modules.PurchaseAP.GoodsReturn.GoodsReturn;
 
 namespace KamnttraApi.Modules.PurchaseAP;
 
@@ -29,8 +31,12 @@ public enum PurchaseLineRole
     Expense,
 }
 
-/// <summary>One document line as the posting sees it.</summary>
-public record PurchaseLine(string? ItemCode, decimal Quantity, decimal Price, decimal Total, PurchaseLineRole StockRole);
+/// <summary>
+/// One document line as the posting sees it. <c>ClearingValue</c> is, for a line copied from a
+/// goods document, what that document put on GR/IR for this line's quantity; null when unknown.
+/// </summary>
+public record PurchaseLine(string? ItemCode, decimal Quantity, decimal Price, decimal Total, PurchaseLineRole StockRole,
+    decimal? ClearingValue = null);
 
 /// <summary>One amount to post. <c>Name</c> is the journal line's AccountName.</summary>
 public record PurchaseAmount(string Name, string Account, decimal Amount);
@@ -57,6 +63,58 @@ public class PurchaseLineAccounts
     /// </summary>
     public static bool IsStocked(ItemsMaster? item) =>
         item != null && item.StockItem && !string.Equals(item.ItemType, "Service", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// What each Goods Receipt PO put on GR/IR per unit, by (receipt id, item code): its net value
+    /// (total less tax, so the header discount is in it) shared across its lines by quantity × price,
+    /// as its journal entry does.
+    /// </summary>
+    public Dictionary<(int Doc, string Item), decimal> ReceiptUnitValues(IEnumerable<int?> receiptIds)
+    {
+        var ids = receiptIds.Where(i => i.HasValue).Select(i => i!.Value).Distinct().ToList();
+        if (ids.Count == 0) return new();
+        return _db.Set<GRPOEntity>().Where(r => ids.Contains(r.Id))
+            .Select(r => new { r.Id, Value = r.Total - r.TaxAmount,
+                               Lines = r.Lines.Select(l => new { l.ItemCode, l.Quantity, Weight = l.Quantity * l.Price }).ToList() })
+            .AsEnumerable()
+            .SelectMany(r => UnitValues(r.Id, r.Value, r.Lines.Select(l => (l.ItemCode, l.Quantity, l.Weight))))
+            .ToDictionary(x => x.Key, x => x.Value);
+    }
+
+    /// <summary>
+    /// What each Goods Return took off GR/IR per unit, by (return id, item code): its total shared
+    /// across its lines by line total, as its journal entry does.
+    /// </summary>
+    public Dictionary<(int Doc, string Item), decimal> ReturnUnitValues(IEnumerable<int?> returnIds)
+    {
+        var ids = returnIds.Where(i => i.HasValue).Select(i => i!.Value).Distinct().ToList();
+        if (ids.Count == 0) return new();
+        return _db.Set<ReturnEntity>().Where(r => ids.Contains(r.Id))
+            .Select(r => new { r.Id, Value = r.Total,
+                               Lines = r.Items.Select(l => new { l.ItemCode, l.Quantity, Weight = l.Total > 0 ? l.Total : l.Quantity * l.Price }).ToList() })
+            .AsEnumerable()
+            .SelectMany(r => UnitValues(r.Id, r.Value, r.Lines.Select(l => (l.ItemCode, l.Quantity, l.Weight))))
+            .ToDictionary(x => x.Key, x => x.Value);
+    }
+
+    /// <summary>
+    /// The GR/IR value for <paramref name="quantity"/> of an item copied from goods document
+    /// <paramref name="doc"/>, or null when that document or item isn't found.
+    /// </summary>
+    public static decimal? ClearingValueOf(Dictionary<(int Doc, string Item), decimal> unitValues, int? doc, string? itemCode, decimal quantity) =>
+        doc.HasValue && itemCode != null && unitValues.TryGetValue((doc.Value, itemCode), out var unit)
+            ? Math.Round(unit * quantity, 2)
+            : null;
+
+    private static IEnumerable<KeyValuePair<(int Doc, string Item), decimal>> UnitValues(
+        int doc, decimal value, IEnumerable<(string? Item, decimal Quantity, decimal Weight)> lines)
+    {
+        var list = lines.Where(l => l.Item != null && l.Quantity > 0).ToList();
+        var sum = list.Sum(l => l.Weight);
+        if (sum <= 0) yield break;
+        foreach (var g in list.GroupBy(l => l.Item!))
+            yield return new((doc, g.Key), value * g.Sum(l => l.Weight) / sum / g.Sum(l => l.Quantity));
+    }
 
     public Dictionary<string, ItemsMaster> Items(IEnumerable<string?> itemCodes)
     {
@@ -97,7 +155,29 @@ public class PurchaseLineAccounts
         if (shares.TryGetValue(PurchaseLineRole.Clearing, out var clearing) && clearing != 0)
         {
             var code = Need(gl.InventoryOffset, "Inventory Offset (GR/IR clearing)", "lines copied from a goods receipt or return, or stock items on a reserve invoice");
-            result.Add(new PurchaseAmount(ClearingName, code, clearing));
+
+            // GR/IR is cleared at what the goods document put on it, not at this document's price:
+            // otherwise a price change between receipt and invoice is left sitting in GR/IR. The gap
+            // goes to Price Difference. (Not Inventory: the stock ledger isn't revalued here, so
+            // putting it on Inventory would part the G/L from the stock value.)
+            var clearingLines = weighted.Where(x => x.Line.StockRole == PurchaseLineRole.Clearing).ToList();
+            var valued        = clearingLines.Where(x => x.Line.ClearingValue.HasValue).ToList();
+            var difference    = 0m;
+            if (valued.Count > 0)
+            {
+                var onThisDocument = valued.Count == clearingLines.Count
+                    ? clearing
+                    : Math.Round(clearing * valued.Sum(x => x.Weight) / clearingLines.Sum(x => x.Weight), 2);
+                difference = onThisDocument - valued.Sum(x => x.Line.ClearingValue!.Value);
+            }
+
+            if (clearing - difference != 0)
+                result.Add(new PurchaseAmount(ClearingName, code, clearing - difference));
+            if (difference != 0)
+            {
+                var diff = Need(gl.PriceDifference, "Price Difference", "lines priced differently from their goods receipt or return");
+                result.Add(new PurchaseAmount(PriceDiffName, diff, difference));
+            }
         }
 
         if (shares.TryGetValue(PurchaseLineRole.Inventory, out var inventory) && inventory != 0)

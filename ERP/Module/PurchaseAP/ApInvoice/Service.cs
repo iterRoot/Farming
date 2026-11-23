@@ -76,11 +76,14 @@ public class APInvoiceJournalService : IAPInvoiceJournalService
         // Dr, net of tax, per line: GR/IR clearing for lines already received on a Goods
         // Receipt PO, Inventory for stock items this invoice brings into stock, and
         // Purchase Expense for services and non-stock items.
+        // Received lines clear GR/IR at the receipt's value; a different invoice price goes to Price Difference.
         var accounts = new PurchaseLineAccounts(_db, _resolver);
         var items    = accounts.Items(invoice.Items.Select(l => l.ItemCode));
+        var received = accounts.ReceiptUnitValues(invoice.Items.Where(IsBasedOnGoodsReceipt).Select(l => l.BaseEntry));
         var lines    = invoice.Items.Select(l => new PurchaseLine(l.ItemCode, l.Quantity, l.Price, l.Total,
             PurchaseLineAccounts.RoleOf(l.ItemCode != null && items.TryGetValue(l.ItemCode, out var it) ? it : null,
-                IsBasedOnGoodsReceipt(l), PurchaseLineRole.Inventory))).ToList();
+                IsBasedOnGoodsReceipt(l), PurchaseLineRole.Inventory),
+            IsBasedOnGoodsReceipt(l) ? PurchaseLineAccounts.ClearingValueOf(received, l.BaseEntry, l.ItemCode, l.Quantity) : null)).ToList();
         PurchaseLineAccounts.AddLines(je, accounts.Split(gl, netExpense, lines), debit: true, ref lineNum, invoice.DocNum);
 
         // Dr Input VAT — recoverable tax, only when there is tax
