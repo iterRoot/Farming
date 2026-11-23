@@ -54,7 +54,11 @@ namespace KamnttraApi
             DocumentTotalsGuard.Apply(this);      // refuses invoices whose total doesn't match their lines — Core/DocumentTotalsGuard.cs
             DocumentLedgerGuard.Apply(this);      // voids a deleted document's journal entry first — Core/DocumentLedgerGuard.cs
             GLBalanceSync.ApplyPendingDeltas(this);
-            try { return base.SaveChanges(acceptAllChangesOnSuccess); }
+            try
+            {
+                ColumnLengthGuard.Apply(this);    // text longer than its column → 400, not a database error — Core/ColumnLengthGuard.cs
+                return base.SaveChanges(acceptAllChangesOnSuccess);
+            }
             finally { ReleaseJournalLock(); }
         }
 
@@ -63,7 +67,11 @@ namespace KamnttraApi
             DocumentTotalsGuard.Apply(this);
             DocumentLedgerGuard.Apply(this);
             GLBalanceSync.ApplyPendingDeltas(this);
-            try { return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken); }
+            try
+            {
+                ColumnLengthGuard.Apply(this);
+                return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            }
             finally { ReleaseJournalLock(); }
         }
 
