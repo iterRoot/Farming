@@ -4,6 +4,7 @@ using KamnttraApi.Modules.Inventory.ItemsMaster;
 using KamnttraApi.Modules.InventoryManagement.InventoryJournal;
 using GRPOEntity   = KamnttraApi.Modules.PurchaseAP.GoodsReceiptPO.GoodsReceiptPO;
 using ReturnEntity = KamnttraApi.Modules.PurchaseAP.GoodsReturn.GoodsReturn;
+using ReserveEntity = KamnttraApi.Modules.PurchaseAP.APReserveInvoice.APReserveInvoice;
 
 namespace KamnttraApi.Modules.PurchaseAP;
 
@@ -96,6 +97,26 @@ public class PurchaseLineAccounts
             .SelectMany(r => UnitValues(r.Id, r.Value, r.Lines.Select(l => (l.ItemCode, l.Quantity, l.Weight))))
             .ToDictionary(x => x.Key, x => x.Value);
     }
+
+    /// <summary>
+    /// What each AP Reserve Invoice put on GR/IR per unit, by (reserve invoice id, item code): its net
+    /// value (total less tax) shared across its lines by line total, as its journal entry does.
+    /// </summary>
+    public Dictionary<(int Doc, string Item), decimal> ReserveUnitValues(IEnumerable<int?> reserveIds)
+    {
+        var ids = reserveIds.Where(i => i.HasValue).Select(i => i!.Value).Distinct().ToList();
+        if (ids.Count == 0) return new();
+        return _db.Set<ReserveEntity>().Where(r => ids.Contains(r.Id))
+            .Select(r => new { r.Id, Value = r.Total - r.TaxAmount,
+                               Lines = r.Items.Select(l => new { l.ItemCode, l.Quantity, Weight = l.Total != 0 ? l.Total : l.Quantity * l.Price }).ToList() })
+            .AsEnumerable()
+            .SelectMany(r => UnitValues(r.Id, r.Value, r.Lines.Select(l => (l.ItemCode, l.Quantity, l.Weight))))
+            .ToDictionary(x => x.Key, x => x.Value);
+    }
+
+    /// <summary>True when the line was copied from an AP Reserve Invoice (BaseType "APReserveInvoice").</summary>
+    public static bool IsFromReserveInvoice(int? baseEntry, string? baseType) =>
+        baseEntry.HasValue && string.Equals(baseType, "APReserveInvoice", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// The GR/IR value for <paramref name="quantity"/> of an item copied from goods document

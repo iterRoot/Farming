@@ -1,5 +1,6 @@
 using KamnttraApi.Modules.Financials.GLAccountDetermination;
 using KamnttraApi.Modules.Financials.JournalEntry;
+using GRPOLine = KamnttraApi.Modules.PurchaseAP.GoodsReceiptPO.GoodsReceiptPOLine;
 using BPEntity = KamnttraApi.Modules.BusinessPartners.BusinessPartnersMaster.BusinessPartnersMaster;
 
 namespace KamnttraApi.Modules.PurchaseAP.APInvoice;
@@ -76,6 +77,8 @@ public class APInvoiceJournalService : IAPInvoiceJournalService
         // Dr, net of tax, per line: GR/IR clearing for lines already received on a Goods
         // Receipt PO, Inventory for stock items this invoice brings into stock, and
         // Purchase Expense for services and non-stock items.
+        RefuseGoodsAlreadyReserveInvoiced(invoice);
+
         // Received lines clear GR/IR at the receipt's value; a different invoice price goes to Price Difference.
         var accounts = new PurchaseLineAccounts(_db, _resolver);
         var items    = accounts.Items(invoice.Items.Select(l => l.ItemCode));
@@ -147,6 +150,30 @@ public class APInvoiceJournalService : IAPInvoiceJournalService
 
         _db.Set<JournalEntry>().Add(je);
         return je;
+    }
+
+    /// <summary>
+    /// Goods received against an AP Reserve Invoice were billed, and put on the payable, by that
+    /// invoice. Invoicing the receipt again would owe the vendor twice, so it is refused.
+    /// </summary>
+    private void RefuseGoodsAlreadyReserveInvoiced(APInvoice invoice)
+    {
+        var receiptIds = invoice.Items.Where(IsBasedOnGoodsReceipt).Select(l => l.BaseEntry!.Value).Distinct().ToList();
+        if (receiptIds.Count == 0) return;
+
+        var reserved = _db.Set<GRPOLine>()
+            .Where(l => receiptIds.Contains(l.GoodsReceiptPOId) && l.BaseEntry != null
+                        && l.BaseType != null && l.BaseType.ToUpper() == "APRESERVEINVOICE")
+            .Select(l => new { l.GoodsReceiptPOId, l.ItemCode, l.GoodsReceiptPO.DocNum })
+            .ToList();
+
+        var hit = invoice.Items.Where(IsBasedOnGoodsReceipt)
+            .Select(l => reserved.FirstOrDefault(r => r.GoodsReceiptPOId == l.BaseEntry && r.ItemCode == l.ItemCode))
+            .FirstOrDefault(r => r != null);
+        if (hit != null)
+            throw new InvalidOperationException(
+                $"Item {hit.ItemCode} on Goods Receipt PO {hit.DocNum} was received against an AP Reserve Invoice, " +
+                "which already billed it. It can't be invoiced again.");
     }
 
     /// <summary>True when the line was copied from a Goods Receipt PO, whose receipt already moved the stock.</summary>

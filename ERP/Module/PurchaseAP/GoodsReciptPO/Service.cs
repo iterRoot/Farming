@@ -60,9 +60,28 @@ public class GoodsReceiptPOJournalService : IGoodsReceiptPOJournalService
             && Valuation.Of(it.ValuationMethod) == Valuation.Standard && it.ItemCost > 0
                 ? (l.Price - it.ItemCost) * l.Quantity
                 : 0m), 2);
-        if (variance != 0 && string.IsNullOrWhiteSpace(gl.PriceDifference))
+        // Lines copied from an AP Reserve Invoice were already put on GR/IR by that invoice, at its
+        // price. Clear exactly that, so nothing is left in GR/IR when this receipt's value differs;
+        // the gap is a price difference. (Inventory stays at this receipt's value, as the stock
+        // ledger records it.)
+        var accounts   = new PurchaseLineAccounts(_db, _resolver);
+        var reserved   = accounts.ReserveUnitValues(receipt.Lines
+            .Where(l => PurchaseLineAccounts.IsFromReserveInvoice(l.BaseEntry, l.BaseType)).Select(l => l.BaseEntry));
+        var weightSum  = receipt.Lines.Sum(l => l.Quantity * l.Price);
+        var reserveGap = 0m;
+        foreach (var l in receipt.Lines.Where(l => PurchaseLineAccounts.IsFromReserveInvoice(l.BaseEntry, l.BaseType)))
+        {
+            var invoiced = PurchaseLineAccounts.ClearingValueOf(reserved, l.BaseEntry, l.ItemCode, l.Quantity);
+            if (invoiced == null || weightSum <= 0) continue;
+            reserveGap += Math.Round(goodsValue * l.Quantity * l.Price / weightSum, 2) - invoiced.Value;
+        }
+        var clearingValue = goodsValue - reserveGap;     // what GR/IR is credited with
+        var priceDiff     = variance - reserveGap;       // Dr when positive, Cr when negative
+
+        if (priceDiff != 0 && string.IsNullOrWhiteSpace(gl.PriceDifference))
             throw new InvalidOperationException(
-                "Price Difference account is not set in GL Account Determination (KGLD); standard-cost receipts need it.");
+                "Price Difference account is not set in GL Account Determination (KGLD); standard-cost receipts " +
+                "and receipts priced differently from their AP Reserve Invoice need it.");
 
         var postingDate = receipt.PostingDate ?? receipt.DocDate ?? DateTime.UtcNow;
 
@@ -112,21 +131,22 @@ public class GoodsReceiptPOJournalService : IGoodsReceiptPOJournalService
             InActive    = false,
         });
 
-        // Price difference on standard-cost items (Dr when paid above standard, Cr when below)
-        if (variance != 0)
+        // Price difference: standard-cost items (Dr when paid above standard, Cr when below), and
+        // lines from a reserve invoice priced differently here (Dr when the invoice was higher).
+        if (priceDiff != 0)
         {
             je.Lines.Add(new JournalEntryLine
             {
                 LineNum     = lineNum++,
                 AccountCode = gl.PriceDifference!,
                 AccountName = "Price Difference",
-                Debit       = variance > 0 ? variance : 0,
-                Credit      = variance < 0 ? -variance : 0,
-                DebitLC     = variance > 0 ? variance : 0,
-                CreditLC    = variance < 0 ? -variance : 0,
+                Debit       = priceDiff > 0 ? priceDiff : 0,
+                Credit      = priceDiff < 0 ? -priceDiff : 0,
+                DebitLC     = priceDiff > 0 ? priceDiff : 0,
+                CreditLC    = priceDiff < 0 ? -priceDiff : 0,
                 DebitFC     = 0,
                 CreditFC    = 0,
-                LineMemo    = $"Price difference vs standard — {receipt.DocNum}",
+                LineMemo    = $"Price difference — {receipt.DocNum}",
                 TaxAmount   = 0,
                 CreatedAt   = DateTime.UtcNow,
                 InActive    = false,
@@ -142,9 +162,9 @@ public class GoodsReceiptPOJournalService : IGoodsReceiptPOJournalService
             CardCode    = vendor.Code,
             CardName    = vendor.CardName,
             Debit       = 0,
-            Credit      = goodsValue,
+            Credit      = clearingValue,
             DebitLC     = 0,
-            CreditLC    = goodsValue,
+            CreditLC    = clearingValue,
             DebitFC     = 0,
             CreditFC    = 0,
             LineMemo    = $"GR/IR clearing — {receipt.DocNum}",
