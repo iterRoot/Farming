@@ -197,7 +197,7 @@ public class CompanyController : MyController
 		var item = _repository.GetSingle(e => e.Id == id);
 		if (item == null)
 		{
-			return BadRequest($"Item not found {id}");
+			return NotFound($"Item not found: {id}");
 		}
 		var result = _mapper.Map<CompanyDetailResponse>(item);
 		return Ok(result);
@@ -225,7 +225,7 @@ public class CompanyController : MyController
 		var item = _repository.GetSingle(e => e.Id == id);
 		if (item == null)
 		{
-			return BadRequest($"Item not found {id}");
+			return NotFound($"Item not found: {id}");
 		}
 		_mapper.Map(request, item);
 		// if (request.Logo != null)
@@ -247,7 +247,7 @@ public class CompanyController : MyController
 		var item = _repository.GetSingle(e => e.Id == id);
 		if (item == null)
 		{
-			return BadRequest($"Item not found {id}");
+			return NotFound($"Item not found: {id}");
 		}
 		item.DeletedAt = DateTime.UtcNow;
 		// item.DeletedBy = GetClaim()!.Id;

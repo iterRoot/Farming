@@ -49,7 +49,7 @@ public class OutgoingPaymentController : MyController
             .FirstOrDefault(e => e.Id == id);
 
         if (payment == null)
-            return BadRequest($"Payment not found {id}");
+            return NotFound($"Payment not found: {id}");
 
         var result = _mapper.Map<OutgoingPaymentListResponse>(payment);
         return Ok(result);
@@ -415,7 +415,7 @@ public class OutgoingPaymentController : MyController
             .FirstOrDefault(e => e.Id == id);
 
         if (payment == null)
-            return BadRequest($"Payment not found {id}");
+            return NotFound($"Payment not found: {id}");
 
         if (payment.Status == "C")
             return BadRequest("Cannot delete closed payment. Use Void instead.");

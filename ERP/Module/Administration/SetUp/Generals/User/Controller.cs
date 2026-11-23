@@ -370,7 +370,7 @@ public class UserController : MyController
         var user = _repository.GetSingle(e => e.Id == id);
         if (user == null)
         {
-            return BadRequest($"Item not found {id}");
+            return NotFound($"Item not found: {id}");
         }
         var result = _mapper.Map<UserListResponse>(user);
         return Ok(result);
@@ -487,7 +487,7 @@ public class UserController : MyController
         var user = _repository.GetSingle(e => e.Id == id);
         if (user == null)
         {
-            return BadRequest($"Item not found {id}");
+            return NotFound($"Item not found: {id}");
         }
 
         // ApprovalTemplateApprover and ApprovalRequest both hold Restrict-behavior

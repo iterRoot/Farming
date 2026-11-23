@@ -40,7 +40,7 @@ public class InventoryController : MyController
 		var item = _repository.GetSingle(e => e.Id == id);
 		if (item == null)
 		{
-			return BadRequest($"Item not found {id}");
+			return NotFound($"Item not found: {id}");
 		}
 		var result = _mapper.Map<InventoryListResponse>(item);
 		return Ok(result);
@@ -141,7 +141,7 @@ public class InventoryController : MyController
 		var item = _repository.GetSingle(e => e.Id == id);
 		if (item == null)
 		{
-			return BadRequest($"Item not found {id}");
+			return NotFound($"Item not found: {id}");
 		}
 		item.DeletedAt = DateTime.UtcNow;
 		// item.DeletedBy = GetClaim()!.Id;

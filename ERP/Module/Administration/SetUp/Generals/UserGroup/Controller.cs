@@ -40,7 +40,7 @@ public class UserGroupController : MyController
 		var UserGroup = _repository.GetSingle(e => e.Id == id);
 		if (UserGroup == null)
 		{
-			return BadRequest($"Item not found {id}");
+			return NotFound($"Item not found: {id}");
 		}
 		var result = _mapper.Map<UserGroupListResponse>(UserGroup);
 		return Ok(result);
@@ -90,7 +90,7 @@ public class UserGroupController : MyController
 		var UserGroup = _repository.GetSingle(e => e.Id == id);
 		if (UserGroup == null)
 		{
-			return BadRequest($"Item not found {id}");
+			return NotFound($"Item not found: {id}");
 		}
 		UserGroup.DeletedAt = DateTime.UtcNow;
 		// UserGroup.DeletedBy = GetClaim()!.Id;
